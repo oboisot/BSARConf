@@ -1,0 +1,379 @@
+html, body {
+	margin: 0;
+    height: 100%;
+	background-color: #000;
+	color: #fff;
+	font-family: "Lucida Console", "Courier New", "Monospace", "Arial";
+	font-size: 16px;
+	line-height: 16px;
+	overscroll-behavior: none;
+}
+
+input[type=number], input[type=text] {
+	width: 80px;
+	min-height: 34px;
+	min-width: 80px;
+}
+
+input[type=number]:invalid+span:after,
+input[type=text]:invalid+span:after {
+	content: '✖';
+	color: #ff0000;
+	font-size: 20px;
+}
+  
+input[type=number]:valid+span:after,
+input[type=text]:valid+span:after {
+	content: '✓';
+	color: #00ff00;
+	font-size: 20px;
+}
+
+.canvas {
+    width: 100%;
+    height: 100%;
+	z-index: -1;
+}
+
+.leftDiv, .rightDiv {
+	display: block;
+	position: fixed;
+	top: 0px;
+	width: 360px;
+	z-index: 10;
+	transition: 0.5s;
+	transition-timing-function: ease-in-out;
+}
+
+.leftDiv {
+	left: 0px;
+	-webkit-transform: translateX(-300px);
+	-moz-transform: translateX(-300px);
+	-ms-transform: translateX(-300px);
+	-o-transform: translateX(-300px);
+	transform: translateX(-300px);
+}
+
+.rightDiv {
+	right: 0px;
+	-webkit-transform: translateX(300px);
+	-moz-transform: translateX(300px);
+	-ms-transform: translateX(300px);
+	-o-transform: translateX(300px);
+	transform: translateX(300px);
+}
+
+#TxInputDiv, #RxInputDiv {
+	display: block;
+	float: left;
+}
+
+.InputTable {
+	width: 300px;
+	display: none;
+	background-color: rgba(0, 0, 0, 0.5);
+}
+
+.tdInputText {
+	text-align: right;
+	min-width: 115px;
+}
+
+.thInputText {
+	text-decoration: underline;
+}
+
+.txInfosDiv, .rxInfosDiv, .BSARInfosDiv {
+	display: block;
+	position: fixed;
+	font-size: 14px;
+	top: 0px;
+	width: 320px;
+	height: 180px;
+	z-index: 0;
+	transition: 0.5s;
+	transition-timing-function: ease-in-out;
+	/* border: 1px solid white; */
+}
+
+.txInfosDiv {
+	left: calc(100% / 2 - 480px);
+	-webkit-transform: translateY(-180px);
+	-moz-transform: translateY(-180px);
+	-ms-transform: translateY(-180px);
+	-o-transform: translateY(-180px);
+	transform: translateY(-180px);
+}
+
+.rxInfosDiv {
+	left: calc(100% / 2 + 160px);
+	-webkit-transform: translateY(-180px);
+	-moz-transform: translateY(-180px);
+	-ms-transform: translateY(-180px);
+	-o-transform: translateY(-180px);
+	transform: translateY(-180px);
+}
+
+.BSARInfosDiv {
+	left: calc(100% / 2 - 160px);
+	-webkit-transform: translateY(-180px);
+	-moz-transform: translateY(-180px);
+	-ms-transform: translateY(-180px);
+	-o-transform: translateY(-180px);
+	transform: translateY(-180px);
+}
+
+.InfosTable {
+	margin: 0 auto; /* center the table in the div */
+}
+
+/* PLOTS */
+.plotIsoRangeDop, .plotGAFAmp {
+	display: block;
+	position: fixed;
+	height: 400px;
+	bottom: 0px;
+	margin: 0 auto;
+	transition: 0.5s;
+	transition-timing-function: ease-in-out;
+}
+
+.plotIsoRangeDop {
+	width: 400px;
+	left: 0px;
+	-webkit-transform: translateY(400px);
+	-moz-transform: translateY(400px);
+	-ms-transform: translateY(400px);
+	-o-transform: translateY(400px);
+	transform: translateY(400px);
+}
+
+.plotGAFAmp {
+	width: 451px;
+	right: 0px;
+	-webkit-transform: translateY(400px);
+	-moz-transform: translateY(400px);
+	-ms-transform: translateY(400px);
+	-o-transform: translateY(400px);
+	transform: translateY(400px);
+}
+
+/*********** BUTTONS ***********/
+.header {
+	display: block;
+	position: fixed;
+	top: 0px;
+	left: calc(100% / 2 - 300px);
+	height: 60px;
+	width: 600px;
+	z-index: 10;
+	background:rgba(0, 0, 0, 0.5);
+	text-align: center;
+}
+
+.BSARMenuButton {
+	display: block;
+	float: left;
+	cursor: pointer;
+	background-color: transparent;
+	border: none;
+	color: white;
+	width: 60px;
+	height: 100%;
+	font-size: 18px;
+	font-weight: bolder;
+	text-align: center;
+	/* border: 2px solid rgba(0, 0, 0, 0.5); */
+}
+
+#BSARbutton {
+	width: 300px;
+}
+
+.BSARMenuButton:hover {
+	border: 2px solid white;
+}
+
+.MenuButton {
+	display: block;
+	cursor: pointer; 
+	/* background-color: transparent; */
+	background: rgba(0, 0, 0, 0.5);
+	border: none;
+	color: white;
+	width: 300px;
+	height: 60px;
+	text-align: center;
+	text-decoration: none;
+	font-size: 16px;
+	font-weight: bolder;
+}
+
+.MenuButton:hover {
+	border: 2px solid white;
+}
+
+#TxButton, #RxButton {
+	display: block;
+	float: left;
+	cursor: pointer; 
+	/* background-color: transparent; */
+	background: rgba(0, 0, 0, 0.5);
+	border: none;
+	color: white;
+	width: 60px;
+	height:60px;
+	padding: 5px 5px;
+	text-align: center;
+	text-decoration: none;
+	font-size: 16px;
+}
+
+.ImgButton {
+	display: block;
+	width: 40px;
+	height: 40px;
+	margin: 0 auto;
+	background-size: cover;
+	background-color: transparent;
+}
+
+.LoadIcon {
+	background-image: url("../img/icons/import.svg");
+	filter: invert(100%);
+}
+
+.SaveIcon {
+	background-image: url("../img/icons/save.svg");
+	filter: invert(100%);
+}
+
+.ScreenshotIcon {
+	background-image: url("../img/icons/screenshot.svg");
+	filter: invert(100%);
+}
+
+.ProcessIcon {
+	background-image: url("../img/icons/process.svg");
+	filter: invert(100%);
+}
+
+.InfoIcon {
+	background-image: url("../img/icons/infos.svg");
+	filter: invert(100%);
+}
+
+.BSARMenuButton:hover div {
+	filter: invert(0%);
+}
+
+/* ***** TOOLTIP ***** */
+.TooltipButtonBottom {
+	visibility: hidden;
+	width: 120px;
+	background-color: rgba(0, 0, 0, 0.5);
+	color: #fff;
+	text-align: center;
+	padding: 5px 0;
+	position: absolute;
+	z-index: 20;
+	top: 150%;
+	left: 50%;
+	margin-left: -60px;
+	font-size: 12px;
+	font-weight: normal;
+}
+
+.TooltipButtonBottom::after {
+	content: "";
+	position: absolute;
+	bottom: 100%;
+	left: 50%;
+	margin-left: -5px;
+	border-width: 5px;
+	border-style: solid;
+	border-color: transparent transparent white transparent;
+}
+
+.BSARMenuButton:hover span {
+	visibility: visible;
+}
+
+/* The switch - the box around the slider */
+.switch {
+	position: relative;
+	display: inline-block;
+	width: 98px;
+	height: 34px;
+	background-color: transparent;
+}
+
+/* Hide default HTML checkbox */
+.switch input {
+	opacity: 0;
+	width: 0;
+	height: 0;
+}
+
+/* The slider */
+.slider-sight {
+	position: absolute;
+	cursor: pointer;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	border-radius: 5px;
+	background-color: #000000;
+	text-align: center;
+	color: #ffffff;
+	font-size: 12px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	-webkit-transition: 0.2s;
+	-moz-transition: 0.2s;
+	-ms-transition: 0.2s;
+	-o-transition: 0.2s;
+	transition: 0.2s;
+}
+
+.slider-sight:hover {
+	box-shadow: 0 0 0 2px #ffffff inset;
+	-webkit-transition: none;
+	-moz-transition: none;
+	-ms-transition: none;
+	-o-transition: none;
+	transition: none;
+}
+
+.slider-sight:before {
+	position: absolute;
+	content: "right";
+	height: 32px;
+	width: 47px;
+	right: 1px;
+	bottom: 1px;
+	border-radius: 5px;
+	background-color: #ffffff;
+	color: #000000;
+	font-size: 12px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	-webkit-transition: 0.2s;
+	-moz-transition: 0.2s;
+	-ms-transition: 0.2s;
+	-o-transition: 0.2s;
+	transition: 0.2s;
+}
+
+input:checked + .slider-sight:before {
+	-webkit-transform: translateX(-49px);
+	-moz-transform: translateX(-49px);
+	-ms-transform: translateX(-49px);
+	-o-transform: translateX(-49px);;
+	transform: translateX(-49px);
+	content: "left";
+	color: #000000;
+}

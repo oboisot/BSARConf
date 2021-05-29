@@ -16,8 +16,10 @@ of some usefull BSAR parameters such as:
 
 A preview is available here:  [BSARConf](https://www.bsarconf.oboisot.com)
 
-It is a recent project and is still under construction and improvements:
-MORE TO COME !
+It is a recent project and is still under construction and improvements, MORE TO COME:
+- The addition of NESZ computation must be added
+- The making of a full configuration report must be added
+- More informations about the site and the physics behind must be added
 
 ## Detailed description
  TO DO...

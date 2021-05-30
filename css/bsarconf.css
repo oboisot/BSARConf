@@ -377,3 +377,20 @@ input:checked + .slider-sight:before {
 	content: "left";
 	color: #000000;
 }
+
+/* ***** LOADER div ***** */
+.loadingContainer {
+	z-index:1000;
+	display: none;
+	justify-content: center;
+	align-items: center;
+	position: fixed;
+	top: calc(100%/2 - 100px);
+	left: calc(100%/2 - 100px);
+	width: 200px;
+	height: 200px;
+	margin: 0 auto;
+	background-size: cover;
+	background-color: transparent;
+	background-image: url("../img/icons/loader.svg");
+}

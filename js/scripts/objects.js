@@ -1,6 +1,6 @@
 import * as THREE from "../three/three.module.js";
 
-export { Carrier, Axes };
+export { Carrier, IsoRangeSurface, Axes };
 
 class Carrier {
     /* */
@@ -14,7 +14,7 @@ class Carrier {
         this.carrier     = new THREE.Mesh();      // Carrier referential (relative to World)
         this.antenna     = new THREE.Mesh();      // Antenna referential (relative to carrier)
         this.beam        = new THREE.Mesh();      // Antenna beam (relative to antenna referential)
-        this.footprint   = new THREE.Line(); // For plotting beam footprint
+        this.footprint   = new THREE.Line();      // For plotting beam footprint
         this._beamRadiusY = 0.0;
         this._beamRadiusZ = 0.0;
         this._beamOriginWorld = new THREE.Vector3(); // The antenna position in World coordinates
@@ -100,7 +100,7 @@ class Carrier {
         coneGeometry.translate( 0, -0.5 * this._coneLength, 0);       // Define Cone Vertex as origin
         coneGeometry.rotateZ( 0.5 * Math.PI );                  // Define x-axis as cone axis
         coneGeometry.scale( 1, this._beamRadiusY , this._beamRadiusZ );  // In case of elliptic cone
-        const coneMaterial = new THREE.MeshPhongMaterial({
+        const coneMaterial = new THREE.MeshLambertMaterial({// More efficient than : new THREE.MeshPhongMaterial({
             color: 0x000000,
             opacity: 0.25,
             transparent: true,
@@ -579,6 +579,156 @@ class Carrier {
         [this._range_min, this._range_max] = this.rangeMinMax();
         this._footprint_area = this.footprintArea();
         this._footprint_abs_max_coord = this.footprintAbsMaxPlaneCoord();
+    }
+}
+
+class IsoRangeSurface {
+    constructor ( TxCarrier, RxCarrier ) { // Tx and Rx antennas in world coordinate
+        // ***** Iso-Range Mesh object
+        this.isoRangeSurface       = new THREE.Mesh(); // Relative to World
+        this.groundIsoRangeContour = new THREE.Line(); // For plotting ground iso-Range contour
+        this.matrixWorld = new THREE.Matrix4(); // set the transformation matrix : rotation: from (u, v, w) ; translation: from OE (centerPosition) ; scale: from a, b
+        this._m = new THREE.Matrix3();  // Rotation matrix only -> for ground iso-Range contours
+        // "private" properties
+        this._xAxis = new THREE.Vector3( 1, 0, 0 );
+        this._yAxis = new THREE.Vector3( 0, 1, 0 );
+        this._zAxis = new THREE.Vector3( 0, 0, 1 );
+        // Adding Geometry and Material
+        this.isoRangeSurface.geometry = new THREE.SphereGeometry( 1, 64, 64 );
+        this.isoRangeSurface.material = new THREE.MeshLambertMaterial({
+            color: 0xd62728,
+            opacity: 0.15,
+            transparent: true,
+            side: THREE.DoubleSide
+        });
+        this.isoRangeSurface.name = "isoRangeSurface"; // For getting getObjectByName
+        // groud iso-Range Contour geometry and material
+        this.groundIsoRangeContour.geometry = new THREE.BufferGeometry();
+        this.groundIsoRangeContour.material = new THREE.LineBasicMaterial({ color: 0xd62728 });
+        this.updateIsoRangeSurface( TxCarrier, RxCarrier );
+    }
+
+    updateIsoRangeSurface( TxCarrier, RxCarrier ) {
+        const OT = TxCarrier.getAntennaPosition(),
+              OR = RxCarrier.getAntennaPosition(),
+              TP = OT.clone().negate(), // here point P is the origin of the "World"
+              RP = OR.clone().negate(),
+              TR = OR.clone().sub( OT.clone() ),
+              TPnorm = TP.length(),
+              RPnorm = RP.length();
+        // Ellipsoid center
+        this.centerPosition = TR.clone().multiplyScalar( 0.5 ).add( OT );
+        // Ellipsoid referential axes
+        if ( TR.length() < 1e-10 ) { // Monostatic case
+            this.u = this._xAxis.clone();
+            this.v = this._yAxis.clone();
+            this.w = this._zAxis.clone();
+        } else {
+            this.u = TR.clone().normalize();
+            this.v = this._zAxis.clone().cross( this.u );
+            if ( this.v.lengthSq() > 0 ) { // if u and z are not colinear
+                this.v.normalize();
+            } else {
+                this.v = new THREE.Vector3( 1, 0, 0 );
+            }
+            this.w = this.u.clone().cross( this.v ).normalize();
+        }
+        // Ellipsoid radii
+        this.xRadius = 0.5 * ( TPnorm + RPnorm  );
+        this.yRadius = Math.sqrt( 0.5 * (TPnorm * RPnorm + TP.dot( RP )) );
+        // Update Position and Rotation
+            // Apply inverse transform
+        this.isoRangeSurface.geometry.applyMatrix4( this.matrixWorld.invert() );
+        // set the transformation matrix :
+        // - rotation: from (u, v, w)
+        // - translation: from OE
+        // - scale: from a, b
+        this.matrixWorld.set( 
+            this.u.x * this.xRadius, this.v.x * this.yRadius, this.w.x * this.yRadius, this.centerPosition.x,
+            this.u.y * this.xRadius, this.v.y * this.yRadius, this.w.y * this.yRadius, this.centerPosition.y,
+            this.u.z * this.xRadius, this.v.z * this.yRadius, this.w.z * this.yRadius, this.centerPosition.z,
+                                  0,                       0,                       0,                     1
+        );
+           // ...then new transform
+        this.isoRangeSurface.geometry.applyMatrix4( this.matrixWorld );
+        // Ground iso-Range contour
+            // Update rotation matrix only
+        this._m.set(
+            this.u.x, this.v.x, this.w.x,
+            this.u.y, this.v.y, this.w.y,
+            this.u.z, this.v.z, this.w.z
+        );
+        this.intersectWorldPlane();
+    }
+
+    intersectWorldPlane() {
+        const size = 100, points = [],
+              scale = new THREE.Vector3( this.xRadius, this.yRadius, this.yRadius ),
+              minv = this._m.clone().transpose();
+        // See : https://en.wikipedia.org/wiki/Ellipsoid#Plane_sections for computation principle
+        // Get plane parameters in Ellipsoid referential:
+        // Point of plane: EP = OP - OE
+        // normal of plane: n = minv * z (here z is the plane normal)
+        const EP = this.centerPosition.clone().negate().applyMatrix3( minv ),
+              n = this._zAxis.clone().applyMatrix3( minv );
+        // Plane constant (plane of the form: nx*(x-xp)+ny*(y-yp)+nz*(z-zp)=0 => nx*x+ny*y+nz*z = nx*xp+ny*yp+nz*zp = d)
+        const dvec = n.clone().multiply( EP ),
+              d = dvec.x + dvec.y + dvec.z;
+        // Scale transform applied to plane: (Ellipsoid -> unit Sphere)
+        // plane equation becomes : nx*a*u + ny*b*v + nz*c*w = d
+        const m = n.clone().multiply( scale );
+        // Expression of plane in its Hessian normal form (see : https://mathworld.wolfram.com/HessianNormalForm.html)
+        // Plane becomes : mu*u + mv*v + mw*w = delta
+        const delta = d / m.length();
+        m.normalize(); // (mu, mv, mw)
+        console.log("m = ", m);
+        // Computation of intersection ellipse axes
+        const f0 = new THREE.Vector3(),
+              f1 = new THREE.Vector3(),
+              f2 = new THREE.Vector3();
+        if ( Math.abs(delta) <= 1 ) { // Intersection is an ellipse (delta is the distance from the unit sphere to the plane)
+            const rho = Math.sqrt( 1 - delta * delta );
+            f0.copy( m.clone().multiplyScalar( delta ) );
+            if ( Math.abs( m.z - 1 ) <= 1e-14 ) { // In case of m.z is almost one (for numerical stability)
+                f1.set( rho, 0, 0 ),
+                f2.set( 0, rho, 0 );
+            } else {
+                const f = rho / Math.sqrt( m.x * m.x + m.y * m.y );
+                f1.set( f * m.y, -f * m.x, 0 );
+                f2.copy( m.clone().cross( f1 ) );
+            }
+            // Inverse scale transform . inverse rotation transform . inverse translation (for f0 only, which is the center of the ellipse)
+            f0.multiply( scale ).applyMatrix3( this._m ).add( this.centerPosition );
+            f1.multiply( scale ).applyMatrix3( this._m );
+            f2.multiply( scale ).applyMatrix3( this._m );
+            console.log("f0 = ", f0);
+            console.log("f1 = ", f1);
+            console.log("f2 = ", f2);
+            const dt = 2 * Math.PI / (size - 1);
+            points.length = size;
+            for ( let i = 0 ; i < size ; ++i ){
+                const t = i * dt;
+                points[i] = f0.clone()
+                                .add( f1.clone().multiplyScalar( Math.cos( t ) ) )
+                                .add( f2.clone().multiplyScalar( Math.sin( t ) ) )
+                                .setZ( 0 ); // ensure to have a real zero
+                console.log(points[i]);
+            }
+        } // else: No intersection
+        // Set new geometry points of the footprint
+        this.groundIsoRangeContour.geometry.setFromPoints( points );
+        this.groundIsoRangeContour.geometry.verticesNeedUpdate = true;
+    }
+
+    // Methods
+    addToScene(scene) {
+        scene.add( this.isoRangeSurface );
+        scene.add( this.groundIsoRangeContour );
+    }
+
+    removeFromScene(scene) {
+        scene.remove( this.isoRangeSurface );
+        scene.remove( this.groundIsoRangeContour );
     }
 }
 

@@ -1,6 +1,6 @@
 import * as THREE from "../three/three.module.js";
 import { OrbitControls } from "../three/OrbitControls.js";
-import { Carrier, Axes } from "./objects.js";
+import { Carrier, Axes, IsoRangeSurface } from "./objects.js";
 
 import { BSARConfig, Elements } from "./config.js";
 import { drawIsoRangeDop, drawGAFAmp } from "./plots.js";
@@ -13,6 +13,7 @@ const worldPlane = new THREE.Mesh();
 // Global objects
 let renderer, camera, scene, controls,
     TxCarrier, RxCarrier,
+    BSARisoRangeSurface,
     renderRequested = false;
 
 // ***** CANVAS ELEMENT *****
@@ -123,6 +124,11 @@ function initScene() {
     RxCarrier.addToScene( scene );
     TxCarrier.addToScene( scene );
 
+    // ***** Iso-Range Surface *****
+    BSARisoRangeSurface = new IsoRangeSurface( TxCarrier, RxCarrier );
+    // Add iso-Range surface to scene
+    BSARisoRangeSurface.addToScene( scene );
+
     // ***** Axes Helper *****
     const axes = new Axes( 500 );
     axes.origin.translateZ( 0.1 ); // For better rendering
@@ -199,35 +205,36 @@ function onEventBindings() {
           rx_conf = BSARConfig.Rx,
           rx_elmts = Elements.Rx;
     // Tx events binding
-    for ( const key in tx_elmts ) {
-        if ( key === 'infos' ) { break; } // we read only until 'infos' property
+    for ( const key in tx_conf ) {
         if ( key === 'sight' ) {
             tx_elmts.sight.element.onchange = () => {
                 const newvalue = tx_elmts.sight.element.checked;
-                TxCarrier.setAntennaSight( newvalue );
                 tx_conf.sight.value = newvalue;
-                updateSelector( tx_elmts.sight.needUpdate );
+                TxCarrier.setAntennaSight( newvalue );
+                computeIsoRangeSurface( tx_elmts.sight.isoRangeSurfaceUpdate );                
+                updateSelector( tx_elmts.sight.needUpdate );                
             }
         } else {
             const elmt = tx_elmts[key];
             elmt.element.onchange = () => {
                 const newvalue = Number( elmt.element.value );
                 if ( (newvalue >= elmt.element.min) && (newvalue <= elmt.element.max) ) {
-                    TxCarrier.setValueSelector( key, newvalue ); // Ignore keys which are not defined in Carrier
                     tx_conf[key].value = newvalue;
+                    TxCarrier.setValueSelector( key, newvalue ); // Ignore keys which are not defined in Carrier
+                    computeIsoRangeSurface( tx_elmts[key].isoRangeSurfaceUpdate );  
                     updateSelector( elmt.needUpdate );
                 }
             }
         }
     }
     // Rx events binding
-    for ( const key in rx_elmts ) {
-        if ( key === 'infos' ) { break; } // we read only until 'infos' property
+    for ( const key in rx_conf ) {
         if ( key === 'sight' ) {
             rx_elmts.sight.element.onchange = () => {
                 const newvalue = rx_elmts.sight.element.checked;
-                RxCarrier.setAntennaSight( newvalue );
                 rx_conf.sight.value = newvalue;
+                RxCarrier.setAntennaSight( newvalue );
+                computeIsoRangeSurface( rx_elmts.sight.isoRangeSurfaceUpdate );                    
                 updateSelector( rx_elmts.sight.needUpdate );
             }
         } else if ( key === 'integrationTime' ){
@@ -245,8 +252,9 @@ function onEventBindings() {
             elmt.element.onchange = () => {
                 const newvalue = Number( elmt.element.value );
                 if ( (newvalue >= elmt.element.min) && (newvalue <= elmt.element.max) ) {
-                    RxCarrier.setValueSelector( key, newvalue ); // Ignore keys which are not defined in Carrier
                     rx_conf[key].value = newvalue;
+                    RxCarrier.setValueSelector( key, newvalue ); // Ignore keys which are not defined in Carrier
+                    computeIsoRangeSurface( rx_elmts[key].isoRangeSurfaceUpdate );
                     updateSelector( elmt.needUpdate );
                 }
             }
@@ -267,6 +275,12 @@ function onEventBindings() {
         } else {
             rx_elmts.integrationTime.element.setCustomValidity("'auto-ground', 'auto-slant' or 0 - 3600 s");
         }
+    }
+}
+
+function computeIsoRangeSurface( isoRangeSurfaceUpdate ) {
+    if ( isoRangeSurfaceUpdate ) {
+        BSARisoRangeSurface.updateIsoRangeSurface( TxCarrier, RxCarrier );
     }
 }
 
@@ -542,7 +556,8 @@ function parseLoadConfig( config ) {
         alert( "Rx.integrationTime property is not set !" );
     }
     // Update of all scene, infos and plots
-    updateSelector( [true, true, true, true, true] );
+    computeIsoRangeSurface( true );
+    updateSelector( [true, true, true, true, true] );    
 }
 
 // ***** Process Button *****

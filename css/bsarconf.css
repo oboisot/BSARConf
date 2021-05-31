@@ -380,7 +380,7 @@ input:checked + .slider-sight:before {
 
 /* ***** LOADER div ***** */
 .loadingContainer {
-	z-index:1000;
+	z-index:100;
 	display: none;
 	justify-content: center;
 	align-items: center;

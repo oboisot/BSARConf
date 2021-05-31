@@ -6,11 +6,10 @@ export { drawIsoRangeDop, drawGAFAmp };
 // *******************************************
 // ***** ISO-RANGE and ISO-DOPPLER PLOTS *****
 // *******************************************
-function drawIsoRangeDop( TxCarrier, RxCarrier, fem, plot_div ) {
-    const size = 101;
+function drawIsoRangeDop( TxCarrier, RxCarrier, fem, plot_div, size=151 ) {
     const lem = bsar.C0 / fem;
     // bistatic range and doppler frequency calculation
-    const xmax = 1.5 * RxCarrier.getFootprintAbsMaxCoord();    
+    const xmax = 2.0 * RxCarrier.getFootprintAbsMaxCoord();    
     const xaxis = bsar.linspaced_array(-xmax, xmax, size);
     const OT = TxCarrier.getAntennaPosition(),
           OR = RxCarrier.getAntennaPosition(),
@@ -152,7 +151,7 @@ function drawIsoRangeDop( TxCarrier, RxCarrier, fem, plot_div ) {
                         format: 'svg', // one of png, svg, jpeg, webp
                         filename: 'ground_iso_range_dop',
                         height: 500,
-                        width: 500,
+                        width: 563.75,
                         scale: 1.5 // Multiply title/legend/axis/canvas sizes by this factor
                     });
                 Plotly.relayout(plot_div,
@@ -179,7 +178,7 @@ function drawIsoRangeDop( TxCarrier, RxCarrier, fem, plot_div ) {
                         format: 'png', // one of png, svg, jpeg, webp
                         filename: 'ground_iso_range_dop',
                         height: 500,
-                        width: 500,
+                        width: 563.75,
                         scale: 1.5 // Multiply title/legend/axis/canvas sizes by this factor
                     });
                 Plotly.relayout(plot_div,
@@ -202,8 +201,7 @@ function drawIsoRangeDop( TxCarrier, RxCarrier, fem, plot_div ) {
 // *******************************
 // ***** GAF AMPLITUDE PLOTS *****
 // *******************************
-function drawGAFAmp( TxCarrier, RxCarrier, fem, bandwidth, tint, plot_div ) {
-    const size = 151;
+function drawGAFAmp( TxCarrier, RxCarrier, fem, bandwidth, tint, plot_div, size=151 ) {
     const lem = bsar.C0 / fem;
     const TP = TxCarrier.getAntennaPosition().negate(),
           RP = RxCarrier.getAntennaPosition().negate(),

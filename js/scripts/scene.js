@@ -8,22 +8,20 @@ import * as bsar from "./bsarfun.js";
 // ***** Configurator Parameters *****
 
 // ***** THREE parameters *****
-const sceneCanvas = document.getElementById('sceneCanvas');
 const planeSize = 25000; // m
 const worldPlane = new THREE.Mesh();
-let renderer, camera, scene, controls;
-let renderRequested = false;
+// Global objects
+let renderer, camera, scene, controls,
+    TxCarrier, RxCarrier,
+    renderRequested = false;
 
-//
-let TxCarrier, RxCarrier;
-
+// ***** CANVAS ELEMENT *****
+const sceneCanvas      = document.getElementById('sceneCanvas');
 // ***** PLOTS ELEMENTS *****
-const plotIsoRangeDop = document.getElementById('plotIsoRangeDop'),
-      plotGAFAmp      = document.getElementById('plotGAFAmp');
-
+const plotIsoRangeDop  = document.getElementById('plotIsoRangeDop'),
+      plotGAFAmp       = document.getElementById('plotGAFAmp');
 // ***** LOADING ELEMENTS *****
-const loadingContainer = document.getElementById('loadingContainer'),
-      processingContainer = document.getElementById('processingContainer');
+const loadingContainer = document.getElementById('loadingContainer');
 
 // ***** Initialization functions *****
 initValues();
@@ -550,6 +548,10 @@ function parseLoadConfig( config ) {
 // ***** Process Button *****
 const ProcessButton = document.getElementById('ProcessButton');
 ProcessButton.onclick = () => {
-    processingContainer.style['display'] = 'flex';
-    setTimeout(()=>{ processingContainer.style['display'] = 'none'; }, 2000 );
+    loadingContainer.innerHTML = "Processing<br>report...";
+    loadingContainer.style['display'] = 'flex';
+    setTimeout(()=>{
+        loadingContainer.style['display'] = 'none';
+        loadingContainer.innerHTML = "Loading...";
+    }, 2000 );
 }

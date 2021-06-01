@@ -681,15 +681,14 @@ class IsoRangeSurface {
         // Plane becomes : mu*u + mv*v + mw*w = delta
         const delta = d / m.length();
         m.normalize(); // (mu, mv, mw)
-        console.log("m = ", m);
         // Computation of intersection ellipse axes
         const f0 = new THREE.Vector3(),
               f1 = new THREE.Vector3(),
               f2 = new THREE.Vector3();
-        if ( Math.abs(delta) <= 1 ) { // Intersection is an ellipse (delta is the distance from the unit sphere to the plane)
+        if ( Math.abs( delta ) <= 1 ) { // Intersection is an ellipse (delta is the algebraic distance from the unit sphere to the plane)
             const rho = Math.sqrt( 1 - delta * delta );
             f0.copy( m.clone().multiplyScalar( delta ) );
-            if ( Math.abs( m.z - 1 ) <= 1e-14 ) { // In case of m.z is almost one (for numerical stability)
+            if ( Math.abs( Math.abs( m.z ) - 1 ) <= 1e-14 ) { // In case of m.z is +-1 (for numerical stability)
                 f1.set( rho, 0, 0 ),
                 f2.set( 0, rho, 0 );
             } else {
@@ -701,9 +700,6 @@ class IsoRangeSurface {
             f0.multiply( scale ).applyMatrix3( this._m ).add( this.centerPosition );
             f1.multiply( scale ).applyMatrix3( this._m );
             f2.multiply( scale ).applyMatrix3( this._m );
-            console.log("f0 = ", f0);
-            console.log("f1 = ", f1);
-            console.log("f2 = ", f2);
             const dt = 2 * Math.PI / (size - 1);
             points.length = size;
             for ( let i = 0 ; i < size ; ++i ){
@@ -712,7 +708,6 @@ class IsoRangeSurface {
                                 .add( f1.clone().multiplyScalar( Math.cos( t ) ) )
                                 .add( f2.clone().multiplyScalar( Math.sin( t ) ) )
                                 .setZ( 0 ); // ensure to have a real zero
-                console.log(points[i]);
             }
         } // else: No intersection
         // Set new geometry points of the footprint

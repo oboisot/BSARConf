@@ -97,8 +97,8 @@ function initScene() {
         BSARConfig.Tx.leverX.value,
         BSARConfig.Tx.leverY.value,
         BSARConfig.Tx.leverZ.value,
-        BSARConfig.Tx.siteAperture.value,
-        BSARConfig.Tx.aziAperture.value
+        BSARConfig.Tx.siteBeamWidth.value,
+        BSARConfig.Tx.aziBeamWidth.value
     );
     TxCarrier.setBeamColor(0xffffff);
 
@@ -116,8 +116,8 @@ function initScene() {
         BSARConfig.Rx.leverX.value,
         BSARConfig.Rx.leverY.value,
         BSARConfig.Rx.leverZ.value,
-        BSARConfig.Rx.siteAperture.value,
-        BSARConfig.Rx.aziAperture.value
+        BSARConfig.Rx.siteBeamWidth.value,
+        BSARConfig.Rx.aziBeamWidth.value
     );
 
     // Add carriers to scene

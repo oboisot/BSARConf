@@ -8,7 +8,7 @@ class Carrier {
                 heading=0, roll=0, pitch=0,
                 incidence=45, squint=0, sight=true,
                 leverx=0, levery=0, leverz=0,
-                siteAperture=16, aziAperture=16,                
+                siteBeamWidth=16, aziBeamWidth=16,                
                 coneLength=1e9, helpers=true) {
         // *****
         this.carrier     = new THREE.Mesh();      // Carrier referential (relative to World)
@@ -28,19 +28,19 @@ class Carrier {
         this._yAxis = new THREE.Vector3( 0, 1, 0 );
         this._zAxis = new THREE.Vector3( 0, 0, 1 );
         // ***** Create a new carrier *****
-        this._altitude     = altitude;
-        this._velocity     = velocity;
-        this._heading      = THREE.MathUtils.degToRad( -heading );
-        this._roll         = THREE.MathUtils.degToRad( roll );
-        this._pitch        = THREE.MathUtils.degToRad( pitch );
-        this._incidence    = THREE.MathUtils.degToRad( incidence );
-        this._squint       = THREE.MathUtils.degToRad( squint );
-        this._sight        = sight;
-        this._lever        = new THREE.Vector3( leverx, levery, leverz );
-        this._siteAperture = THREE.MathUtils.degToRad( siteAperture );
-        this._aziAperture  = THREE.MathUtils.degToRad( aziAperture );
-        this._coneLength   = coneLength;
-        this._helpers      = helpers;
+        this._altitude      = altitude;
+        this._velocity      = velocity;
+        this._heading       = THREE.MathUtils.degToRad( -heading );
+        this._roll          = THREE.MathUtils.degToRad( roll );
+        this._pitch         = THREE.MathUtils.degToRad( pitch );
+        this._incidence     = THREE.MathUtils.degToRad( incidence );
+        this._squint        = THREE.MathUtils.degToRad( squint );
+        this._sight         = sight;
+        this._lever         = new THREE.Vector3( leverx, levery, leverz );
+        this._siteBeamWidth = THREE.MathUtils.degToRad( siteBeamWidth );
+        this._aziBeamWidth  = THREE.MathUtils.degToRad( aziBeamWidth );
+        this._coneLength    = coneLength;
+        this._helpers       = helpers;
         // ***** Infos Parameters *****
         this._loc_incidence           = 0;
         this._computed_squint         = 0;
@@ -92,8 +92,8 @@ class Carrier {
         this.antenna.name = "antenna"; // For getting getObjectByName
 
         // ***** Antenna beam *****
-        this._beamRadiusY = this._coneLength * Math.tan( 0.5 * this._aziAperture );
-        this._beamRadiusZ = this._coneLength * Math.tan( 0.5 * this._siteAperture );
+        this._beamRadiusY = this._coneLength * Math.tan( 0.5 * this._aziBeamWidth );
+        this._beamRadiusZ = this._coneLength * Math.tan( 0.5 * this._siteBeamWidth );
         const coneGeometry = new THREE.ConeGeometry( 1, this._coneLength, 128, 1, true );
         coneGeometry.translate( 0, -0.5 * this._coneLength, 0);       // Define Cone Vertex as origin
         coneGeometry.rotateZ( 0.5 * Math.PI );                  // Define x-axis as cone axis
@@ -333,20 +333,20 @@ class Carrier {
         this.updateFootprint();
     }
 
-    setSiteAperture(site) {
-        this._siteAperture = THREE.MathUtils.degToRad( site );
+    setSiteBeamWidth(site) {
+        this._siteBeamWidth = THREE.MathUtils.degToRad( site );
         const _beamRadiusZ = this._beamRadiusZ; // Get old Z radius
-        this._beamRadiusZ = this._coneLength * Math.tan( 0.5 * this._siteAperture ); // Compute new Z radius
+        this._beamRadiusZ = this._coneLength * Math.tan( 0.5 * this._siteBeamWidth ); // Compute new Z radius
         // inverse scale factor thus apply new scale factor
         this.beam.geometry.scale(1, 1, this._beamRadiusZ / _beamRadiusZ);
         this.carrierPosForSwathCenterAtWorldOrigin();
         this.updateFootprint();
     }
 
-    setAziAperture(azimut) {
-        this._aziAperture = THREE.MathUtils.degToRad( azimut );
+    setAziBeamWidth(azimut) {
+        this._aziBeamWidth = THREE.MathUtils.degToRad( azimut );
         const _beamRadiusY = this._beamRadiusY; // Get old Y radius
-        this._beamRadiusY = this._coneLength * Math.tan( 0.5 * this._aziAperture ); // Compute new Y radius
+        this._beamRadiusY = this._coneLength * Math.tan( 0.5 * this._aziBeamWidth ); // Compute new Y radius
         // inverse scale factor thus apply new scale factor
         this.beam.geometry.scale(1, this._beamRadiusY / _beamRadiusY, 1);
         this.carrierPosForSwathCenterAtWorldOrigin();
@@ -397,11 +397,11 @@ class Carrier {
         if ( str_value === 'leverZ' ) {
             this.setAntennaLeverZ( value );
         }
-        if ( str_value === 'siteAperture' ) {
-            this.setSiteAperture( value );
+        if ( str_value === 'siteBeamWidth' ) {
+            this.setSiteBeamWidth( value );
         }
-        if ( str_value === 'aziAperture' ) {
-            this.setAziAperture( value );
+        if ( str_value === 'aziBeamWidth' ) {
+            this.setAziBeamWidth( value );
         }
     }
 
@@ -441,8 +441,8 @@ class Carrier {
         this.antenna.updateMatrixWorld();
         const m = new THREE.Matrix3().setFromMatrix4( this.antenna.matrixWorld ),
               minv = m.clone().transpose(),
-              ty = Math.tan( 0.5 * this._aziAperture ),
-              tz = Math.tan( 0.5 * this._siteAperture );
+              ty = Math.tan( 0.5 * this._aziBeamWidth ),
+              tz = Math.tan( 0.5 * this._siteBeamWidth );
         // Get plane parameters in Cone referential:
         // Point of plane: AP = OP - OA
         // normal of plane: n = minv * z (here z is the plane normal)

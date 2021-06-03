@@ -486,11 +486,16 @@ window.ondrop = (ev) => {
     }
     if ( file ) {
         loadingContainer.style['display'] = 'flex';
-        const reader = new FileReader();
-        reader.readAsText(file);
-        reader.onload = () => {
-            parseLoadConfig( JSON.parse( reader.result ) );
+        if ( (file.type === 'application/json') && (file.name.split('.').pop() === 'json') ) {
+            const reader = new FileReader();
+            reader.readAsText(file);
+            reader.onload = () => {
+                parseLoadConfig( JSON.parse( reader.result ) );
+                loadingContainer.style['display'] = 'none';
+            }
+        } else {
             loadingContainer.style['display'] = 'none';
+            alert("The configuration file must be a json file.")
         }
     }
 }

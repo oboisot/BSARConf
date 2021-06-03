@@ -105,10 +105,10 @@ function drawIsoRangeDop( TxCarrier, RxCarrier, fem, plot_div, size=151 ) {
             }
         },
         paper_bgcolor: "rgba(0,0,0,0)",
-        plot_bgcolor: "rgba(255, 255, 255, 0.75)",
+        plot_bgcolor: "rgb(255,255,255)",
         font: {
             size: 12,
-            color: "#fff"
+            color: "#ffffff"
         },
         margin: {l: 50, r: 50, t: 50, b: 50},
         xaxis: {
@@ -142,9 +142,8 @@ function drawIsoRangeDop( TxCarrier, RxCarrier, fem, plot_div, size=151 ) {
             click: () => {
                 Plotly.relayout(plot_div,
                     {
-                        paper_bgcolor: "rgba(255,255,255,1)",
-                        plot_bgcolor: "rgba(255,255,255,1)",
-                        'font.color': "#000"
+                        paper_bgcolor: "rgb(255,255,255)",
+                        'font.color': "#000000"
                     });
                 Plotly.downloadImage(plot_div,
                     {
@@ -157,8 +156,7 @@ function drawIsoRangeDop( TxCarrier, RxCarrier, fem, plot_div, size=151 ) {
                 Plotly.relayout(plot_div,
                     {
                         paper_bgcolor: "rgba(0,0,0,0)",
-                        plot_bgcolor: "rgba(255,255,255,0.75)",
-                        'font.color': "#fff"
+                        'font.color': "#ffffff"
                     });
             }
         },
@@ -169,9 +167,8 @@ function drawIsoRangeDop( TxCarrier, RxCarrier, fem, plot_div, size=151 ) {
             click: () => {
                 Plotly.relayout(plot_div,
                     {
-                        paper_bgcolor: "rgba(255,255,255,1)",
-                        plot_bgcolor: "rgba(255,255,255,1)",
-                        'font.color': "#000"
+                        paper_bgcolor: "rgb(255,255,255)",
+                        'font.color': "#000000"
                     });
                 Plotly.downloadImage(plot_div,
                     {
@@ -184,8 +181,7 @@ function drawIsoRangeDop( TxCarrier, RxCarrier, fem, plot_div, size=151 ) {
                 Plotly.relayout(plot_div,
                     {
                         paper_bgcolor: "rgba(0,0,0,0)",
-                        plot_bgcolor: "rgba(255,255,255,0.75)",
-                        'font.color': "#fff"
+                        'font.color': "#ffffff"
                     });
             }
         }
@@ -303,10 +299,10 @@ function drawGAFAmp( TxCarrier, RxCarrier, fem, bandwidth, tint, plot_div, size=
             }
         },
         paper_bgcolor: "rgba(0,0,0,0)",
-        plot_bgcolor: "rgba(255,255,255,1)",
+        plot_bgcolor: "rgb(0,0,0)",
         font: {
             size: 12,
-            color: "#fff"
+            color: "#ffffff"
         },
         margin: {l: 50, r: 50, t: 50, b: 50},
         xaxis: {
@@ -338,9 +334,9 @@ function drawGAFAmp( TxCarrier, RxCarrier, fem, bandwidth, tint, plot_div, size=
             click: () => {
                 Plotly.relayout('plotGAFAmp',
                     {
-                        paper_bgcolor: "rgba(255,255,255,1)",
-                        plot_bgcolor: "rgba(255,255,255,1)",
-                        'font.color': "#000"
+                        paper_bgcolor: "rgb(255,255,255)",
+                        plot_bgcolor: "rgb(255,255,255)",
+                        'font.color': "#000000"
                     });
                 Plotly.downloadImage(plot_div,
                     {
@@ -353,7 +349,7 @@ function drawGAFAmp( TxCarrier, RxCarrier, fem, bandwidth, tint, plot_div, size=
                 Plotly.relayout(plot_div,
                     {
                         paper_bgcolor: "rgba(0,0,0,0)",
-                        plot_bgcolor: "rgba(0,0,0,1)",
+                        plot_bgcolor: "rgb(0,0,0)",
                         'font.color': "#fff"
                     });
             }
@@ -365,9 +361,9 @@ function drawGAFAmp( TxCarrier, RxCarrier, fem, bandwidth, tint, plot_div, size=
             click: () => {
                 Plotly.relayout(plot_div,
                     {
-                        paper_bgcolor: "rgba(255,255,255,1)",
-                        plot_bgcolor: "rgba(255,255,255,1)",
-                        'font.color': "#000"
+                        paper_bgcolor: "rgb(255,255,255)",
+                        plot_bgcolor: "rgb(255,255,255)",
+                        'font.color': "#000000"
                     });
                 Plotly.downloadImage(plot_div,
                     {
@@ -380,7 +376,7 @@ function drawGAFAmp( TxCarrier, RxCarrier, fem, bandwidth, tint, plot_div, size=
                 Plotly.relayout(plot_div,
                     {
                         paper_bgcolor: "rgba(0,0,0,0)",
-                        plot_bgcolor: "rgba(0,0,0,1)",
+                        plot_bgcolor: "rgb(0,0,0)",
                         'font.color': "#fff"
                     });
             }

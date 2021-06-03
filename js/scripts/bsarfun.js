@@ -144,11 +144,6 @@ function bistatic_sar_resolution( lem, bandwidth, tx_vec, tx_vel, rx_vec, rx_vel
 function compute_nesz( tx_peak_power, tx_duty_cycle, tx_loss_factor, tx_gain,
                        rx_temp, rx_noise_factor, rx_gain,
                        tx_vec, rx_vec, lem, tint, res_area ) {
-    console.log(tx_loss_factor);
-    console.log(rx_noise_factor);
-    console.log(tx_gain);
-    console.log(rx_gain);
-    console.log(Math.pow(10, 0.1 * (tx_loss_factor + rx_noise_factor - tx_gain - rx_gain)));
     return (
         64 * Math.PI * Math.PI * Math.PI *
         tx_vec.lengthSq() * rx_vec.lengthSq() *

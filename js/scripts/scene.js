@@ -368,7 +368,6 @@ function updateBSARinfos() {
                                     TP, RP, lem,
                                     bsar_resolutions.tint,
                                     bsar_resolutions.resolution_area );
-    console.log(nesz);
     // Bistatic angle
     Elements.bsarInfos.bistaticAngle.innerHTML = `${bistatic_angle.toFixed(3)} °`;
     // Slant range resolution
@@ -454,14 +453,15 @@ function saveBlob(blob, fileName) {
 
 // ***** Load Button *****
 const LoadButton = document.getElementById('LoadButton'),
-      FileInput = document.getElementById('FileInput');
+      FileInput = document.getElementById('FileInput'),
+      DropZone = document.getElementById('DropZone');
 LoadButton.onclick = () => {
     if ( FileInput ) {
         FileInput.click();
     }
 }
 FileInput.onchange = () => {
-    let file = FileInput.files[0];
+    const file = FileInput.files[0];
     if ( file ) {
         loadingContainer.style['display'] = 'flex';
         const reader = new FileReader();
@@ -471,6 +471,38 @@ FileInput.onchange = () => {
             loadingContainer.style['display'] = 'none';
         }
     }
+}
+
+window.ondrop = (ev) => {
+    ev.preventDefault();
+    DropZone.style['display'] = 'none';
+    let file;
+    if (ev.dataTransfer.items) {
+        if (ev.dataTransfer.items[0].kind === 'file') {
+            file = ev.dataTransfer.items[0].getAsFile();
+        }
+    } else {
+        file = ev.dataTransfer.files[0];
+    }
+    if ( file ) {
+        loadingContainer.style['display'] = 'flex';
+        const reader = new FileReader();
+        reader.readAsText(file);
+        reader.onload = () => {
+            parseLoadConfig( JSON.parse( reader.result ) );
+            loadingContainer.style['display'] = 'none';
+        }
+    }
+}
+
+window.ondragover = (ev) => {
+    ev.preventDefault();
+    DropZone.style['display'] = 'flex';
+    DropZone.style['background'] = 'rgba(0,0,0,0.75)';
+}
+window.ondragleave = (ev) => {
+    ev.preventDefault();
+    DropZone.style['display'] = 'none';
 }
 
 function parseLoadConfig( config ) {

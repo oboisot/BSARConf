@@ -267,6 +267,21 @@ input[type=text]:valid+span:after {
 	filter: invert(0%);
 }
 
+.DropZone {
+	display: none;
+	position: fixed;
+	z-index: 100;
+	justify-content: center;
+	align-items: center;
+	width: calc(100% - 128px);
+	height: calc(100% - 128px);
+	top: 60px;
+	left: 60px;
+	margin: 0 auto;
+	border: 8px double rgb(255,255,255);
+	background: rgba(0,0,0,0.75);
+}
+
 /* ***** TOOLTIP ***** */
 .TooltipButtonBottom {
 	visibility: hidden;

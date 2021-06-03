@@ -597,7 +597,7 @@ class IsoRangeSurface {
     }
 
     intersectWorldPlane() {
-        const size = 256, points = [],
+        const size = 100, points = [],
               scale = new THREE.Vector3( this.xRadius, this.yRadius, this.yRadius ),
               minv = this._m.clone().transpose();
         // See : https://en.wikipedia.org/wiki/Ellipsoid#Plane_sections for computation principle

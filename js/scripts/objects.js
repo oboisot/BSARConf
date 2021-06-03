@@ -15,11 +15,11 @@ class Carrier {
         this.antenna     = new THREE.Mesh();      // Antenna referential (relative to carrier)
         this.beam        = new THREE.Mesh();      // Antenna beam (relative to antenna referential)
         this.footprint   = new THREE.Line();      // For plotting beam footprint
+        this.footprintPoints = [];
         this._beamRadiusY = 0.0;
         this._beamRadiusZ = 0.0;
         this._beamOriginWorld = new THREE.Vector3(); // The antenna position in World coordinates
         this._beamAxisWorld = new THREE.Vector3();   // In local referential at beginning
-        this._raycaster   = new THREE.Raycaster();    // For computing swath center
         //
         this.carrierVelocityVector = new THREE.ArrowHelper();  // Velocity vector orientated along y-axis of carrier
         // "private" properties
@@ -27,9 +27,6 @@ class Carrier {
         this._xAxis = new THREE.Vector3( 1, 0, 0 );
         this._yAxis = new THREE.Vector3( 0, 1, 0 );
         this._zAxis = new THREE.Vector3( 0, 0, 1 );
-        this._refPlaneMesh = new THREE.Mesh( new THREE.PlaneGeometry( 1e9, 1e9, 1, 1) ); // Mesh representation of World reference plane
-        this._refPlaneMath = new THREE.Plane( this._zAxis, 0 ); // Mathematical representation of World reference plane
-
         // ***** Create a new carrier *****
         this._altitude     = altitude;
         this._velocity     = velocity;
@@ -50,6 +47,7 @@ class Carrier {
         this._range_at_swath_center   = 0;
         this._range_min               = 0;
         this._range_max               = 0;
+        this._ground_range_swath      = 0;
         this._footprint_area          = 0;
         this._footprint_abs_max_coord = 0; // max absolute footprint coordinates in plane
 
@@ -96,7 +94,7 @@ class Carrier {
         // ***** Antenna beam *****
         this._beamRadiusY = this._coneLength * Math.tan( 0.5 * this._aziAperture );
         this._beamRadiusZ = this._coneLength * Math.tan( 0.5 * this._siteAperture );
-        const coneGeometry = new THREE.ConeGeometry( 1, this._coneLength, 1024, 1, true );
+        const coneGeometry = new THREE.ConeGeometry( 1, this._coneLength, 128, 1, true );
         coneGeometry.translate( 0, -0.5 * this._coneLength, 0);       // Define Cone Vertex as origin
         coneGeometry.rotateZ( 0.5 * Math.PI );                  // Define x-axis as cone axis
         coneGeometry.scale( 1, this._beamRadiusY , this._beamRadiusZ );  // In case of elliptic cone
@@ -117,10 +115,9 @@ class Carrier {
         this.carrierPosForSwathCenterAtWorldOrigin();
 
         // Footprint (NOTE : Footprint is added to the World referential)
-        this.footprint.geometry = new THREE.Geometry();
+        this.footprint.geometry = new THREE.BufferGeometry();
         this.footprint.material = new THREE.LineBasicMaterial({ color: 0x000000 });
         this.updateFootprint();
-        this.updateInfos();
     }
 
     // Getter
@@ -206,6 +203,10 @@ class Carrier {
         return this._range_max;
     }
 
+    getGroundRangeSwath() {
+        return this._ground_range_swath;
+    }
+
     getFootprintArea() {
         return this._footprint_area;
     }
@@ -228,7 +229,6 @@ class Carrier {
         this._altitude = altitude;
         this.carrierPosForSwathCenterAtWorldOrigin();
         this.updateFootprint();
-        this.updateInfos();
     }
 
     setCarrierVelocity(velocity) {
@@ -247,7 +247,6 @@ class Carrier {
                     .rotateX( this._pitch );
         this.carrierPosForSwathCenterAtWorldOrigin();
         this.updateFootprint();
-        this.updateInfos();
     }
 
     setCarrierRoll(roll) {
@@ -259,7 +258,6 @@ class Carrier {
                     .rotateX( this._pitch );
         this.carrierPosForSwathCenterAtWorldOrigin();
         this.updateFootprint();
-        this.updateInfos();
     }
 
     setCarrierPitch(pitch) {
@@ -269,7 +267,6 @@ class Carrier {
         this.carrier.rotateX( this._pitch - _pitch );
         this.carrierPosForSwathCenterAtWorldOrigin();
         this.updateFootprint();
-        this.updateInfos();
     }
 
     setAntennaNominalIncidence(incidence) {
@@ -287,7 +284,6 @@ class Carrier {
         this.antenna.rotateZ( this._squint );
         this.carrierPosForSwathCenterAtWorldOrigin();
         this.updateFootprint();
-        this.updateInfos();
     }
 
     setAntennaSquint(squint) {
@@ -296,7 +292,6 @@ class Carrier {
         this.antenna.rotateZ( this._squint - _squint ); // Removing then adding new squint
         this.carrierPosForSwathCenterAtWorldOrigin();
         this.updateFootprint();
-        this.updateInfos();
     }
 
     setAntennaSight(sight) {
@@ -314,7 +309,6 @@ class Carrier {
             this.antenna.rotateZ( this._squint );
             this.carrierPosForSwathCenterAtWorldOrigin();
             this.updateFootprint();
-            this.updateInfos();
         }
     }
 
@@ -323,7 +317,6 @@ class Carrier {
         this.antenna.position.setX( leverx ); // Relative to carrier position, could be used to add "bras de levier"
         this.carrierPosForSwathCenterAtWorldOrigin();
         this.updateFootprint();
-        this.updateInfos();
     }
 
     setAntennaLeverY(levery) {
@@ -331,7 +324,6 @@ class Carrier {
         this.antenna.position.setY( levery ); // Relative to carrier position, could be used to add "bras de levier"
         this.carrierPosForSwathCenterAtWorldOrigin();
         this.updateFootprint();
-        this.updateInfos();
     }
 
     setAntennaLeverZ(leverz) {
@@ -339,7 +331,6 @@ class Carrier {
         this.antenna.position.setZ( leverz ); // Relative to carrier position, could be used to add "bras de levier"
         this.carrierPosForSwathCenterAtWorldOrigin();
         this.updateFootprint();
-        this.updateInfos();
     }
 
     setSiteAperture(site) {
@@ -350,7 +341,6 @@ class Carrier {
         this.beam.geometry.scale(1, 1, this._beamRadiusZ / _beamRadiusZ);
         this.carrierPosForSwathCenterAtWorldOrigin();
         this.updateFootprint();
-        this.updateInfos();
     }
 
     setAziAperture(azimut) {
@@ -361,7 +351,6 @@ class Carrier {
         this.beam.geometry.scale(1, this._beamRadiusY / _beamRadiusY, 1);
         this.carrierPosForSwathCenterAtWorldOrigin();
         this.updateFootprint();
-        this.updateInfos();
     }
 
     setAntennaLeverArm(x, y, z) { // Relative to Carrier
@@ -369,7 +358,6 @@ class Carrier {
         this.antenna.position.copy( this._lever ); // in carrier referential
         this.carrierPosForSwathCenterAtWorldOrigin();
         this.updateFootprint();
-        this.updateInfos();
     }
 
     setValueSelector( str_value, value ) { // For onchange bindings
@@ -429,172 +417,119 @@ class Carrier {
     }
 
     carrierPosForSwathCenterAtWorldOrigin() {
-        this.carrier.position.set( 0, 0, this._altitude ); // On se replace à l'origine et à la bonne altitude
-        this.antenna.getWorldPosition( this._beamOriginWorld ); // Get cone origin position in World referential
-        this._beamAxisWorld.copy( this._xAxis ).applyMatrix3( this.antenna.matrixWorld ); // Get beam axis in Wordl referential
-        this._raycaster.set( this._beamOriginWorld, this._beamAxisWorld ); // Initialize RayCaster
-        const center = this._raycaster.intersectObjects( [this._refPlaneMesh, ] )[0];
-        if (center) {
-            // Move carrier position to have World origin at Swath center
-            this.carrier.position.set( -center.point.x, -center.point.y, this._altitude ); // Better solution when adding carrier orientation
+        // Translate Carrier position to have Antenna beam center at center of referential:
+        // -> compute line-plane intersection of Antenna beam considering Carrier at position
+        // (0, 0, altitude) then apply opposite translation (taking into account Antenna position
+        // in Carrier referential)
+        this.carrier.updateMatrixWorld( true ); // Update Carrier and its children World Matrix
+        this._beamAxisWorld.copy( this._xAxis ).applyMatrix3( this.antenna.matrixWorld ); // Get beam axis in World referential
+        if ( Math.abs( this._beamAxisWorld.z ) > 0 ) { // if dz != 0
+            const OC = new THREE.Vector3(),      // carrier position in World referential
+                  CA = new THREE.Vector3();      // Antenna position in World referential
+            this.carrier.getWorldPosition( OC );
+            this.antenna.getWorldPosition( CA ); // get antenna World position (OA)
+            CA.sub( OC );                        // Carrier -> Antenna vector in World referential: CA = OA - OC           
+            this.carrier.position.set( ( this._altitude + CA.z) * this._beamAxisWorld.x / this._beamAxisWorld.z - CA.x,
+                                       ( this._altitude + CA.z) * this._beamAxisWorld.y / this._beamAxisWorld.z - CA.y,
+                                       this._altitude );
         }
     }
 
     updateFootprint() {
-        // ***** Cone-Plane intersection *****
-        const a = new THREE.Vector3(),
-              c = new THREE.Vector3();                                                                  // |-> only this one 
-        const lineCA = new THREE.Line3(); // Only line from face C and A is needed with a cone : AB - BC - CA
-        const point = new THREE.Vector3();
-        const points = [];
+        const size = 2000;
         // Update World Matrix
-        this.carrier.updateMatrixWorld();
-        // Search footprint points
-        let face;
-        for (let i = 0 ; i < this.beam.geometry.faces.length ; ++i) {
-            face = this.beam.geometry.faces[i];
-            // Get positions of vertex on face A and C
-            this.beam.localToWorld( a.copy( this.beam.geometry.vertices[face.a] ) );
-            this.beam.localToWorld( c.copy( this.beam.geometry.vertices[face.c] ) );
-            // Set the 3D line with this two positions
-            lineCA.set( c, a );
-            // Get intersection point
-            this._refPlaneMath.intersectLine( lineCA, point );
-            // Add it to the line
-            if (point) {
-                points.push( point.clone() );
-            };
-        }
-        // Close the footprint
-        points.push( points[0] ); // Close the footprint
-        // Set new geometry points of the footprint
-        this.footprint.geometry.setFromPoints( points );
-        this.footprint.geometry.verticesNeedUpdate = true;
-    }
-
-    // Parameters computation
-    localIncidence() {
-        const axis = this._beamAxisWorld.clone().negate();
-        return THREE.MathUtils.radToDeg( Math.acos( axis.dot( this._zAxis ) ) );
-    }
-
-    computedSquint() {
-        const axis = this._beamAxisWorld.clone(),
-              vel  = this.getCarrierVelocityVector().normalize();
-        return THREE.MathUtils.radToDeg( Math.asin( axis.dot( vel ) ) );
-    }
-
-    rangeAtSwathCenter() {
-        const pos = new THREE.Vector3();
-        this.antenna.getWorldPosition( pos ); // World antenna position
-        return pos.length(); // Norm from origin to antenna position.
-    }
-
-    rangeMin() {
-        const pos = new THREE.Vector3();
-        this.antenna.getWorldPosition( pos ); // World antenna position
-        const vertices = this.footprint.geometry.vertices;
-        let dist = 0;
-        let minDist = pos.distanceTo( vertices[0] );
-        for (let i = 1 ; i < vertices.length ; ++i) {
-            dist = pos.distanceTo( vertices[i] );
-            if ( dist < minDist ) {
-                minDist = dist;
-            }
-        }
-        return minDist;
-    }
-
-    rangeMax() {
-        const pos = new THREE.Vector3();
-        this.antenna.getWorldPosition( pos ); // World antenna position
-        const vertices = this.footprint.geometry.vertices;
-        let dist = 0;
-        let maxDist = pos.distanceTo( vertices[0] );
-        for (let i = 1 ; i < vertices.length ; ++i) {
-            dist = pos.distanceTo( vertices[i] );
-            if ( dist > maxDist ) {
-                maxDist = dist;
-            }
-        }
-        return maxDist;
-    }
-
-    rangeMinMax() {
-        const pos = new THREE.Vector3();
-        this.antenna.getWorldPosition( pos ); // World antenna position
-        const vertices = this.footprint.geometry.vertices;
-        let dist = 0;
-        let minDist = pos.distanceTo( vertices[0] );
-        let maxDist = minDist;
-        for (let i = 1 ; i < vertices.length ; ++i) {
-            dist = pos.distanceTo( vertices[i] );
-            if ( dist < minDist ) {
-                minDist = dist;
-            }
-            if ( dist > maxDist ) {
-                maxDist = dist;
-            }
-        }
-        return [minDist, maxDist];
-    }
-
-    footprintArea() {
-        /**
-         * Compute footprint area of this Carrier.
-         *
-         * Compute the antenna 3dB footprint area of this Carrier
-         * using the "Shoelace" formula.
-         */
-        const vertices = this.footprint.geometry.vertices;
-        let area = 0;
-        let cross = new THREE.Vector3();
-        for (let i = 0 ; i < vertices.length - 1 ; ++i) {
-            area += cross.crossVectors(vertices[i], vertices[i+1]).z; // Note: vertices are in the x0y plane, so the cross-product is only in z-axis. This allows to simplify calculations
-        }
-        return 0.5 * Math.abs( area );
-    }
-
-    footprintAbsMaxPlaneCoord() {
-        const vertices = this.footprint.geometry.vertices;
+        this.antenna.updateMatrixWorld();
+        const m = new THREE.Matrix3().setFromMatrix4( this.antenna.matrixWorld ),
+              minv = m.clone().transpose(),
+              ty = Math.tan( 0.5 * this._aziAperture ),
+              tz = Math.tan( 0.5 * this._siteAperture );
+        // Get plane parameters in Cone referential:
+        // Point of plane: AP = OP - OA
+        // normal of plane: n = minv * z (here z is the plane normal)
+        const OA = new THREE.Vector3();
+        this.antenna.getWorldPosition( OA ); // Antenna world position
+        const AP = OA.clone().negate().applyMatrix3( minv ), // Point of plane in cone referential
+              n = this._zAxis.clone().applyMatrix3( minv ),  // normal of plane in cone referential
+              dvec = n.clone().multiply( AP ),
+              d = dvec.x + dvec.y + dvec.z;                  // plane constant
+        //
+        const dt = 2 * Math.PI / (size - 1);
+        this.footprintPoints = [];
+        this.footprintPoints.length = size;
+        //
         let xmax = 0;
-        for (let i = 0 ; i < vertices.length ; ++i) {
-            xmax = Math.max( xmax, Math.abs( vertices[i].x ), Math.abs( vertices[i].y ) );
+        // Compute range min and range max and find their corresponding points index
+        let dist = 0,
+            minDist = Number.MAX_VALUE,
+            maxDist = 0,
+            indexMinDist = 0,
+            indexMaxDist = 0;
+        for ( let i = 0 ; i < size ; ++i ){
+            const t = i * dt,
+                    c = Math.cos( t ),
+                    s = Math.sin( t ),
+                    f = d / (n.x + n.y * ty * c + n.z * tz * s);
+            // const point  = new THREE.Vector3( f, ty * c * f, tz * s * f ).applyMatrix3( m ).add( OA );
+            const point  = new THREE.Vector3( f, ty * c * f, tz * s * f )
+                               .applyMatrix3( m )
+                               .add( OA )
+                               .setZ( 0 ); // ensure to have a real zero
+            this.footprintPoints[i] = point;
+            //
+            xmax = Math.max( xmax, Math.abs( point.x ), Math.abs( point.y ) );
+            //
+            dist = OA.distanceTo( point );
+            if ( dist < minDist ) {
+                minDist = dist;
+                indexMinDist = i;
+            }
+            if ( dist > maxDist ) {
+                maxDist = dist;
+                indexMaxDist = i;
+            }
+            //
         }
-        return xmax
-    }
-
-    maxIlluminationTime() {
-        /** Compute the maximum illumination time of the illuminated point
-         * 
-         * 
-         */
-
-    }
-
-    updateInfos() {
-        this._loc_incidence = this.localIncidence();
-        this._computed_squint = this.computedSquint();
-        this._range_at_swath_center = this.rangeAtSwathCenter();
-        [this._range_min, this._range_max] = this.rangeMinMax();
-        this._footprint_area = this.footprintArea();
-        this._footprint_abs_max_coord = this.footprintAbsMaxPlaneCoord();
+        // Set new geometry points of the footprint
+        this.footprint.geometry.setFromPoints( this.footprintPoints );
+        this.footprint.geometry.verticesNeedUpdate = true;
+        // max absolute footprint coordinates in plane
+        this._footprint_abs_max_coord = xmax;
+        // Range min and max
+        this._range_min = minDist;
+        this._range_max = maxDist;
+        // Ground range swath
+        this._ground_range_swath = this.footprintPoints[indexMinDist].distanceTo( this.footprintPoints[indexMaxDist] );
+        // Compute the antenna 3dB footprint area of this Carrier using the "Shoelace" formula.
+        let area = 0;
+        const cross = new THREE.Vector3();
+        for (let i = 0 ; i < size - 1 ; ++i) {
+            area += cross.crossVectors(this.footprintPoints[i], this.footprintPoints[i+1]).z; // Note: vertices are in the x0y plane, so the cross-product is only in z-axis. This allows to simplify calculations
+        }
+        this._footprint_area = 0.5 * Math.abs( area );
+        // Local incidence
+        const axis = this._beamAxisWorld.clone();
+        this._loc_incidence = THREE.MathUtils.radToDeg( Math.acos( axis.negate().dot( this._zAxis ) ) );
+        // Computed squint
+        const vel = this.getCarrierVelocityVector().normalize();
+        this._computed_squint = THREE.MathUtils.radToDeg( Math.asin( axis.dot( vel ) ) );
+        // Slant range at swath center
+        this._range_at_swath_center = OA.length();
     }
 }
 
 class IsoRangeSurface {
     constructor ( TxCarrier, RxCarrier ) { // Tx and Rx antennas in world coordinate
-        // ***** Iso-Range Mesh object
-        this.isoRangeSurface       = new THREE.Mesh(); // Relative to World
-        this.groundIsoRangeContour = new THREE.Line(); // For plotting ground iso-Range contour
-        this.matrixWorld = new THREE.Matrix4(); // set the transformation matrix : rotation: from (u, v, w) ; translation: from OE (centerPosition) ; scale: from a, b
-        this._m = new THREE.Matrix3();  // Rotation matrix only -> for ground iso-Range contours
         // "private" properties
         this._xAxis = new THREE.Vector3( 1, 0, 0 );
         this._yAxis = new THREE.Vector3( 0, 1, 0 );
         this._zAxis = new THREE.Vector3( 0, 0, 1 );
+        this._m = new THREE.Matrix3();  // Rotation matrix only -> for ground iso-Range contours
+        // ***** Iso-Range Mesh object
+        this.isoRangeSurface       = new THREE.Mesh(); // Relative to World
+        this.groundIsoRangeContour = new THREE.Line(); // For plotting ground iso-Range contour
+        this.matrixWorld = new THREE.Matrix4(); // set the transformation matrix : rotation: from (u, v, w) ; translation: from OE (centerPosition) ; scale: from a, b
         // Adding Geometry and Material
-        this.isoRangeSurface.geometry = new THREE.SphereGeometry( 1, 64, 64 );
+        this.isoRangeSurface.geometry = new THREE.SphereBufferGeometry( 1, 128, 128 );
         this.isoRangeSurface.material = new THREE.MeshLambertMaterial({
             color: 0xd62728,
             opacity: 0.15,
@@ -662,7 +597,7 @@ class IsoRangeSurface {
     }
 
     intersectWorldPlane() {
-        const size = 100, points = [],
+        const size = 256, points = [],
               scale = new THREE.Vector3( this.xRadius, this.yRadius, this.yRadius ),
               minv = this._m.clone().transpose();
         // See : https://en.wikipedia.org/wiki/Ellipsoid#Plane_sections for computation principle

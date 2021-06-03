@@ -37,13 +37,13 @@ function drawIsoRangeDop( TxCarrier, RxCarrier, fem, plot_div, size=151 ) {
     }
 
     // Rx footprint plane coordinates retrieval
-    const vertices = RxCarrier.footprint.geometry.vertices;
-    let footprintx = [], footprinty = [];
-    footprintx.length = vertices.length;
-    footprinty.length = vertices.length;
-    for (let i = 0 ; i < vertices.length ; ++i) {
-        footprintx[i] = vertices[i].x;
-        footprinty[i] = vertices[i].y;
+    const footprint = RxCarrier.footprintPoints,
+          footprintx = [], footprinty = [];
+    footprintx.length = footprint.length;
+    footprinty.length = footprint.length;
+    for (let i = 0 ; i < footprint.length ; ++i) {
+        footprintx[i] = footprint[i].x;
+        footprinty[i] = footprint[i].y;
     }
 
     let data = [

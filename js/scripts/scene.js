@@ -330,9 +330,16 @@ function updateInfos( system, elmts ) {
     } else  {
         elmts.infos.rangeMax.innerHTML = `${rangeMax.toFixed(3)} m`;
     }
+    // Ground range swath
+    const groudRangeSwath = system.getGroundRangeSwath();
+    if (groudRangeSwath > 1000.0) {
+        elmts.infos.groundRangeSwath.innerHTML = `${(groudRangeSwath/1000.0).toFixed(3)} km`;
+    } else {
+        elmts.infos.groundRangeSwath.innerHTML = `${groudRangeSwath.toFixed(3)} m`;
+    }
     // Footprint area
     const footprintArea = system.getFootprintArea();
-    if (footprintArea > 1000000.0) {
+    if (footprintArea > 100000.0) {
         elmts.infos.footprintArea.innerHTML = `${(footprintArea/1000000.0).toFixed(3)} km&sup2;`;
     } else {
         elmts.infos.footprintArea.innerHTML = `${footprintArea.toFixed(3)} m&sup2;`;

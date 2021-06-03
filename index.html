@@ -150,8 +150,8 @@
                 </td>
                 <td>
                   <input type="number" id="TxIncidence" name="TxIncidence"
-                        placeholder="0 - 90°"
-                        min="0" max="90" step="any" required> 
+                        placeholder="0 - 89°"
+                        min="0" max="89" step="any" required> 
                 <span></span>
                 <span>°</span>
                 </td>
@@ -482,8 +482,8 @@
                 </td>
                 <td>
                   <input type="number" id="RxIncidence" name="RxIncidence"
-                        placeholder="0 - 90°"
-                        min="0" max="90" step="any" value="45" required> 
+                        placeholder="0 - 89°"
+                        min="0" max="89" step="any" value="45" required> 
                 <span></span>
                 <span>°</span>
                 </td>
@@ -641,10 +641,10 @@
               <!-- Loss factor -->
               <tr>
                 <td class="tdInputText">
-                  <label for="RxLossFactor">Loss factor:</label>
+                  <label for="RxNoiseFactor">Noise factor:</label>
                 </td>
                 <td>
-                  <input type="number" id="RxLossFactor" name="RxLossFactor"
+                  <input type="number" id="RxNoiseFactor" name="RxNoiseFactor"
                          placeholder="0 - 100 dB"
                          min="0" max="100" step="any" required>
                   <span></span>
@@ -683,16 +683,20 @@
               <td id="TxInfosAntennaSquint"></td>
             </tr>
             <tr>
-              <td class="tdInputText">Range at swath center:</td>
+              <td class="tdInputText">Slant range [center]:</td>
               <td id="TxInfosRangeAtSwathCenter"></td>
             </tr>
             <tr>
-              <td class="tdInputText">Range min [-3dB]:</td>
+              <td class="tdInputText">Slant range min [-3dB]:</td>
               <td id="TxInfosRangeMin"></td>
             </tr>
             <tr>
-              <td class="tdInputText">Range max [-3dB]:</td>
+              <td class="tdInputText">Slant range max [-3dB]:</td>
               <td id="TxInfosRangeMax"></td>
+            </tr>
+            <tr>
+              <td class="tdInputText">Ground range swath [-3dB]:</td>
+              <td id="TxInfosGroundRangeSwath"></td>
             </tr>
             <tr>
               <td class="tdInputText">Footprint area [-3dB]:</td>
@@ -722,12 +726,16 @@
               <td id="RxInfosRangeAtSwathCenter"></td>
             </tr>
             <tr>
-              <td class="tdInputText">Range min [-3dB]:</td>
+              <td class="tdInputText">Slant range min [-3dB]:</td>
               <td id="RxInfosRangeMin"></td>
             </tr>
             <tr>
-              <td class="tdInputText">Range max [-3dB]:</td>
+              <td class="tdInputText">Slant range max [-3dB]:</td>
               <td id="RxInfosRangeMax"></td>
+            </tr>
+            <tr>
+              <td class="tdInputText">Ground range swath [-3dB]:</td>
+              <td id="RxInfosGroundRangeSwath"></td>
             </tr>
             <tr>
               <td class="tdInputText">Footprint area [-3dB]:</td>

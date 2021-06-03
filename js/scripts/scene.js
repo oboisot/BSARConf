@@ -351,11 +351,24 @@ function updateBSARinfos() {
           RP = RxCarrier.getAntennaPosition().negate(),
           VT = TxCarrier.getCarrierVelocityVector(),
           VR = RxCarrier.getCarrierVelocityVector();
-    const bsar_resolutions = bsar.bistatic_sar_resolution( bsar.C0 * 1e-9 / BSARConfig.Tx.centerFrequency.value,
-                                                           BSARConfig.Tx.bandwidth.value * 1e6,
-                                                           TP, VT, RP, VR,
-                                                           BSARConfig.Rx.integrationTime.value );
-    const bistatic_angle = THREE.MathUtils.radToDeg( bsar.bistatic_angle( TP, RP ) );
+    const lem = bsar.C0/ BSARConfig.Tx.centerFrequency.value * 1e-9,
+          bandwidth = BSARConfig.Tx.bandwidth.value * 1e6,
+          tint = BSARConfig.Rx.integrationTime.value,
+          tx_peak_power = BSARConfig.Tx.peakPower.value,
+          tx_duty_cycle = BSARConfig.Tx.dutyCycle.value * 0.01,
+          tx_loss_factor = BSARConfig.Tx.lossFactor.value,
+          tx_gain = BSARConfig.Tx.gain.value,
+          rx_temp = BSARConfig.Rx.noiseTemperature.value,
+          rx_noise_factor = BSARConfig.Rx.noiseFactor.value,
+          rx_gain = BSARConfig.Rx.gain.value;
+    const bsar_resolutions = bsar.bistatic_sar_resolution( lem, bandwidth, TP, VT, RP, VR, tint ),
+          bistatic_angle = THREE.MathUtils.radToDeg( bsar.bistatic_angle( TP, RP ) ),
+          nesz = bsar.compute_nesz( tx_peak_power, tx_duty_cycle, tx_loss_factor, tx_gain,
+                                    rx_temp, rx_noise_factor, rx_gain,
+                                    TP, RP, lem,
+                                    bsar_resolutions.tint,
+                                    bsar_resolutions.resolution_area );
+    console.log(nesz);
     // Bistatic angle
     Elements.bsarInfos.bistaticAngle.innerHTML = `${bistatic_angle.toFixed(3)} °`;
     // Slant range resolution
@@ -395,7 +408,7 @@ function updateBSARinfos() {
     // Integration time
     Elements.bsarInfos.integrationTime.innerHTML = `${bsar_resolutions.tint.toFixed(3)} s`;
     // NESZ
-    Elements.bsarInfos.nesz.innerHTML = 'TO DO';
+    Elements.bsarInfos.nesz.innerHTML = `${(10*Math.log10(nesz)).toFixed(3)} dBm&sup2/m&sup2`;
 }
 
 function updatePlots() {

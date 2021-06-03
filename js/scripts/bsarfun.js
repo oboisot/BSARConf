@@ -4,9 +4,9 @@ export {
     bisector_vector, bisector_vector_derivative,
     ground_bisector_vector,  ground_bisector_vector_derivative,
     bisector_vectors, bistatic_sar_resolution,
+    compute_nesz,
     linspaced_array,
     sinc,
-    datedString,
 };
 
 // ***** CONSTANTS *****
@@ -127,6 +127,39 @@ function bistatic_sar_resolution( lem, bandwidth, tx_vec, tx_vel, rx_vec, rx_vel
 }
 
 
+/*
+ * tx_peak_power: transmitter peak power [W]
+ * tx_duty_cycle: transmitter duty cycle [%]
+ * tx_loss_factor: transmitter total loss factor [dB]
+ * tx_gain: transmission antenna power gain (one-way at transmission) [dB]
+ * rx_temp: receiver temperature [k]
+ * rx_noise_factor: receiver noise factor [dB]
+ * rx_gain: reception antenna power gain (one-way at reception) [dB]
+ * tx_vec: transmitter-target vector [m]
+ * rx_vec: receiver-target vector [m]
+ * lem: electromagnetic wavelength [m]
+ * tint: integration time [s]
+ * res_area: resolution cell area [m2]
+ */
+function compute_nesz( tx_peak_power, tx_duty_cycle, tx_loss_factor, tx_gain,
+                       rx_temp, rx_noise_factor, rx_gain,
+                       tx_vec, rx_vec, lem, tint, res_area ) {
+    console.log(tx_loss_factor);
+    console.log(rx_noise_factor);
+    console.log(tx_gain);
+    console.log(rx_gain);
+    console.log(Math.pow(10, 0.1 * (tx_loss_factor + rx_noise_factor - tx_gain - rx_gain)));
+    return (
+        64 * Math.PI * Math.PI * Math.PI *
+        tx_vec.lengthSq() * rx_vec.lengthSq() *
+        K * Math.pow(10, 0.1 * (tx_loss_factor + rx_noise_factor - tx_gain - rx_gain)) * rx_temp / // noise dsp + Rx and Rx gains
+        (lem * lem *
+         tx_peak_power * tx_duty_cycle * // mean transmitted power
+         tint * res_area)
+    )
+}
+
+
 /***************************
  ****** Array utility ******
  **************************/
@@ -151,22 +184,4 @@ function sinc(x) {
         return 1.0 - arg * arg / 6;
     }
     return Math.sin( arg ) / arg;
-}
-// function sinc(x) {
-//     const arg = Math.PI * x;
-//     return Math.sin( arg ) / arg;
-// }
-
-/*******************************
- ****** Utility functions ******
- ******************************/
-function datedString(str) {
-    let date = new Date();
-    return `${date.getFullYear()}-
-            ${('0' + (date.getMonth() + 1)).slice(-2)}-
-            ${('0' + date.getDate()).slice(-2)}_
-            ${('0' + date.getHours()).slice(-2)}-
-            ${('0' + date.getMinutes()).slice(-2)}-
-            ${('0' + date.getSeconds()).slice(-2)}_
-            ${str}`;
 }

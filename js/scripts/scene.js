@@ -505,6 +505,13 @@ window.ondragover = (ev) => {
     DropZone.style['display'] = 'flex';
     DropZone.style['background'] = 'rgba(0,0,0,0.75)';
 }
+
+window.ondragenter = (ev) => {
+    ev.preventDefault();
+    DropZone.style['display'] = 'flex';
+    DropZone.style['background'] = 'rgba(0,0,0,0.75)';
+}
+
 window.ondragleave = (ev) => {
     ev.preventDefault();
     DropZone.style['display'] = 'none';

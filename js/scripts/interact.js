@@ -108,11 +108,11 @@ const TxInfos = document.getElementById("TxInfos"),
 let BSARbuttonOpened = false; // Infos not show by default
 BSARbutton.onclick = () => {
     if ( BSARbuttonOpened ) {
-        TxInfos.style["-webkit-transform"] = RxInfos.style["-webkit-transform"] = BSARInfos.style["-webkit-transform"] = "translateY(-180px)";
-        TxInfos.style["-moz-transform"] = RxInfos.style["-moz-transform"] = BSARInfos.style["-moz-transform"] = "translateY(-180px)";
-        TxInfos.style["-ms-transform"] = RxInfos.style["-ms-transform"] = BSARInfos.style["-ms-transform"] = "translateY(-180px)";
-        TxInfos.style["-o-transform"] = RxInfos.style["-o-transform"] = BSARInfos.style["-o-transform"] = "translateY(-180px)";
-        TxInfos.style["transform"] = RxInfos.style["transform"] = BSARInfos.style["transform"] = "translateY(-180px)";
+        TxInfos.style["-webkit-transform"] = RxInfos.style["-webkit-transform"] = BSARInfos.style["-webkit-transform"] = "translateY(-240px)";
+        TxInfos.style["-moz-transform"] = RxInfos.style["-moz-transform"] = BSARInfos.style["-moz-transform"] = "translateY(-240px)";
+        TxInfos.style["-ms-transform"] = RxInfos.style["-ms-transform"] = BSARInfos.style["-ms-transform"] = "translateY(-240px)";
+        TxInfos.style["-o-transform"] = RxInfos.style["-o-transform"] = BSARInfos.style["-o-transform"] = "translateY(-240px)";
+        TxInfos.style["transform"] = RxInfos.style["transform"] = BSARInfos.style["transform"] = "translateY(-240px)";
         plotIsoRangeDop.style["-webkit-transform"] = plotGAFAmp.style["-webkit-transform"] = "translateY(400px)";
         plotIsoRangeDop.style["-moz-transform"] = plotGAFAmp.style["-moz-transform"] = "translateY(400px)";
         plotIsoRangeDop.style["-ms-transform"] = plotGAFAmp.style["-ms-transform"] = "translateY(400px)";

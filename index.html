@@ -248,8 +248,8 @@
                 </td>
                 <td>
                   <input type="number" id="TxSiteBeamWidth" name="TxSiteBeamWidth"
-                        placeholder="1 - 89°"
-                        min="1" max="89" step="any" required>
+                        placeholder="0.001 - 89°"
+                        min="0.001" max="89" step="any" required>
                   <span></span>
                   <span>°</span>
                 </td>
@@ -261,8 +261,8 @@
                 </td>
                 <td>
                   <input type="number" id="TxAziBeamWidth" name="TxAziBeamWidth"
-                        placeholder="1 - 89°"
-                        min="1" max="89" step="any" required>
+                        placeholder=".001 - 89°"
+                        min="0.001" max="89" step="any" required>
                   <span></span>
                   <span>°</span>
                 </td>
@@ -580,8 +580,8 @@
                 </td>
                 <td>
                   <input type="number" id="RxSiteBeamWidth" name="RxSiteBeamWidth"
-                        placeholder="1 - 89°"
-                        min="1" max="89" step="any"  value="16" required>
+                        placeholder="0.001 - 89°"
+                        min="0.001" max="89" step="any"  value="16" required>
                   <span></span>
                   <span>°</span>
                 </td>
@@ -593,8 +593,8 @@
                 </td>
                 <td>
                   <input type="number" id="RxAziBeamWidth" name="RxAziBeamWidth"
-                        placeholder="1 - 89°"
-                        min="1" max="89" step="any"  value="16" required>
+                        placeholder="0.001 - 89°"
+                        min="0.001" max="89" step="any"  value="16" required>
                   <span></span>
                   <span>°</span>
                 </td>
@@ -671,38 +671,59 @@
 
         <!-- ****************************** TX INFOS ****************************** -->
         <div id="TxInfos" class="txInfosDiv">
-          <table id="TxInfosTable" class="InfosTable">
+          <table id="TxInfosTable" class="InfosTable" cellspacing="0" cellpadding="1">
             <tr>
-              <th colspan="2" class="thInputText">Tx Infos [-3dB]</th>
+              <th colspan="3" class="thInputText">Tx Infos [-3dB]</th>
             </tr>
-            <!-- Local incidence -->
+            <!-- Slant range -->
             <tr>
-              <td class="tdInputText">Local incidence:</td>
-              <td id="TxInfosLocalIncidence"></td>
-            </tr>
-            <tr>
-              <td class="tdInputText">Antenna squint:</td>
-              <td id="TxInfosAntennaSquint"></td>
-            </tr>
-            <tr>
-              <td class="tdInputText">Slant range [center]:</td>
-              <td id="TxInfosRangeAtSwathCenter"></td>
-            </tr>
-            <tr>
-              <td class="tdInputText">Slant range min:</td>
+              <td rowspan="3" class="tdInputText"
+                  style="border: solid 0 #ffffff;border-right-width:1px;">Slant range&nbsp;</td>
+              <td class="tdInputText">min:</td>
               <td id="TxInfosRangeMin"></td>
             </tr>
             <tr>
-              <td class="tdInputText">Slant range max:</td>
+              <td class="tdInputText">&nbsp;center:</td>
+              <td id="TxInfosRangeAtSwathCenter"></td>
+            </tr>
+            <tr>
+              <td class="tdInputText">max:</td>
               <td id="TxInfosRangeMax"></td>
             </tr>
+            <!-- Local incidence -->
             <tr>
-              <td class="tdInputText">Ground range swath:</td>
-              <td id="TxInfosGroundRangeSwath"></td>
+              <td rowspan="3" class="tdInputText"
+                  style="border: solid 0 #ffffff;border-right-width:1px;">Local incidence&nbsp;</td>
+              <td class="tdInputText">min:</td>
+              <td id="TxInfosLocalIncidenceMin"></td>
             </tr>
             <tr>
-              <td class="tdInputText">Footprint area:</td>
+              <td class="tdInputText">&nbsp;center:</td>
+              <td id="TxInfosLocalIncidenceCenter"></td>
+            </tr>
+            <tr>
+              <td class="tdInputText">max:</td>
+              <td id="TxInfosLocalIncidenceMax"></td>
+            </tr>
+            <!-- Antenna squint -->
+            <tr>
+              <td colspan="2" class="tdInputText">Antenna squint:</td>
+              <td id="TxInfosAntennaSquint"></td>
+            </tr>
+            <!-- Ground range swath -->
+            <tr>
+              <td colspan="2" class="tdInputText">Ground range swath:</td>
+              <td id="TxInfosGroundRangeSwath"></td>
+            </tr>
+            <!-- Footprint area -->
+            <tr>
+              <td colspan="2" class="tdInputText">Footprint area:</td>
               <td id="TxInfosFootprintArea"></td>
+            </tr>
+            <!-- Illumination time -->
+            <tr>
+              <td colspan="2" class="tdInputText">Illumination time:</td>
+              <td id="TxInfosIlluminationTime"></td>
             </tr>
           </table>
         </div>
@@ -710,48 +731,69 @@
 
         <!-- ****************************** RX INFOS ****************************** -->
         <div id="RxInfos" class="rxInfosDiv">
-          <table id="RxInfosTable" class="InfosTable">
+          <table id="RxInfosTable" class="InfosTable" cellspacing="0" cellpadding="1">
             <tr>
-              <th colspan="2" class="thInputText">Rx Infos [-3dB]</th>
+              <th colspan="3" class="thInputText">Rx Infos [-3dB]</th>
             </tr>
-            <!-- Local incidence -->
+            <!-- Slant range -->
             <tr>
-              <td class="tdInputText">Local incidence:</td>
-              <td id="RxInfosLocalIncidence"></td>
-            </tr>
-            <tr>
-              <td class="tdInputText">Antenna squint:</td>
-              <td id="RxInfosAntennaSquint"></td>
-            </tr>
-            <tr>
-              <td class="tdInputText">Slant range [center]:</td>
-              <td id="RxInfosRangeAtSwathCenter"></td>
-            </tr>
-            <tr>
-              <td class="tdInputText">Slant range min:</td>
+              <td rowspan="3" class="tdInputText"
+                  style="border: solid 0 #ffffff;border-right-width:1px;">Slant range&nbsp;</td>
+              <td class="tdInputText">min:</td>
               <td id="RxInfosRangeMin"></td>
             </tr>
             <tr>
-              <td class="tdInputText">Slant range max:</td>
+              <td class="tdInputText">&nbsp;center:</td>
+              <td id="RxInfosRangeAtSwathCenter"></td>
+            </tr>
+            <tr>
+              <td class="tdInputText">max:</td>
               <td id="RxInfosRangeMax"></td>
             </tr>
+            <!-- Local incidence -->
             <tr>
-              <td class="tdInputText">Ground range swath:</td>
-              <td id="RxInfosGroundRangeSwath"></td>
+              <td rowspan="3" class="tdInputText"
+                  style="border: solid 0 #ffffff;border-right-width:1px;">Local incidence&nbsp;</td>
+              <td class="tdInputText">min:</td>
+              <td id="RxInfosLocalIncidenceMin"></td>
             </tr>
             <tr>
-              <td class="tdInputText">Footprint area:</td>
+              <td class="tdInputText">&nbsp;center:</td>
+              <td id="RxInfosLocalIncidenceCenter"></td>
+            </tr>
+            <tr>
+              <td class="tdInputText">max:</td>
+              <td id="RxInfosLocalIncidenceMax"></td>
+            </tr>
+            <!-- Antenna squint -->
+            <tr>
+              <td colspan="2" class="tdInputText">Antenna squint:</td>
+              <td id="RxInfosAntennaSquint"></td>
+            </tr>
+            <!-- Ground range swath -->
+            <tr>
+              <td colspan="2" class="tdInputText">Ground range swath:</td>
+              <td id="RxInfosGroundRangeSwath"></td>
+            </tr>
+            <!-- Footprint area -->
+            <tr>
+              <td colspan="2" class="tdInputText">Footprint area:</td>
               <td id="RxInfosFootprintArea"></td>
+            </tr>
+            <!-- Illumination time -->
+            <tr>
+              <td colspan="2" class="tdInputText">Illumination time:</td>
+              <td id="RxInfosIlluminationTime"></td>
             </tr>
           </table>
         </div>
         <!--------------------------------------------------------------------------------------------------------------->
 
         <!-- ****************************** BSAR INFOS ****************************** -->
-        <div id="BSARInfos" class="BSARInfosDiv">
+        <div id="BSARInfos" class="BSARInfosDiv" cellspacing="0" cellpadding="1">
           <table id="BSARInfosTable" class="InfosTable">
             <tr>
-              <th colspan="2" class="thInputText">BSAR Infos [-3dB]</th>
+              <th colspan="2" class="thInputText">BSAR Infos (center) [-3dB]</th>
             </tr>
             <tr>
               <td class="tdInputText">Bistatic angle:</td>
@@ -778,8 +820,20 @@
               <td id="BSARInfosResArea"></td>
             </tr>
             <tr>
+              <td class="tdInputText">Doppler frequency:</td>
+              <td id="BSARInfosDopplerFrequency"></td>
+            </tr>
+            <tr>
+              <td class="tdInputText">Doppler rate:</td>
+              <td id="BSARInfosDopplerRate"></td>
+            </tr>
+            <tr>
               <td class="tdInputText">Integration time:</td>
               <td id="BSARInfosIntegrationTime"></td>
+            </tr>
+            <tr>
+              <td class="tdInputText">Processed Dop. band.:</td>
+              <td id="BSARInfosProcessedDopplerBandwidth"></td>
             </tr>
             <tr>
               <td class="tdInputText">NESZ:</td>

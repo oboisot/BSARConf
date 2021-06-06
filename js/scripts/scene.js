@@ -8,7 +8,8 @@ import * as bsar from "./bsarfun.js";
 // ***** Configurator Parameters *****
 
 // ***** THREE parameters *****
-const planeSize = 25000; // m
+// const planeSize = 25000; // m
+const planeSize = 30000; // m
 const worldPlane = new THREE.Mesh();
 // Global objects
 let renderer, camera, scene, controls,
@@ -74,12 +75,8 @@ function initScene() {
 
     // ***** Reference plane *****
     worldPlane.geometry = new THREE.PlaneGeometry( planeSize, planeSize, 1, 1 ); // new THREE.PlaneBufferGeometry( planeSize, planeSize, 1, 1 );
-    worldPlane.material = new THREE.MeshPhongMaterial({
-        // wireframe: true,
-        color: 0x006400,
-        // side: THREE.DoubleSide
-    });
-    worldPlane.translateZ( -0.5 ); // For better rendering
+    worldPlane.material = new THREE.MeshPhongMaterial({ color: 0x006400 });
+    worldPlane.translateZ( -0.1 ); // For better rendering
     scene.add( worldPlane );
 
     // ***** Initialisation of TX and RX Carriers *****
@@ -134,7 +131,7 @@ function initScene() {
     axes.origin.translateZ( 0.1 ); // For better rendering
     axes.addToScene( scene );
 
-    const gridHelper = new THREE.GridHelper( planeSize, 100 );
+    const gridHelper = new THREE.GridHelper( planeSize, 150 );
     gridHelper.rotateX( 0.5 * Math.PI );
     scene.add( gridHelper );
 
@@ -307,7 +304,9 @@ function updateInfos( system, elmts ) {
         system : TxCarrier or RxCarrier
         infoElements : 
     */
-    elmts.infos.localIncidence.innerHTML = `${system.getLocalIncidence().toFixed(3)} °`;
+    elmts.infos.localIncidenceMin.innerHTML = `${system.getLocalIncidenceMin().toFixed(3)} °`;
+    elmts.infos.localIncidenceCenter.innerHTML = `${system.getLocalIncidence().toFixed(3)} °`;
+    elmts.infos.localIncidenceMax.innerHTML = `${system.getLocalIncidenceMax().toFixed(3)} °`;
     elmts.infos.antennaSquint.innerHTML = `${system.getComputedAntennaSquint().toFixed(3)} °`;
     // Range at Swath center
     const rangeAtSwathCenter = system.getRangeAtSwathCenter();
@@ -344,6 +343,13 @@ function updateInfos( system, elmts ) {
     } else {
         elmts.infos.footprintArea.innerHTML = `${footprintArea.toFixed(3)} m&sup2;`;
     }
+    // Illumination time
+    const illuminationTime = system.getIlluminationTime();
+    if ( illuminationTime ) {
+        elmts.infos.illuminationTime.innerHTML = `${illuminationTime.toFixed(3)} s`;
+    } else {
+        elmts.infos.illuminationTime.innerHTML = '+Inf s';
+    }
 }
 
 function updateBSARinfos() {
@@ -367,7 +373,10 @@ function updateBSARinfos() {
                                     rx_temp, rx_noise_factor, rx_gain,
                                     TP, RP, lem,
                                     bsar_resolutions.tint,
-                                    bsar_resolutions.resolution_area );
+                                    bsar_resolutions.resolution_area ),
+          dopplerFrequency = bsar.doppler_frequency( lem, TP, VT, RP, VR ),
+          dopplerRate = bsar.doppler_rate( lem, TP, VT, RP, VR ),
+          dopplerBandwidth = bsar.doppler_bandwidth( dopplerRate, bsar_resolutions.tint );
     // Bistatic angle
     Elements.bsarInfos.bistaticAngle.innerHTML = `${bistatic_angle.toFixed(3)} °`;
     // Slant range resolution
@@ -404,8 +413,14 @@ function updateBSARinfos() {
     } else {
         Elements.bsarInfos.resolutionArea.innerHTML = `${bsar_resolutions.resolution_area.toFixed(3)} m&sup2`;
     }
+    // Doppler frequency
+    Elements.bsarInfos.dopplerFrequency.innerHTML = `${dopplerFrequency.toFixed(3)} Hz`;
+    // Doppler rate
+    Elements.bsarInfos.dopplerRate.innerHTML = `${dopplerRate.toFixed(3)} Hz/s`;
     // Integration time
     Elements.bsarInfos.integrationTime.innerHTML = `${bsar_resolutions.tint.toFixed(3)} s`;
+    // Doppler bandwidth
+    Elements.bsarInfos.processedDopplerBandwidth.innerHTML = `${dopplerBandwidth.toFixed(3)} Hz`;
     // NESZ
     Elements.bsarInfos.nesz.innerHTML = `${(10*Math.log10(nesz)).toFixed(3)} dBm&sup2/m&sup2`;
 }

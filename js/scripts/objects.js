@@ -20,6 +20,7 @@ class Carrier {
         this._beamRadiusZ = 0.0;
         this._beamOriginWorld = new THREE.Vector3(); // The antenna position in World coordinates
         this._beamAxisWorld = new THREE.Vector3();   // In local referential at beginning
+        this._footprint_size = 5000;
         //
         this.carrierVelocityVector = new THREE.ArrowHelper();  // Velocity vector orientated along y-axis of carrier
         // "private" properties
@@ -42,13 +43,16 @@ class Carrier {
         this._coneLength    = coneLength;
         this._helpers       = helpers;
         // ***** Infos Parameters *****
-        this._loc_incidence           = 0;
+        this._loc_incidence_center    = 0;
+        this._loc_incidence_min       = 0;
+        this._loc_incidence_max       = 0;
         this._computed_squint         = 0;
         this._range_at_swath_center   = 0;
         this._range_min               = 0;
         this._range_max               = 0;
         this._ground_range_swath      = 0;
         this._footprint_area          = 0;
+        this._illumination_time       = 0;
         this._footprint_abs_max_coord = 0; // max absolute footprint coordinates in plane
 
         // ***** Carrier referential *****
@@ -73,8 +77,6 @@ class Carrier {
             0.5 * this._velocity
         );
         this.carrier.add( this.carrierVelocityVector );
-
-        //console.log("vector direction : " + this.carrierVelocityVector.line.geometry);
 
         // ***** Antenna referential *****
         this.antenna.visible = true;
@@ -184,7 +186,15 @@ class Carrier {
 
     // Parameters infos
     getLocalIncidence() {
-        return this._loc_incidence;
+        return this._loc_incidence_center;
+    }
+
+    getLocalIncidenceMin() {
+        return this._loc_incidence_min;
+    }
+
+    getLocalIncidenceMax() {
+        return this._loc_incidence_max;
     }
 
     getComputedAntennaSquint() {
@@ -215,6 +225,10 @@ class Carrier {
         return this._footprint_abs_max_coord;
     }
 
+    getIlluminationTime() {
+        return this._illumination_time;
+    }
+
     // Setter
     setBeamColor(color) {
         this.beam.material.color.set( color );
@@ -234,6 +248,7 @@ class Carrier {
     setCarrierVelocity(velocity) {
         this._velocity = velocity;
         this.carrierVelocityVector.setLength( 5 * this._velocity, 0.5 * this._velocity, 0.5 * this._velocity);
+        this.illuminationTime(); // Update illumination time
     }
 
     setCarrierHeading(heading) {
@@ -436,7 +451,6 @@ class Carrier {
     }
 
     updateFootprint() {
-        const size = 2000;
         // Update World Matrix
         this.antenna.updateMatrixWorld();
         const m = new THREE.Matrix3().setFromMatrix4( this.antenna.matrixWorld ),
@@ -453,9 +467,9 @@ class Carrier {
               dvec = n.clone().multiply( AP ),
               d = dvec.x + dvec.y + dvec.z;                  // plane constant
         //
-        const dt = 2 * Math.PI / (size - 1);
+        const dt = 2 * Math.PI / (this._footprint_size - 1);
         this.footprintPoints = [];
-        this.footprintPoints.length = size;
+        this.footprintPoints.length = this._footprint_size;
         //
         let xmax = 0;
         // Compute range min and range max and find their corresponding points index
@@ -464,7 +478,7 @@ class Carrier {
             maxDist = 0,
             indexMinDist = 0,
             indexMaxDist = 0;
-        for ( let i = 0 ; i < size ; ++i ){
+        for ( let i = 0 ; i < this._footprint_size ; ++i ){
             const t = i * dt,
                     c = Math.cos( t ),
                     s = Math.sin( t ),
@@ -498,22 +512,60 @@ class Carrier {
         this._range_min = minDist;
         this._range_max = maxDist;
         // Ground range swath
-        this._ground_range_swath = this.footprintPoints[indexMinDist].distanceTo( this.footprintPoints[indexMaxDist] );
+        const pointMin = this.footprintPoints[indexMinDist],
+              pointMax = this.footprintPoints[indexMaxDist];
+        this._ground_range_swath = pointMin.distanceTo( pointMax );
         // Compute the antenna 3dB footprint area of this Carrier using the "Shoelace" formula.
         let area = 0;
         const cross = new THREE.Vector3();
-        for (let i = 0 ; i < size - 1 ; ++i) {
+        for (let i = 0 ; i < this._footprint_size - 1 ; ++i) {
             area += cross.crossVectors(this.footprintPoints[i], this.footprintPoints[i+1]).z; // Note: vertices are in the x0y plane, so the cross-product is only in z-axis. This allows to simplify calculations
         }
         this._footprint_area = 0.5 * Math.abs( area );
         // Local incidence
         const axis = this._beamAxisWorld.clone();
-        this._loc_incidence = THREE.MathUtils.radToDeg( Math.acos( axis.negate().dot( this._zAxis ) ) );
+        this._loc_incidence_center = THREE.MathUtils.radToDeg( Math.acos( axis.clone().negate().dot( this._zAxis ) ) );
+            // Min
+        const axisMin = OA.clone().sub( pointMin ).normalize(),
+              axisMax = OA.clone().sub( pointMax ).normalize();
+        this._loc_incidence_min = THREE.MathUtils.radToDeg( Math.acos( axisMin.dot( this._zAxis ) ) );
+        this._loc_incidence_max = THREE.MathUtils.radToDeg( Math.acos( axisMax.dot( this._zAxis ) ) );
         // Computed squint
         const vel = this.getCarrierVelocityVector().normalize();
         this._computed_squint = THREE.MathUtils.radToDeg( Math.asin( axis.dot( vel ) ) );
         // Slant range at swath center
         this._range_at_swath_center = OA.length();
+        // Compute illumination time
+        this.illuminationTime();
+    }
+
+    illuminationTime() {
+        // Compute the illumination time from the intersection of the footprint with
+        // the velocity vector projection on the world plane (uses line/segment intersection)
+        const velocity = this.getCarrierVelocity();
+        const intersections = [new THREE.Vector3(), new THREE.Vector3()];
+        if ( velocity > 0 ) {
+            const velocityVector = this.getCarrierVelocityVector(),                  
+                  vx = velocityVector.x,
+                  vy = velocityVector.y;
+                //   intersections = [new THREE.Vector3(), new THREE.Vector3()];
+            let count = 0; // Number of intersection points
+            for (let i = 0 ; i < this._footprint_size - 1 ; ++i) {
+                const e1x = this.footprintPoints[i].x,   // first footprint point
+                      e1y = this.footprintPoints[i].y,
+                      e2x = this.footprintPoints[i+1].x, // second footprint point
+                      e2y = this.footprintPoints[i+1].y,
+                      v = (vy * e1x - vx * e1y) / (vx * (e2y - e1y) - vy * (e2x - e1x));
+                if ( (v >= 0) && (v < 1) ) {
+                    intersections[count].set( e1x + v * (e2x - e1x), e1y + v * (e2y - e1y), 0 );
+                    count += 1;
+                    if ( count > 1 ) { break; } // Only two intersection points
+                }
+            }
+            this._illumination_time = intersections[0].distanceTo( intersections[1] ) / velocity;
+        } else { // velocity = 0, illmination time is infinite
+            this._illumination_time = null;
+        }
     }
 }
 

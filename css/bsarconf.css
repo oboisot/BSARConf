@@ -76,7 +76,7 @@ input[type=text]:valid+span:after {
 
 .tdInputText {
 	text-align: right;
-	min-width: 115px;
+	/* min-width: 115px; */
 }
 
 .thInputText {

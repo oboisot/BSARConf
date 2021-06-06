@@ -1,6 +1,6 @@
 export {
     bistatic_angle,
-    bistatic_range, doppler_frequency, doppler_rate,
+    bistatic_range, doppler_frequency, doppler_rate, doppler_bandwidth,
     bisector_vector, bisector_vector_derivative,
     ground_bisector_vector,  ground_bisector_vector_derivative,
     bisector_vectors, bistatic_sar_resolution,
@@ -45,6 +45,10 @@ function doppler_rate( lem, tx_vec, tx_vel, rx_vec, rx_vel ) {
           singamma_rx = rx_vel.clone().normalize().dot( rx_vec.clone().normalize() );
     return -(tx_vel.lengthSq() * (1 - singamma_tx * singamma_tx) / tx_vec.length() +
              rx_vel.lengthSq() * (1 - singamma_rx * singamma_rx) / rx_vec.length()) / lem;
+}
+
+function doppler_bandwidth( doppler_rate, tint ) {
+    return tint * Math.abs( doppler_rate );
 }
 
 /* Slant BSAR bisector vector */

@@ -2,11 +2,14 @@ import * as THREE from "../three/three.module.js";
 
 export { Carrier, IsoRangeSurface, Axes };
 
+const HALF_PI = 0.5 * Math.PI;
+
 class Carrier {
     /* */
     constructor(altitude=3000, velocity=120,
                 heading=0, roll=0, pitch=0,
-                incidence=45, squint=0, sight=true,
+                incidence=45, ant_squint=0, ground_squint=0,
+                sight=true,
                 leverx=0, levery=0, leverz=0,
                 siteBeamWidth=16, aziBeamWidth=16,                
                 coneLength=1e9, helpers=true) {
@@ -31,11 +34,12 @@ class Carrier {
         // ***** Create a new carrier *****
         this._altitude      = altitude;
         this._velocity      = velocity;
-        this._heading       = THREE.MathUtils.degToRad( -heading );
         this._roll          = THREE.MathUtils.degToRad( roll );
         this._pitch         = THREE.MathUtils.degToRad( pitch );
+        this._heading       = THREE.MathUtils.degToRad( -heading );
         this._incidence     = THREE.MathUtils.degToRad( incidence );
-        this._squint        = THREE.MathUtils.degToRad( squint );
+        this._ant_squint    = THREE.MathUtils.degToRad( ant_squint );
+        this._ground_squint = THREE.MathUtils.degToRad( ground_squint );
         this._sight         = sight;
         this._lever         = new THREE.Vector3( leverx, levery, leverz );
         this._siteBeamWidth = THREE.MathUtils.degToRad( siteBeamWidth );
@@ -58,9 +62,9 @@ class Carrier {
         // ***** Carrier referential *****
         this.carrier.visible = true;
         this.carrier.position.set( 0, 0, this._altitude );
-        this.carrier.rotateZ( this._heading ); // Cap
-        this.carrier.rotateY( this._roll );    // Roll
-        this.carrier.rotateX( this._pitch );   // Pitch
+        this.carrier.rotateZ( this._heading ) // Cap
+                    .rotateY( this._roll )    // Roll
+                    .rotateX( this._pitch );  // Pitch
         // Carrier AxesHelper
         if ( helpers ) {
             this.carrier.add( new THREE.AxesHelper( 100 ) );
@@ -80,13 +84,15 @@ class Carrier {
 
         // ***** Antenna referential *****
         this.antenna.visible = true;
-        this.antenna.position.copy( this._lever ); // Relative to carrier position, could be used to add "bras de levier"
+        this.antenna.position.copy( this._lever ); // Relative to carrier position
         if ( this._sight ) {// if true => left-looking
-            this.antenna.rotateY( 0.5 * Math.PI + this._incidence );
+            this.antenna.rotateZ( -this._ground_squint )  // Ground squint first
+                        .rotateY( HALF_PI + this._incidence );
         } else {
-            this.antenna.rotateY( 0.5 * Math.PI - this._incidence );
+            this.antenna.rotateZ( this._ground_squint )  // Ground squint first
+                        .rotateY( HALF_PI - this._incidence );
         }
-        this.antenna.rotateZ( this._squint ); // squint
+        this.antenna.rotateZ( this._ant_squint ); // antenna squint last
         // Antenna AxesHelper
         if ( helpers ) {
             this.antenna.add( new THREE.AxesHelper( 100 ) );
@@ -98,7 +104,7 @@ class Carrier {
         this._beamRadiusZ = this._coneLength * Math.tan( 0.5 * this._siteBeamWidth );
         const coneGeometry = new THREE.ConeGeometry( 1, this._coneLength, 128, 1, true );
         coneGeometry.translate( 0, -0.5 * this._coneLength, 0);       // Define Cone Vertex as origin
-        coneGeometry.rotateZ( 0.5 * Math.PI );                  // Define x-axis as cone axis
+        coneGeometry.rotateZ( HALF_PI );                  // Define x-axis as cone axis
         coneGeometry.scale( 1, this._beamRadiusY , this._beamRadiusZ );  // In case of elliptic cone
         const coneMaterial = new THREE.MeshLambertMaterial({// More efficient than : new THREE.MeshPhongMaterial({
             color: 0x000000,
@@ -181,7 +187,7 @@ class Carrier {
     }
 
     getNominalAntennaSquint() {
-        return THREE.MathUtils.radToDeg( this._squint );
+        return THREE.MathUtils.radToDeg( this._ant_squint );
     }
 
     // Parameters infos
@@ -288,7 +294,7 @@ class Carrier {
         const _incidence = this._incidence; // Get old incidence value
         this._incidence = THREE.MathUtils.degToRad( incidence );
         // We remove squint rotaton first (Z rotation)
-        this.antenna.rotateZ( -this._squint );
+        this.antenna.rotateZ( -this._ant_squint );
         // We thus apply new incidence
         if ( this._sight ) {// if true => left-looking
             this.antenna.rotateY( this._incidence - _incidence );
@@ -296,32 +302,51 @@ class Carrier {
             this.antenna.rotateY( _incidence - this._incidence );
         }
         // Adding back squint
-        this.antenna.rotateZ( this._squint );
+        this.antenna.rotateZ( this._ant_squint);
         this.carrierPosForSwathCenterAtWorldOrigin();
         this.updateFootprint();
     }
 
-    setAntennaSquint(squint) {
-        const _squint = this._squint; // Get old incidence value
-        this._squint = THREE.MathUtils.degToRad( squint );
-        this.antenna.rotateZ( this._squint - _squint ); // Removing then adding new squint
+    setAntennaSquint( ant_squint ) {
+        const _ant_squint = this._ant_squint; // Get old incidence value
+        this._ant_squint = THREE.MathUtils.degToRad( ant_squint );
+        this.antenna.rotateZ( this._ant_squint - _ant_squint ); // Removing then adding new squint
         this.carrierPosForSwathCenterAtWorldOrigin();
         this.updateFootprint();
     }
 
-    setAntennaSight(sight) {
+    setGroundSquint( ground_squint ) {
+        const _ground_squint = this._ground_squint; // Get old ground squint value
+        this._ground_squint = THREE.MathUtils.degToRad( ground_squint );
+        this.antenna.rotateZ( -this._ant_squint ); // We remove squint first
+        if ( this._sight ) { // if true => left-looking
+            this.antenna.rotateY( -HALF_PI - this._incidence )           // We remove incidence angle
+                        .rotateZ( _ground_squint - this._ground_squint ) // Removing then adding new ground squint
+                        .rotateY( HALF_PI + this._incidence );           // We apply back incidence
+        } else {
+            this.antenna.rotateY( this._incidence - HALF_PI )            // We remove incidence angle
+                        .rotateZ( this._ground_squint - _ground_squint ) // Removing then adding new ground squint
+                        .rotateY( HALF_PI - this._incidence );           // We apply back incidence
+        }
+        this.antenna.rotateZ( this._ant_squint ); // Adding back squint
+        this.carrierPosForSwathCenterAtWorldOrigin();
+        this.updateFootprint();
+    }
+
+    setAntennaSight( sight ) {
         if ( sight != this._sight ) { // For stability
             this._sight = sight;
-            // We remove squint rotaton first (Z rotation)
-            this.antenna.rotateZ( -this._squint );
-            // We thus apply new incidence
-            if ( this._sight ) { // right-looking to left-looking
-                this.antenna.rotateY( 2 * this._incidence );
-            } else { // left-looking to right-looking
-                this.antenna.rotateY( -2 * this._incidence );
+            this.antenna.rotateZ( -this._ant_squint ); // We remove squint first
+            if ( this._sight ) { // if true => right-looking to left-looking
+                this.antenna.rotateY( -HALF_PI + this._incidence ) // We remove incidence angle from right-looking
+                            .rotateZ( -2 * this._ground_squint )   // Removing ground squint from right-looking then adding for left-looking
+                            .rotateY( HALF_PI + this._incidence ); // We apply incidence for left-looking
+            } else { // if false => left-looking to right-looking
+                this.antenna.rotateY( -HALF_PI - this._incidence ) // We remove incidence angle from left-looking
+                            .rotateZ( 2 * this._ground_squint )    // Removing ground squint from left-looking then adding for right-looking
+                            .rotateY( HALF_PI - this._incidence ); // We apply incidence for right-looking
             }
-            // Adding back squint
-            this.antenna.rotateZ( this._squint );
+            this.antenna.rotateZ( this._ant_squint ); // Adding back squint
             this.carrierPosForSwathCenterAtWorldOrigin();
             this.updateFootprint();
         }
@@ -398,7 +423,7 @@ class Carrier {
             this.setAntennaSquint( value );
         }
         if ( str_value === 'groundSquint' ) {
-            return;
+            this.setGroundSquint( value );
         }
         // if ( str_value === 'sight') { // Particular case, must be treated independently
         //     this.setAntennaSight( value );

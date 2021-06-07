@@ -10,8 +10,10 @@ export {
 };
 
 // ***** CONSTANTS *****
-export const C0 = 299792458.0;  // m/s
-export const K  = 1.380649e-23; // J/K
+export const C0 = 299792458.0;  // speed of light in vacuum [m/s]
+export const K  = 1.380649e-23; // Boltzmann constant [J/K]
+export const RES_FACTOR = 0.8858929413789047; // twice the solution of sinc^2(x) = 0.5 for -3.01dB resolutions
+export const RES_AREA_FACTOR = 0.7848063035849675; // RES_FACTOR * RES_FACTOR
 
 // ***** BSAR functions *****
 /*
@@ -113,11 +115,11 @@ function bistatic_sar_resolution( lem, bandwidth, tx_vec, tx_vel, rx_vec, rx_vel
     } else if (tint === 'auto-slant') { // estimate tint for slant 'squared' resolutions
         tint = bandwidth * lem / C0 * beta_norm / dbeta_norm;
     }
-    slant_range_resolution    = 0.88589 * C0 / (bandwidth * beta_norm);
-    slant_lateral_resolution  = 0.88589 * lem / (tint * dbeta_norm);
-    ground_range_resolution   = 0.88589 * C0 / (bandwidth * betag_norm);
-    ground_lateral_resolution = 0.88589 * lem / (tint * dbetag_norm);
-    resolution_area           = 0.78481 * lem * C0 / (
+    slant_range_resolution    = RES_FACTOR * C0 / (bandwidth * beta_norm);
+    slant_lateral_resolution  = RES_FACTOR * lem / (tint * dbeta_norm);
+    ground_range_resolution   = RES_FACTOR * C0 / (bandwidth * betag_norm);
+    ground_lateral_resolution = RES_FACTOR * lem / (tint * dbetag_norm);
+    resolution_area           = RES_AREA_FACTOR * lem * C0 / (
         bandwidth * tint * bisectors.betag.clone().cross( bisectors.dbetag.clone() ).length());
     return {
         slant_range_resolution:    slant_range_resolution,

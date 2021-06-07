@@ -89,7 +89,7 @@ function initScene() {
         BSARConfig.Tx.pitch.value,
         BSARConfig.Tx.incidence.value,
         BSARConfig.Tx.antennaSquint.value,
-        // BSARConfig.Tx.groundSquint.value, TO BE ADDED
+        BSARConfig.Tx.groundSquint.value,
         BSARConfig.Tx.sight.value,
         BSARConfig.Tx.leverX.value,
         BSARConfig.Tx.leverY.value,
@@ -108,7 +108,7 @@ function initScene() {
         BSARConfig.Rx.pitch.value,
         BSARConfig.Rx.incidence.value,
         BSARConfig.Rx.antennaSquint.value,
-        // BSARConfig.Rx.groundSquint.value, TO BE ADDED
+        BSARConfig.Rx.groundSquint.value,
         BSARConfig.Rx.sight.value,
         BSARConfig.Rx.leverX.value,
         BSARConfig.Rx.leverY.value,
@@ -361,7 +361,7 @@ function updateBSARinfos() {
           bandwidth = BSARConfig.Tx.bandwidth.value * 1e6,
           tint = BSARConfig.Rx.integrationTime.value,
           tx_peak_power = BSARConfig.Tx.peakPower.value,
-          tx_duty_cycle = BSARConfig.Tx.dutyCycle.value * 0.01,
+          tx_duty_cycle = BSARConfig.Tx.pulseDuration.value / BSARConfig.Tx.pri.value,
           tx_loss_factor = BSARConfig.Tx.lossFactor.value,
           tx_gain = BSARConfig.Tx.gain.value,
           rx_temp = BSARConfig.Rx.noiseTemperature.value,

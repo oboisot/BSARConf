@@ -321,19 +321,32 @@
                   <span>MHz</span>
                 </td>
               </tr>
-              <!-- PRF -->
+              <!-- Pulse duration -->
               <tr>
                 <td class="tdInputText">
-                  <label for="TxPRF">PRF:</label>
+                  <label for="TxPulseDuration">Pulse dur.:</label>
                 </td>
                 <td>
-                  <input type="number" id="TxPRF" name="TxPRF"
-                        placeholder="0 - 100000 Hz"
+                  <input type="number" id="TxPulseDuration" name="TxPulseDuration"
+                        placeholder="0 - 100000 µs"
                         min="0" max="100000" step="any" required>
                   <span></span>
-                  <span>Hz</span>
+                  <span>µs</span>
                 </td>
               </tr>
+              <!-- PRI -->
+              <tr>
+                <td class="tdInputText">
+                  <label for="TxPRI">PRI:</label>
+                </td>
+                <td>
+                  <input type="number" id="TxPRI" name="TxPRI"
+                        placeholder="0 - 100000 µs"
+                        min="0" max="100000" step="any" required>
+                  <span></span>
+                  <span>µs</span>
+                </td>
+              </tr>              
               <!-- Peak power -->
               <tr>
                 <td class="tdInputText">
@@ -345,19 +358,6 @@
                         min="0" max="10000" step="any" required>
                   <span></span>
                   <span>W</span>
-                </td>
-              </tr>
-              <!-- Duty cycle -->
-              <tr>
-                <td class="tdInputText">
-                  <label for="TxDutyCycle">Duty cycle:</label>
-                </td>
-                <td>
-                  <input type="number" id="TxDutyCycle" name="TxDutyCycle"
-                        placeholder="0 - 100 %"
-                        min="0" max="100" step="any" required>
-                  <span></span>
-                  <span>%</span>
                 </td>
               </tr>
               <!-- Loss factor -->

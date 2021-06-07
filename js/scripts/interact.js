@@ -31,7 +31,7 @@ TxButton.onmouseover = () => {
     } else {
         TxButton.innerHTML = "TX</br><span style='font-size:140%;'>&#x25B6</span>";
     }
-    TxButton.style.border = "2px solid white";
+    TxButton.style.border = "2px solid #000000";
 }
 TxButton.onmouseout = () => {
     if ( TxButtonOpened ) {

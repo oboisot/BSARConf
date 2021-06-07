@@ -68,15 +68,24 @@ input[type=text]:valid+span:after {
 	float: left;
 }
 
-.InputTable {
+.TxInputTable, .RxInputTable {
 	width: 300px;
 	display: none;
-	background-color: rgba(0, 0, 0, 0.5);
+	color: #000000;
+}
+
+.TxInputTable {
+	color: #000000;
+	background-color: rgba(255,255,255,0.5);
+}
+
+.RxInputTable {
+	color: #ffffff;
+	background-color: rgba(0,0,0,0.5);;
 }
 
 .tdInputText {
 	text-align: right;
-	/* min-width: 115px; */
 }
 
 .thInputText {
@@ -167,7 +176,7 @@ input[type=text]:valid+span:after {
 	height: 60px;
 	width: 600px;
 	z-index: 10;
-	background:rgba(0, 0, 0, 0.5);
+	background:rgba(0,0,0,0.5);
 	text-align: center;
 }
 
@@ -183,7 +192,6 @@ input[type=text]:valid+span:after {
 	font-size: 18px;
 	font-weight: bolder;
 	text-align: center;
-	/* border: 2px solid rgba(0, 0, 0, 0.5); */
 }
 
 #BSARbutton {
@@ -194,13 +202,10 @@ input[type=text]:valid+span:after {
 	border: 2px solid white;
 }
 
-.MenuButton {
+.MenuButton, .TxInputButton, .RxInputButton {
 	display: block;
-	cursor: pointer; 
-	/* background-color: transparent; */
-	background: rgba(0, 0, 0, 0.5);
+	cursor: pointer;	
 	border: none;
-	color: white;
 	width: 300px;
 	height: 60px;
 	text-align: center;
@@ -209,16 +214,44 @@ input[type=text]:valid+span:after {
 	font-weight: bolder;
 }
 
-.MenuButton:hover {
-	border: 2px solid white;
+.MenuButton, .RxInputButton {
+	color: #ffffff;
+	background: rgba(0,0,0,0.6);
 }
 
-#TxButton, #RxButton {
+.TxInputButton {
+	color: #000000;
+	background: rgba(255,255,255,0.6);
+}
+
+.MenuButton:hover, .RxInputButton:hover {
+	border: 2px solid #ffffff;
+}
+
+.TxInputButton:hover {
+	border: 2px solid #000000;
+}
+
+#TxButton {
 	display: block;
 	float: left;
 	cursor: pointer; 
-	/* background-color: transparent; */
-	background: rgba(0, 0, 0, 0.5);
+	background: rgba(255,255,255,0.6);
+	border: none;
+	color: #000000;
+	width: 60px;
+	height:60px;
+	padding: 5px 5px;
+	text-align: center;
+	text-decoration: none;
+	font-size: 16px;
+}
+
+#RxButton {
+	display: block;
+	float: left;
+	cursor: pointer; 
+	background: rgba(0,0,0,0.6);
 	border: none;
 	color: white;
 	width: 60px;

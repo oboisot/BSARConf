@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+    <!-- HEADER -->
+    <head>
+        <meta content="text/html">
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="../css/documentation.css">
+        <link rel="icon" href="../img/icons/bsarconflogo.svg" sizes="any" type="image/svg+xml">
+        <title>BSARconf - Bistatic SAR configurator</title>
+        <script>
+            MathJax = {
+                tex: {inlineMath: [['$', '$'], ['\\(', '\\)']]},
+                svg: {
+                    fontCache: 'global',
+                    scale: 0.9
+                }
+            };
+        </script>
+        <script id="MathJax-script" async src="../js/mathjax/tex-svg.js"></script>
+    </head>
+    <!-- END OF HEADER -->
+
+    <!-- BODY -->
+    <body>
+        <!-- Header -->
+        <header>
+            <button type="button" id="DocButton" class="DocButton">
+                Bistatic Synthetic Aperture Radar configurator documentation
+            </button>
+            <button type="button" id="ToCButton" class="ToCButton">
+                Table of Contents&ensp;&ensp;
+                <img id="ToCButtonImg" src="../img/icons/arrow-contour.svg" width="18px">
+            </button>
+        </header>
+        <!-- Header -->
+
+        <!-- Table of Contents -->
+        <div id="ToC" class="ToC">
+            <ul>
+                <li><a id="presentationHref" href="#Presentation">1. PRESENTATION</a></li>
+                <li>
+                    <ul>
+                       <li><a href="#BSARconf_interface">1.1 The BSARconf interface</a></li>
+                       <li><a href="#BSARconf_parameters">1.2 The BSARconf parameters</a></li>
+                       <li>
+                           <ul>
+                                <li><a href="#Input_parameters">1.2.1 Input parameters</a></li>
+                                <li><a href="#Information_parameters">1.2.2 Information parameters</a></li>
+                                <li><a href="#Information_plots">1.2.3 Information plots</a></li>
+                           </ul>
+                       </li>
+                    </ul>
+                </li>
+                <li><a href="#Physical_background">2. PHYSICAL BACKGROUND</a></li>
+                <li>
+                    <ul>
+                        <li><a href="#Geometry">2.1 Geometry</a></li>
+                        <li>
+                            <ul>
+                                <li><a href="#Referential">2.1.1 Referential</a></li>
+                                <li><a href="#Carrier">2.1.2 Carrier</a></li>
+                                <li><a href="#Antenna">2.1.3 Antenna</a></li>
+                                <li><a href="#Bistatic_system">2.1.4 Bistatic system</a></li>
+                            </ul>
+                        </li>
+                        <li><a href="#BSAR_resolutions">2.2 BSAR resolutions and design</a></li>
+                        <li>
+                            <ul>
+                                <li><a href="#GAF">2.2.1 The Generalized Ambiguity Function</a></li>
+                                <li><a href="#Range_resolution">2.2.2 Range resolution</a></li>
+                                <li><a href="#Lateral_resolution">2.2.3 Lateral resolution</a></li>
+                                <li><a href="#Iso-range">2.2.4 Iso-Range</a></li>
+                                <li><a href="#Iso-Doppler">2.2.5 Iso-Doppler</a></li>
+                                <li><a href="#Resolution_area">2.2.6 Resolution area</a></li>
+                                <li><a href="#NESZ">2.2.7 Noise Equivalent Sigma Zero</a></li>
+                                <li><a href="#RASR">2.2.8 Range Ambiguity to Signal Ratio</a></li>
+                                <li><a href="#LASR">2.2.9 Lateral Ambiguity to Signal Ratio</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
+                <li><a href="#References">3. REFERENCES</a></li>
+            </ul>
+            <button type="button" id="BackToTop" class="BackToTop">
+                <img id="BackToTopImg1" src="../img/icons/arrow-contour.svg" width="10px">
+                &ensp;Back to top&ensp;
+                <img id="BackToTopImg2" src="../img/icons/arrow-contour.svg" width="10px">
+            </button>
+        </div>
+        <!-- Table of Contents -->
+
+        <!-- Content -->
+        <div id="content" class="content">
+            <div id="Presentation" class="anchor"></div>
+            <h2>1. PRESENTATION</h2>
+                <p>The Bistatic Synthetic Aperture Radar (BSAR) configurator aims to provide a simple but comprehensive tool to visualize bistatic SAR system
+                   geometric configurations together with the calculation of some useful resulting parameters. The main ojective of this tool is to provide
+                   a configurator for the design of some future potential bistatic SAR missions. In addition to its operational objective, the BSAR configurator
+                   tool offers a didactic approach to the SAR systems geometry in a general way with its 3D representation and the possibility to visualize the
+                   impact of the variation of one parameter to the potential result of the final SAR image.</p>
+
+                <div id="BSARconf_interface" class="anchor"></div>
+                <h3>1.1 The BSARconf interface</h3>
+                <p>The main page of the BSAR configurator allows to first, visualize in a 3D scene the transmitter and receiver
+                   geometry defined by their carrier and antenna objects, respectively. The transmitter and receiver antenna beams
+                   are respectively colored white and black in order to distinguish them.
+
+                   The transmitter parameters can be modified by clicking the .... button on the upper left corner and the 
+                   receiver parameters can be modified by clicking the ... button on the upper right corner.
+                </p>
+                <div id="BSARconf_parameters" class="anchor"></div>
+                <h3>1.2 The BSARconf parameters</h3>
+
+                    <div id="Input_parameters" class="anchor"></div>
+                    <h4>1.2.1 Input parameters</h4>
+
+                    <div id="Information_parameters" class="anchor"></div>
+                    <h4>1.2.2 Information parameters</h4>
+
+                    <div id="Information_plots" class="anchor"></div>
+                    <h4>1.2.3 Information plots</h4>
+
+            <div id="Physical_background" class="anchor"></div>
+            <h2>2. PHYSICAL BACKGROUND</h2>
+
+                <div id="Geometry" class="anchor"></div>
+                <h3>2.1 Geometry</h3>
+
+                    <div id="Referential" class="anchor"></div>
+                    <h4>2.1.1 Referential</h4>
+                    <p>Point of interest and referential plane</p>
+
+                    <figure>
+                        <img src="../img/figures/localENU.svg" width="40%"
+                             alt="Local ENU referential">
+                        <figcaption>Illustration of the local ENU referential plane</figcaption>
+                    </figure>
+
+                    <div id="Carrier" class="anchor"></div>
+                    <h4>2.1.2 Carrier</h4>
+
+                    <div id="Antenna" class="anchor"></div>
+                    <h4>2.1.3 Antenna</h4>
+
+                    <div id="Bistatic_system" class="anchor"></div>
+                    <h4>2.1.4 Bistatic system</h4>
+
+                <div id="BSAR_resolutions" class="anchor"></div>
+                <h3>2.2 BSAR resolutions and design</h3>
+
+                    <div id="GAF" class="anchor"></div>
+                    <h4>2.2.1 The Generalized Ambiguity Function</h4>
+                        The Bistatic SAR system response can be characterized by its BSAR bisector vector $\overrightarrow{\beta}(u_0)$ together with its corresponding first
+                    time derivative $\dot{\overrightarrow{\beta}}(u_0)$ in the SG approximation for a point scatterer at a given slow-time $u_0$. They are expressed by, respectively:
+
+                    $$\left\{
+                    \begin{array}{rcl}
+                        \overrightarrow{\beta}(u_0) & = & \widehat{u_{TP}}(u_0)+\widehat{u_{RP}}(u_0) \\
+                        \dot{\overrightarrow{\beta}}(u_0) & = &
+                            -\left[\dfrac{\overrightarrow{V_T}(u_0)-\left(\widehat{u_{TP}}(u_0)\cdot\overrightarrow{V_T}(u_0)\right)\widehat{u_{TP}}(u_0)}{R_{TP}(u_0)}+
+                             \dfrac{\overrightarrow{V_R}(u_0)-\left(\widehat{u_{RP}}(u_0)\cdot\overrightarrow{V_R}(u_0)\right)\widehat{u_{RP}}(u_0)}{R_{RP}(u_0)}\right]
+                    \end{array}\right.
+                    $$
+
+                    with the bistatic angle of the BSAR system derived from the BSAR bisector vector:
+
+                    $$
+                        \beta(u_0)=2\mathrm{arccos}\left(\dfrac{\left\Vert\overrightarrow{\beta}(u_0)\right\Vert}{2}\right)
+                    $$
+
+                    The complex Generalized Ambiguity Function (GAF) can thus be derived by supposing a narrowband transmitted signal, a linear flight path around slow-time $u_0$,
+                    isotropic antennas and by neglecting the signal attenuation to distances. Calculations of this derivation are not presented here. The complex bistatic
+                    GAF is finally given by:
+
+                    $$
+                        \chi_P(\vec{r})\simeq\mathrm{sinc}\left(B\dfrac{\overrightarrow{\beta}(u_0)\cdot\vec{r}}{c}\right)
+                                             \mathrm{sinc}\left(T_u\dfrac{\dot{\overrightarrow{\beta}}(u_0)\cdot\vec{r}}{\lambda_0}\right)
+                                             \mathrm{e}^{\mathrm{j}2\pi\frac{\overrightarrow{\beta}(u_0)\cdot\vec{r}}{\lambda_0}}
+                    $$
+
+                    It must be pointed out that the previous expressions of the BSAR bisector vector and its first time derivative are given in  the <em>slant</em> 
+                    radar geometry. The <em>ground</em> bistatic GAF is given by:
+
+                    $$
+                    \chi_{P,g}(\vec{r})\simeq\mathrm{sinc}\left(B\dfrac{\overrightarrow{\beta_g}(u_0)\cdot\vec{r}}{c}\right)
+                                         \mathrm{sinc}\left(T_u\dfrac{\dot{\overrightarrow{\beta_g}}(u_0)\cdot\vec{r}}{\lambda_0}\right)
+                                         \mathrm{e}^{\mathrm{j}2\pi\frac{\overrightarrow{\beta_g}(u_0)\cdot\vec{r}}{\lambda_0}}
+                    $$
+
+                    for which vectors are expressed in the <em>ground</em> geometry, that is, if $\hat{n}$ is the unit local normal of the surface at point $P$
+                    on the ground:
+
+                    $$
+                        \left\{
+                        \begin{array}{rcl}
+                            \overrightarrow{\beta_g}(u_0) & = & \overrightarrow{\beta}(u_0)-\left(\overrightarrow{\beta}(u_0)\cdot\hat{n}\right)\hat{n} \\
+                            \dot{\overrightarrow{\beta_g}}(u_0) & = & \dot{\overrightarrow{\beta}}(u_0)-\left(\dot{\overrightarrow{\beta}}(u_0)\cdot\hat{n}\right)\hat{n}
+                        \end{array}
+                        \right.
+                    $$
+
+                    where $\overrightarrow{\beta_g}(u_0)$, respectively $\dot{\overrightarrow{\beta_g}}(u_0)$, is the rejection of vector $\overrightarrow{\beta}(u_0)$,
+                    respectively $\dot{\overrightarrow{\beta}}(u_0)$, with respect to the unit normal $\hat{n}$. Those vecctors belongs to the plane of normal $\hat{n}$.
+
+                    <div id="Range_resolution" class="anchor"></div>
+                    <h4>2.2.2 Range resolution</h4>
+                        The BSAR system range resolution can be estimated from its GAF function 
+
+                    <div id="Lateral_resolution" class="anchor"></div>
+                    <h4>2.2.3 Lateral resolution</h4>
+
+                    <div id="Iso-Range" class="anchor"></div>
+                    <h4>2.2.4 Iso-Range</h4>
+
+                    <div id="Iso-Doppler" class="anchor"></div>
+                    <h4>2.2.5 Iso-Doppler</h4>
+
+                    <div id="Resolution_area" class="anchor"></div>
+                    <h4>2.2.6 Resolution area</h4>
+
+                    <div id="NESZ" class="anchor"></div>
+                    <h4>2.2.7 Noise Equivalent Sigma Zero</h4>
+
+                    <div id="RASR" class="anchor"></div>
+                    <h4>2.2.8 Range Ambiguity to Signal Ratio</h4>
+
+                    <div id="LASR" class="anchor"></div>
+                    <h4>2.2.9 Lateral Ambiguity to Signal Ratio</h4>
+
+            <div id="References" class="anchor"></div>
+            <h2>3. REFERENCES</h2>
+        </div>
+        <!-- Content -->
+
+        <!-- JS scripts -->
+        <!-- Javascript for dynamic HTML -->
+        <script type='text/javascript' src='../js/scripts/interactdoc.js'></script>
+        <!-- JS scripts -->
+        
+    </body>
+    <!-- END OF BODY -->
+</html>

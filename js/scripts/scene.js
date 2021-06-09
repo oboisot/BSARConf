@@ -457,13 +457,14 @@ SaveButton.onclick = () => {
 }
 
 function saveBlob(blob, fileName) {
-    const a = document.createElement('a');
-    document.body.appendChild(a);
-    a.style.display = 'none';
-    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a'),
+          url = URL.createObjectURL(blob);
     a.href = url;
     a.download = fileName;
+    a.style.display = 'none';
+    document.body.appendChild(a);
     a.click();
+    a.remove();
 }
 
 // ***** Load Button *****
@@ -648,4 +649,16 @@ ProcessButton.onclick = () => {
         loadingContainer.style['display'] = 'none';
         loadingContainer.innerHTML = "Loading...";
     }, 2000 );
+}
+
+// ***** Documentation Button *****
+const DocumentationButton = document.getElementById('DocumentationButton');
+DocumentationButton.onclick = () => {
+    const a = document.createElement('a');
+    a.href = './html/documentation.html';
+    a.target = '_blank';
+    a.style.display = 'none';
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
 }

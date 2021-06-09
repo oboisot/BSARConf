@@ -1,8 +1,8 @@
 html, body {
 	margin: 0;
     height: 100%;
-	background-color: #000;
-	color: #fff;
+	background-color: #000000;
+	color: #ffffff;
 	font-family: "Lucida Console", "Courier New", "Monospace", "Arial";
 	font-size: 16px;
 	line-height: 16px;
@@ -47,19 +47,11 @@ input[type=text]:valid+span:after {
 
 .leftDiv {
 	left: 0px;
-	-webkit-transform: translateX(-300px);
-	-moz-transform: translateX(-300px);
-	-ms-transform: translateX(-300px);
-	-o-transform: translateX(-300px);
 	transform: translateX(-300px);
 }
 
 .rightDiv {
 	right: 0px;
-	-webkit-transform: translateX(300px);
-	-moz-transform: translateX(300px);
-	-ms-transform: translateX(300px);
-	-o-transform: translateX(300px);
 	transform: translateX(300px);
 }
 
@@ -107,28 +99,16 @@ input[type=text]:valid+span:after {
 
 .txInfosDiv {
 	left: calc(100% / 2 - 525px);
-	-webkit-transform: translateY(-240px);
-	-moz-transform: translateY(-240px);
-	-ms-transform: translateY(-240px);
-	-o-transform: translateY(-240px);
 	transform: translateY(-240px);
 }
 
 .rxInfosDiv {
 	left: calc(100% / 2 + 175px);
-	-webkit-transform: translateY(-240px);
-	-moz-transform: translateY(-240px);
-	-ms-transform: translateY(-240px);
-	-o-transform: translateY(-240px);
 	transform: translateY(-240px);
 }
 
 .BSARInfosDiv {
 	left: calc(100% / 2 - 175px);
-	-webkit-transform: translateY(-240px);
-	-moz-transform: translateY(-240px);
-	-ms-transform: translateY(-240px);
-	-o-transform: translateY(-240px);
 	transform: translateY(-240px);
 }
 
@@ -150,20 +130,12 @@ input[type=text]:valid+span:after {
 .plotIsoRangeDop {
 	width: 400px;
 	left: 0px;
-	-webkit-transform: translateY(400px);
-	-moz-transform: translateY(400px);
-	-ms-transform: translateY(400px);
-	-o-transform: translateY(400px);
 	transform: translateY(400px);
 }
 
 .plotGAFAmp {
 	width: 451px;
 	right: 0px;
-	-webkit-transform: translateY(400px);
-	-moz-transform: translateY(400px);
-	-ms-transform: translateY(400px);
-	-o-transform: translateY(400px);
 	transform: translateY(400px);
 }
 
@@ -196,6 +168,13 @@ input[type=text]:valid+span:after {
 
 #BSARbutton {
 	width: 300px;
+}
+
+#BSARbuttonImg {
+	filter: invert(100%);
+	transform: rotate(90deg);
+	transition: 0.5s;
+	transition-timing-function: ease-in-out;
 }
 
 .BSARMenuButton:hover {
@@ -262,6 +241,16 @@ input[type=text]:valid+span:after {
 	font-size: 16px;
 }
 
+#TxButtonImg, #RxButtonImg {
+	transition: 0.5s;
+	transition-timing-function: ease-in-out;
+}
+
+#RxButtonImg {
+	filter: invert(100%);
+	transform: rotate(180deg);	
+}
+
 .ImgButton {
 	display: block;
 	width: 40px;
@@ -291,7 +280,7 @@ input[type=text]:valid+span:after {
 	filter: invert(100%);
 }
 
-.InfoIcon {
+.DocumentationIcon {
 	background-image: url("../img/icons/infos.svg");
 	filter: invert(100%);
 }
@@ -379,10 +368,6 @@ input[type=text]:valid+span:after {
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	-webkit-transition: 0.2s;
-	-moz-transition: 0.2s;
-	-ms-transition: 0.2s;
-	-o-transition: 0.2s;
 	transition: 0.2s;
 }
 
@@ -409,21 +394,13 @@ input[type=text]:valid+span:after {
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	-webkit-transition: 0.2s;
-	-moz-transition: 0.2s;
-	-ms-transition: 0.2s;
-	-o-transition: 0.2s;
 	transition: 0.2s;
 }
 
 input:checked + .slider-sight:before {
-	-webkit-transform: translateX(-49px);
-	-moz-transform: translateX(-49px);
-	-ms-transform: translateX(-49px);
-	-o-transform: translateX(-49px);;
-	transform: translateX(-49px);
 	content: "left";
 	color: #000000;
+	transform: translateX(-49px);
 }
 
 /* ***** LOADER div ***** */

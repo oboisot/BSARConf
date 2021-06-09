@@ -1,0 +1,71 @@
+%\documentclass[tikz,border=0pt]{standalone}
+\documentclass[multi=tikzpicture,varwidth=false]{standalone} % Permet d'éviter le clash d'import du package xcolor avec tikz
+% qui doit être importé avant tikz (pas possible sir tikz est déclaré dans le préambule de la classe standalone)
+
+% Pour les symboles et équations mathématiques
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{textcomp} % Pour la commande \textdegree
+% Couleurs
+\usepackage[dvipsnames]{xcolor}
+% Dessins en LaTeX
+\usepackage{tikz}
+\usepackage{tikz-3dplot}
+\usetikzlibrary{positioning,shapes.misc}
+\tikzset{cross/.style={cross out, draw=black, fill=none, minimum size=2*(#1-\pgflinewidth), inner sep=0pt, outer sep=0pt}, cross/.default={2pt}} % Définit une croix (pour marquer la position d'un point par exemple)
+
+\definecolor{mred}{HTML}{D62728}
+\definecolor{mblue}{HTML}{1F77B4}
+
+\begin{document}
+\tdplotsetmaincoords{50}{30}
+\begin{tikzpicture}[tdplot_main_coords]
+	\pgfmathsetmacro{\Txx}{-2};\pgfmathsetmacro{\Txy}{-3};\pgfmathsetmacro{\Txz}{4}; % Tx
+	\pgfmathsetmacro{\Rxx}{1};\pgfmathsetmacro{\Rxy}{4};\pgfmathsetmacro{\Rxz}{2}; % Rx
+	\pgfmathsetmacro{\Px}{1.5};\pgfmathsetmacro{\Py}{1};\pgfmathsetmacro{\Pz}{0}; % P
+	\pgfmathsetmacro{\utx}{0.52615222};\pgfmathsetmacro{\uty}{0.60131682};\pgfmathsetmacro{\utz}{-0.60131682}; % utx
+	\pgfmathsetmacro{\urx}{0.13736056};\pgfmathsetmacro{\ury}{-0.82416338};\pgfmathsetmacro{\urz}{-0.54944226}; % urx
+	\pgfmathsetmacro{\ueffx}{0.33175639};\pgfmathsetmacro{\ueffy}{-0.11142328};\pgfmathsetmacro{\ueffz}{-0.57537954}; % ueff
+	\pgfmathsetmacro{\omegx}{-0.24618911};\pgfmathsetmacro{\omegy}{0.5858917};\pgfmathsetmacro{\omegz}{-0.07174075}; % omegaeff
+	\pgfmathsetmacro{\Bx}{-0.06102167};\pgfmathsetmacro{\By}{1.52428276};\pgfmathsetmacro{\Bz}{2.70734778}; % B
+	\pgfmathsetmacro{\vtx}{-1};\pgfmathsetmacro{\vty}{1};\pgfmathsetmacro{\vtz}{0}; % vtx
+	\pgfmathsetmacro{\vrx}{0.5};\pgfmathsetmacro{\vry}{0.5};\pgfmathsetmacro{\vrz}{0}; % vrx
+	\coordinate (O) at (0,0,0);
+	\coordinate (Tx) at (\Txx,\Txy,\Txz);
+	\coordinate (Rx) at (\Rxx,\Rxy,\Rxz);
+	\coordinate (P) at (\Px,\Py,\Pz);
+	\coordinate (B) at (\Bx,\By,\Bz);
+	% Loacl tangent plane
+	 \filldraw[thick,color=Dandelion,draw opacity=1,fill opacity=0.25] (-3.5,-3.5,0) -- (3.5,-3.5,0) -- (3.5,3.5,0) -- (-3.5,3.5,0) -- cycle;
+	\node[Dandelion,rotate=-20,anchor=east] at (3.5,-3.25,0) {\scriptsize local tangent plane};
+	% Repère terrestre
+	\draw[-stealth] (-4,0,0) -- (4,0,0) node[anchor=north east]{$\hat{x}$};
+	\draw[-stealth] (0,-4,0) -- (0,4,0) node[anchor=north]{$\hat{y}$};
+	\draw[-stealth] (0,0,-1) -- (0,0,4) node[anchor=east]{$\hat{z}$};
+	\draw[draw=black,fill=Dandelion] (0,0,0) circle (0.06cm) node[anchor=south east]{$P$};
+	% Tracés des points Tx, Rx et P
+	\draw[color=Orange,fill=Orange] (Tx) circle (0.06cm);\draw[] (\Txx,\Txy,\Txz+0.1) node[left,Orange]{$T_x$}; % Tx
+	\draw[color=OliveGreen,fill=OliveGreen] (Rx) circle (0.06cm);\draw[] (\Rxx,\Rxy,\Rxz+0.1) node[above,OliveGreen]{$R_x$}; % Tx
+	\draw[color=black,fill=black] (P) circle (0.06cm);\draw[] (\Px+0.1,\Py+0.1,\Pz) node[below right]{$P'(x,y)$}; % P
+	% Segments TxP, RxP, TxRx
+	\draw[ultra thin] (Tx) -- (P) -- (Rx);
+	\draw[ultra thin, dashed] (Tx) -- (\Txx,\Txy,0) -- (\Txx,0,0);\draw [ultra thin,dashed] (\Txx,\Txy,0) -- (0,\Txy,0);
+	\draw[ultra thin, dashed] (Rx) -- (\Rxx,\Rxy,0) -- (\Rxx,0,0);\draw [ultra thin,dashed] (\Rxx,\Rxy,0) -- (0,\Rxy,0);
+	\draw[dashed,ultra thin] (Tx) -- (Rx);
+	% Vecteur de visée et vitesse
+	\draw[thick,-latex,Orange] (Tx) -- (\Txx+\utx,\Txy+\uty,\Txz+\utz) node[Orange,below left] {$\widehat{u_{tx}}$};
+	\draw[thick,-latex,Orange] (Tx) -- (\Txx+\vtx,\Txy+\vty,\Txz+\vtz) node[Orange,left] {$\vec{V_{tx}}$};
+	\draw[thick,-latex,OliveGreen] (Rx) -- (\Rxx+\urx,\Rxy+\ury,\Rxz+\urz) node[OliveGreen,below right] {$\widehat{u_{rx}}$};
+	\draw[thick,-latex,OliveGreen] (Rx) -- (\Rxx+\vrx,\Rxy+\vry,\Rxz+\vrz) node[OliveGreen,right] {$\vec{V_{rx}}$};
+	% Tracé de ueff, omegaeff
+	\draw[ultra thin, dashed] (B) -- (P);
+	\draw[thick,-latex,mred] (B) -- (\Bx+\ueffx,\By+\ueffy,\Bz+\ueffz) node[right,mred] {$\vec{u_{eff}}$};
+	\draw[thick,-latex,mblue] (B) -- (\Bx+\omegx,\By+\omegy,\Bz+\omegz) node[right,mblue] {$\vec{\omega_{eff}}$};
+	\draw[color=black,fill=black] (B) circle (0.06cm);
+	% 
+	\draw[-latex,mred] (P) -- (\Px+\ueffx,\Py+\ueffy,\Pz) node[left,mred] {$\vec{u_{eff,g}}$};
+	\draw[-latex,mblue] (P) -- (\Px+\omegx,\Py+\omegy,\Pz) node[right,mblue] {$\vec{\omega_{eff,g}}$};
+	% Tracés de l'angle bistatique
+	\tdplotdefinepoints(\Px,\Py,\Pz)(\Txx,\Txy,\Txz)(\Rxx,\Rxy,\Rxz);
+	\tdplotdrawpolytopearc[]{0.9}{above}{$\beta$};
+\end{tikzpicture}
+\end{document}

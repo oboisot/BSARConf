@@ -1,0 +1,150 @@
+html, body {
+	margin: 0;
+    background-color: #000000;
+	color: #ffffff;
+	font-family: "Lucida Console", "Courier New", "Monospace", "Arial";
+	font-size: 16px;
+	line-height: 16px;
+    scroll-behavior: smooth;
+}
+
+header {
+    display: block;
+	position: fixed;
+	top: 0px;
+	left: 0px;
+	height: 60px;
+	width: 100%;
+	z-index: 10;
+	background: transparent;
+}
+
+.DocButton, .ToCButton {
+    display: flex;
+	float: left;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    font-weight: bolder;
+    height: 60px;
+    border: none;
+    cursor: pointer;
+}
+
+.DocButton {
+    width: calc(100% - 400px);
+    font-size: 24px;
+    color: #000000;
+    background: rgba(255,255,255,0.9);
+}
+
+.DocButton:hover {
+    border: 2px solid #000000;
+}
+
+.ToCButton {
+    width: 400px;
+    font-size: 18px;
+    color: #ffffff;
+    background: rgba(0,0,0,0.9);
+}
+
+#ToCButtonImg {
+    filter: invert(100%);
+	transform: rotate(180deg);
+    transition: 0.5s;
+	transition-timing-function: ease-in-out;   
+}
+
+.ToC {
+    display: block;
+	position: fixed;
+	top: 60px;
+    right: 0px;
+	width: 400px;
+    padding-top: 10px;
+	z-index: 10;
+    background: rgba(255,255,255,0.9);
+	transition: 0.5s;
+	transition-timing-function: ease-in-out;    
+	transform: translateX(400px);
+}
+
+.ToC a {
+    color: #000000;
+    text-decoration: none;
+}
+
+.ToC a:hover {
+    font-size: 110%;
+}
+
+.ToC ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+.ToC ul li {
+    font-size: 16px;
+    text-indent: 20px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+.ToC ul li ul li {
+    font-size: 14px;
+    text-indent: 50px;
+    padding-top: 2px;
+    padding-bottom: 2px;
+}
+.ToC ul li ul li ul li {
+    font-size: 12px;
+    font-style: italic;
+    text-indent: 85px;
+    padding-top: 2px;
+    padding-bottom: 2px;
+}
+
+.BackToTop {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    width:150px;
+    height: 40px;
+    margin: 20px;
+    color:#ffffff;
+    border: none;
+    background: #000000;
+}
+
+.BackToTop img {
+    filter: invert(100%);
+	transform: rotate(270deg);
+}
+
+.anchor {
+    display: block;
+    height: 60px;
+    margin-top: -60px;
+    visibility: hidden;
+}
+
+.content {
+    padding-top: 60px;
+    padding-right: 100px;
+    padding-left: 100px;
+    padding-bottom: 100px;
+    text-align: justify;
+    text-justify: inter-word;
+    transition: padding-right 0.5s;
+    transition-timing-function: ease-in-out;
+}
+
+h3 {
+    text-indent: 50px;
+}
+
+h4 {
+    text-indent: 100px;
+    font-style: italic;
+}

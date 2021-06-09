@@ -19,7 +19,8 @@
         <!-- ****************************** Header ****************************** -->
         <div id="header" class="header">
           <button type="button" id="BSARbutton" class="BSARMenuButton">
-            Bistatic SAR configurator&ensp;<span style='font-size:140%;'>&#x25BD</span>
+            Bistatic SAR configurator&ensp;
+            <img id="BSARbuttonImg" src="./img/icons/arrow-contour.svg" width="18px">
           </button>
           <button type="button" id="LoadButton" class="BSARMenuButton">
             <input id="FileInput" type="file" accept=".json" style="display:none;"/>
@@ -42,9 +43,9 @@
               <span class="TooltipButtonBottom">Process full config</span>
             </div>
           </button>
-          <button type="button" id="InfoButton", class="BSARMenuButton">
-            <div class="ImgButton InfoIcon">
-              <span class="TooltipButtonBottom">More infos</span>
+          <button type="button" id="DocumentationButton", class="BSARMenuButton">
+            <div class="ImgButton DocumentationIcon">
+              <span class="TooltipButtonBottom">Documentation</span>
             </div>
           </button>
         </div>
@@ -375,18 +376,19 @@
               </tr>
             </table>
           </div>
-
           <!-- TX MENU BUTTON -->
           <button type="button" id="TxButton">
-            TX</br><span style='font-size:140%;'>&#x25B7</span>
-          </button> 
+            TX</br>
+            <img id="TxButtonImg" src="./img/icons/arrow-contour.svg" width="16px">
+          </button>
         </div> <!-- Left div -->
 
         <!-- ****************************** RX INPUTS ****************************** -->
         <div id="RxMenu" class="rightDiv">
           <!-- RX MENU BUTTON -->
           <button type="button" id="RxButton">
-            RX</br><span style="font-size:140%;">&#x25C1</span>
+            RX</br>
+            <img id="RxButtonImg" src="./img/icons/arrow-contour.svg" width="16px">
           </button> 
 
           <div id="RxInputDiv">

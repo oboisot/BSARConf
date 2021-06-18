@@ -1,6 +1,16 @@
-html, body {
+/* html, body {
 	margin: 0;
     background-color: #000000;
+	color: #ffffff;
+	font-family: "Lucida Console", "Courier New", "Monospace", "Arial";
+	font-size: 16px;
+	line-height: 16px;
+    scroll-behavior: smooth;
+} */
+html, body {
+	margin: 0;
+    /* background-color: #323232; */
+    background-color: #5a5a5a;
 	color: #ffffff;
 	font-family: "Lucida Console", "Courier New", "Monospace", "Arial";
 	font-size: 16px;
@@ -140,11 +150,24 @@ header {
     transition-timing-function: ease-in-out;
 }
 
+h2 {
+    color: #000000;
+}
 h3 {
+    color: #141414;
     text-indent: 50px;
 }
-
 h4 {
+    color: #282828;
     text-indent: 100px;
     font-style: italic;
+}
+
+.aimg img {
+    border: 2px solid rgba(0,0,0,0);
+    padding: 10px;
+}
+.aimg:hover img {
+    border-color: #ffffff;
+    filter: invert(100%);
 }

@@ -8,7 +8,6 @@ import * as bsar from "./bsarfun.js";
 // ***** Configurator Parameters *****
 
 // ***** THREE parameters *****
-// const planeSize = 25000; // m
 const planeSize = 30000; // m
 const worldPlane = new THREE.Mesh();
 // Global objects

@@ -9,8 +9,13 @@
 \usepackage{tikz-3dplot}
 
 % Colors
-\definecolor{azure}{rgb}{0.0, 0.5, 1.0}
+%\definecolor{azure}{rgb}{0.0, 0.5, 1.0}
+\definecolor{lightgray}{rgb}{0.8,0.8,0.8}
 \definecolor{refgreen}{HTML}{006400}
+\definecolor{gold}{HTML}{ffa500}
+
+% Fonctions persos
+\input{Ellipsoid3D.tex}
 
 %%%%%%%%%%%%%%%%%
 % Ellipsoid Drawing Functions %
@@ -62,29 +67,6 @@
             -- (\x, \y, \z)%
     };%
 }%
-% Draw all full meridians at a given longitude and altitude spaced by delta lon
-\newcommand{\DrawMeridians}[5][black]{ % equatorial radius, polar radius, delta lon, altitude.
-									% Optional = drawing option
-    % Function call :
-    % \DrawMeridians[<drawing options>]{<equatorial radius>}{<polar radius>}{<delta lon>}{<altitude>}
-    \pgfmathsetmacro{\es}{1-#3*#3/(#2*#2)}; % eccentricity squared
-    \pgfmathsetmacro{\lmax}{360-#4};
-    \foreach \lon in {0,{#4},...,\lmax} { % Meridians drawing
-        \pgfmathsetmacro{\clon}{cos(\lon)};\pgfmathsetmacro{\slon}{sin(\lon)}; % cos(lon0), sin(lon0)
-        \draw[#1] ({(#2+#5)*\clon},{(#2+#5)*\slon},0)%
-            \foreach \lat in {1,2,...,359} {%
-                \pgfextra%
-                    \pgfmathsetmacro{\clat}{cos(\lat)};\pgfmathsetmacro{\slat}{sin(\lat)};% cos(lat), sin(lat)
-                    \pgfmathsetmacro{\nu}{#2/sqrt(1-\es*\slat*\slat)};% nu(lat)
-                    \pgfmathsetmacro{\x}{(\nu+#5)*\clat*\clon};%
-                    \pgfmathsetmacro{\y}{(\nu+#5)*\clat*\slon};%
-                    \pgfmathsetmacro{\z}{((1-\es)*\nu+#5)*\slat};%
-               \endpgfextra%
-                -- (\x, \y, \z)%
-        } -- cycle;%
-    }%
-}
-
 % Draw full parallel at a given latitude and altitude
 \newcommand{\DrawParallel}[5][black]{ % equatorial radius, polar radius, latitude,altitude.
 							                 % Optional = drawing options
@@ -130,100 +112,65 @@
     };%
 }%
 
-% Fonction de tracé d'un méridien à la longitude et l'altitude souhaitées
-\newcommand{\DrawParallels}[5][black]{ % equatorial radius, polar radius, delta lat, altitude.
-							                 % Optional = drawing options
-    % Function call :
-    % \DrawParallels[<drawing options>]{<equatorial radius>}{<polar radius>}{<delta lat>}{<altitude>}
-    \pgfmathsetmacro{\es}{1-#3*#3/(#2*#2)}; % eccentricity squared
-    \pgfmathsetmacro{\latmin}{-90+#4};\pgfmathsetmacro{\latmax}{90-#4};\pgfmathsetmacro{\dlat}{\latmin+#4};
-    \foreach \lat in {\latmin,\dlat,...,\latmax} {
-    \pgfmathsetmacro{\clat}{cos(\lat)};\pgfmathsetmacro{\slat}{sin(\lat)}; % cos(phi0), sin(phi0)
-        \pgfmathsetmacro{\nu}{#2/sqrt(1-\es*\slat*\slat)}; % nu(phi0)
-        \draw[#1] ({(\nu+#5)*\clat},0,{((1-\es)*\nu+#5)*\slat})%
-            \foreach \lon in {1,2,...,359} {%
-                \pgfextra%
-                    \pgfmathsetmacro{\x}{(\nu+#5)*\clat*cos(\lon)};%
-                    \pgfmathsetmacro{\y}{(\nu+#5)*\clat*sin(\lon)};%
-                    \pgfmathsetmacro{\z}{((1-\es)*\nu+#5)*\slat};%
-               \endpgfextra%
-                -- (\x, \y, \z)%
-        } -- cycle;%
-    }
-}%
-
-% Ellipsoid drawing function
-\newcommand{\DrawEllipsoid}[5][black]{
-     % Function call :
-    % \DrawParallels[<drawing options>]{<equatorial radius>}{<polar radius>}{<delta lat/lon>}{<altitude>}
-    \DrawMeridians[#1]{#2}{#3}{#4}{#5};
-    \DrawParallels[#1]{#2}{#3}{#4}{#5};
-}
-
 \begin{document}
-\pagecolor{black}
-% sqare of half axes
-% view angle
 \tdplotsetmaincoords{70}{130}
 %
 \begin{tikzpicture}[tdplot_main_coords,scale=3]
     % Tracé de l'ellipsoïde
         % Ellipsoid definition
     \pgfmathsetmacro{\a}{2}; % a
-    \pgfmathsetmacro{\b}{1.5}; % b
-    \pgfmathsetmacro{\es}{1-\b*\b/(\a*\a)}; % e²
+    \pgfmathsetmacro{\b}{1.993294379}; % b = 0,996647189 * a for WGS84 ellipsoid
         % Point P definition
-    \pgfmathsetmacro{\lat}{50}; % latitude [°]
+    \pgfmathsetmacro{\lat}{30}; % latitude [°]
     \pgfmathsetmacro{\lon}{60}; % longitude [°]
     \pgfmathsetmacro{\alt}{.5}; % altitude [m]
     % Tracé des axes de références
-    \draw[white,thin,-stealth,thick] (0,0,0) -- ({\a+0.1},0,0) node[below left]{$\hat{x}$}; % x-axis
-    \draw[white,thin,-stealth,thick] (0,0,0) -- (0,{\a+0.1},0) node[anchor=north west]{$\hat{y}$}; % y-axis
-    \draw[white,thin,-stealth,thick] (0,0,-0.9) -- (0,0,{\b+0.1}) node[anchor=south]{$\hat{z}$}; % z-axis
-    \node[white,opacity=1,above left] at (0,0,0) {$O$};
-
+    \draw[lightgray,thin,-stealth,thick] (0,0,0) -- ({\a+0.1},0,0) node[below left]{$\hat{x}$}; % x-axis
+    \draw[lightgray,thin,-stealth,thick] (0,0,0) -- (0,{\a+0.1},0) node[anchor=north west]{$\hat{y}$}; % y-axis
+    \draw[lightgray,thin,-stealth,thick] (0,0,-0.9) -- (0,0,{\b+0.1}) node[anchor=south]{$\hat{z}$}; % z-axis
+    \node[lightgray,opacity=1,above left] at (0,0,0) {$O$};
     % Tracé de l'ellipsoide + équateur + Greenwich meridian
-    \DrawEllipsoid[azure,thin,opacity=0.2]{\a}{\b}{10}{0};
-    \DrawParallelBetween[azure,thick,fill=white,fill opacity=0.2]{\a}{\b}{0}{0}{-50}{130};
-    \DrawParallelBetween[azure,thick,densely dashed,fill=white,fill opacity=0.2]{\a}{\b}{0}{0}{130}{310};
-    % Meridian and Parallel of point P at altitude 0
-    \DrawMeridianBetween[azure,thin,fill=white,fill opacity=0.2]{\a}{\b}{\lon}{0}{-70}{110};
-    \DrawMeridianBetween[azure,thin,densely dashed,fill=white,fill opacity=0.2]{\a}{\b}{\lon}{0}{110}{290};
-    \DrawParallelBetween[azure,thin]{\a}{\b}{\lat}{0}{-70}{150};
-    \DrawParallelBetween[azure,thin,densely dashed]{\a}{\b}{\lat}{0}{150}{290};
+    \pgfmathsetmacro{\dangle}{5}; % Spacing angle between ellipsoid wireframes
+    \DrawEllipsoidSurface[draw=black, opacity=0.15,
+    				            fill=black, fill opacity=0.1]{\a}{\b}{\b}{\dangle}{\dangle};
+    \DrawParallelBetween[black,thick,fill=white,fill opacity=0.1]{\a}{\b}{0}{0}{-50}{130};
+    \DrawParallelBetween[black,thick,densely dashed,fill=white,fill opacity=0.1]{\a}{\b}{0}{0}{130}{310};
+   % Meridian and Parallel of point P at altitude 0
+    \DrawMeridianBetween[black,thin,fill=white,fill opacity=0.1]{\a}{\b}{\lon}{0}{-70}{110};
+    \DrawMeridianBetween[black,thin,densely dashed,fill=white,fill opacity=0.1]{\a}{\b}{\lon}{0}{110}{290};
     % Meridian and Parallel of point P at altitude h
-    \DrawParallel[refgreen,thin]{\a}{\b}{\lat}{\alt};
-    \DrawMeridianBetween[refgreen,thin]{\a}{\b}{\lon}{\alt}{-105}{155};
-    \DrawMeridianBetween[refgreen,thin,densely dashed]{\a}{\b}{\lon}{\alt}{155}{255};
+    \DrawMeridianBetween[gold,thin]{\a}{\b}{\lon}{\alt}{-108}{150};
+    \DrawMeridianBetween[gold,thin,densely dashed]{\a}{\b}{\lon}{\alt}{150}{252};
+    \DrawParallelBetween[gold,thin]{\a}{\b}{\lat}{\alt}{-121}{201};
+    \DrawParallelBetween[gold,thin,densely dashed]{\a}{\b}{\lat}{\alt}{200}{239};
 
     % Axes plan local ENU (h = 0.5)    				            % (h = 0)
-    \coordinate (P) at (0.90627959, 1.56972229, 1.38264192);%(0.74558268, 1.29138709, 0.9996197);
-    \coordinate (Psurf) at (0.74558268, 1.29138709, 0.9996197);
-    \coordinate (Pe) at (0.68977324, 1.69472229, 1.38264192);%(0.52907633, 1.41638709, 0.9996197);
-    \coordinate (Pn) at (0.81052403, 1.4038688 , 1.54333882);%(0.64982713, 1.1255336 , 1.1603166);
-    \coordinate (Pu) at (0.98662804, 1.70888989, 1.57415303);%(0.82593113, 1.43055469, 1.19113081);
-    \coordinate (nu) at (0, 0, -0.77748199); % nu(phi)
-    % Plan ENU
-    \draw[white,line width=.3pt,opacity=1,dashed] (P) -- (Psurf) node[midway,right] {\footnotesize$H$} -- (nu);
-    \draw[azure,fill=azure,opacity=1] (Psurf) circle (0.015cm);
-    \fill[refgreen,opacity=0.3]
-         (0.28175577, 1.48801531, 1.70403572) -- (1.14778118, 0.98801531, 1.70403572) --
-         (1.5308034 , 1.65142926, 1.06124811) -- (0.664778  , 2.15142926, 1.06124811) -- cycle;
-    \draw[line width=1pt,refgreen,opacity=1]
-         (0.28175577, 1.48801531, 1.70403572) -- (1.14778118, 0.98801531, 1.70403572) --
-         (1.5308034 , 1.65142926, 1.06124811) -- (0.664778  , 2.15142926, 1.06124811) -- cycle;
-    \draw[red,-stealth,thick,opacity=1] (P) -- (Pe) node[below]{$\hat{e}$}; % e
-    \draw[green,-stealth,thick,opacity=1] (P) -- (Pn) node[left]{$\hat{n}$}; % n
-    \draw[blue,-stealth,thick,opacity=1] (P) -- (Pu) node[above right]{$\hat{u}$}; % u
-    \draw[refgreen,fill=refgreen] (P) circle (0.015cm) node[left] {$P$};
+    \coordinate (P) at (1.08325735,1.87625677,1.24413786);% lon=60°,lat=30°,alt=0.5
+    \coordinate (Psurf) at (0.866751 ,1.50125677, 0.99413786);
+    \coordinate (nu) at (0, 0, -0.006699988542861978); % nu(phi)
+    \coordinate (loneq) at (1,1.73205081,0); %
+%    % Plan ENU
+    \draw[white,line width=.3pt,opacity=1,dashed] (P) -- (Psurf) node[midway,below] {\footnotesize$H$} -- (nu);
+    \draw[black,fill=black,opacity=1] (Psurf) circle (0.015cm);
+    \tdplotsetrotatedcoords{60}{60}{90};
+    \tdplotsetrotatedcoordsorigin{(P)};
+	% local ENU plane
+    \draw[thick,refgreen,fill=refgreen,fill opacity=0.6,tdplot_rotated_coords]
+    		(-0.4,-0.4,0) -- (0.4,-0.4,0) -- (0.4,0.4,0) -- (-0.4,0.4,0) -- cycle;
+	% local ENU referential
+    \draw[red,-stealth,thick,opacity=1,tdplot_rotated_coords] (0,0,0) -- (0.3,0,0) node[below]{$\hat{e}$}; % e
+    \draw[green,-stealth,thick,opacity=1,tdplot_rotated_coords] (0,0,0) -- (0,0.3,0) node[left]{$\hat{n}$}; % n
+    \draw[blue,-stealth,thick,opacity=1,tdplot_rotated_coords] (0,0,0) -- (0,0,0.3) node[above right]{$\hat{u}$}; % u
+    	% Origin of local ENU
+    \draw[gold,fill=gold] (P) circle (0.015cm) node[above left] {$P$};
     % Tracés coordonnées lat, lon, h
          % lambda
-    \draw[white,line width=.3pt,opacity=1,dashed] (0,0,0) -- (1, 1.73205081, 0) {};
-    \tdplotdefinepoints(0,0,0)(2,0,0)(1, 1.73205081, 0);
-    \tdplotdrawpolytopearc[white]{0.6}{below}{\color{white}\large$\lambda$};
+    \draw[white,densely dashed] (0,0,0) -- (loneq);
+    \tdplotdefinepoints(0,0,0)(2,0,0)(1,1.73205081,0);
+    \tdplotdrawpolytopearc[white,->]{0.6}{below}{\color{white}\large$\lambda$};
         % phi
-    \tdplotdefinepoints(0.32619242, 0.56498185, 0)(1, 1.73205081, 0)(0.64758623, 1.12165225, 0.76604444);
-    \tdplotdrawpolytopearc[white]{0.5}{right}{\color{white}\large$\phi$};
+    \tdplotdefinepoints(0,0,0)(1,1.73205081, 0)(0.866751 ,1.50125677, 0.99413786);
+    \tdplotdrawpolytopearc[white,->]{0.75}{right}{\color{white}\large$\phi$};
 \end{tikzpicture}
 %
 \end{document}

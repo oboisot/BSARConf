@@ -86,7 +86,7 @@ header {
 }
 
 .ToC a:hover {
-    font-size: 110%;
+    font-size: 105%;
 }
 
 .ToC ul {
@@ -162,12 +162,36 @@ h4 {
     text-indent: 100px;
     font-style: italic;
 }
+p {
+    text-indent:50px;
+}
+a {
+    color:#1F77B4;
+    text-decoration: none;
+}
+a:hover {
+    font-size: 102%;
+}
 
-.aimg img {
+figure {
+    display: block;
+    width: 40%;
+    margin: 0 auto;
+}
+figure img {
     border: 2px solid rgba(0,0,0,0);
     padding: 10px;
 }
-.aimg:hover img {
-    border-color: #ffffff;
-    filter: invert(100%);
+figure img:hover {
+    border-color: #000000;
+}
+figcaption {
+    /* border: 2px solid #000000; */
+    width: 100%;
+    text-align: center;
+    font-style: italic;
+    font-size: smaller;
+    text-indent: 0;
+    color: #000000;
+    padding: 10px;
 }

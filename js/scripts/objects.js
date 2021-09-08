@@ -505,9 +505,9 @@ class Carrier {
             indexMaxDist = 0;
         for ( let i = 0 ; i < this._footprint_size ; ++i ){
             const t = i * dt,
-                    c = Math.cos( t ),
-                    s = Math.sin( t ),
-                    f = d / (n.x + n.y * ty * c + n.z * tz * s);
+                  c = Math.cos( t ),
+                  s = Math.sin( t ),
+                  f = d / (n.x + n.y * ty * c + n.z * tz * s);
             // const point  = new THREE.Vector3( f, ty * c * f, tz * s * f ).applyMatrix3( m ).add( OA );
             const point  = new THREE.Vector3( f, ty * c * f, tz * s * f )
                                .applyMatrix3( m )

@@ -1,6 +1,6 @@
 export {
     bistatic_angle,
-    bistatic_range, doppler_frequency, doppler_rate, doppler_bandwidth,
+    bistatic_range, bistatic_range_minmax, doppler_frequency, doppler_rate, doppler_bandwidth,
     bisector_vector, bisector_vector_derivative,
     ground_bisector_vector,  ground_bisector_vector_derivative,
     bisector_vectors, bistatic_sar_resolution,
@@ -31,6 +31,29 @@ function bistatic_angle( tx_vec, rx_vec ) {
 */
 function bistatic_range( tx_vec, rx_vec ) {
     return tx_vec.length() + rx_vec.length();
+}
+
+/* Compute min and max range of bistatic SAR system.
+   Range is computed from transmitter antenna to receiver footprint.
+*/
+function bistatic_range_minmax( tx_vec, rx_vec, rx_footprint ) {
+    let dist = 0,
+        minDist = Number.MAX_VALUE,
+        maxDist = 0
+    for ( let i = 0 ; i < rx_footprint.length ; ++i ){
+        const point = rx_footprint[i];
+        dist = tx_vec.distanceTo( point ) + rx_vec.distanceTo( point );
+        if ( dist < minDist ) {
+            minDist = dist;
+        }
+        if ( dist > maxDist ) {
+            maxDist = dist;
+        }
+    }
+    return {
+        range_min: minDist,
+        range_max: maxDist
+    }
 }
 
 /*

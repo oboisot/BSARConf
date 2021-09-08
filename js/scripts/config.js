@@ -389,6 +389,9 @@ export const Elements = {
     },
     "bsarInfos": {
         "bistaticAngle":             document.getElementById('BSARInfosBistaticAngle'),
+        "rangeAtSwathCenter":        document.getElementById('BSARInfosRangeAtSwathCenter'),
+        "rangeMin":                  document.getElementById('BSARInfosRangeMin'),
+        "rangeMax":                  document.getElementById('BSARInfosRangeMax'),
         "slantRangeRes":             document.getElementById('BSARInfosSlantRangeRes'),
         "slantLateralRes":           document.getElementById('BSARInfosSlantLateralRes'),
         "groundRangeRes":            document.getElementById('BSARInfosGroundRangeRes'),

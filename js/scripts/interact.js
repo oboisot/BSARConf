@@ -78,11 +78,11 @@ const BSARbutton = document.getElementById('BSARbutton'),
       BSARInfos = document.getElementById("BSARInfos"),
       plotIsoRangeDop = document.getElementById("plotIsoRangeDop"),
       plotGAFAmp = document.getElementById("plotGAFAmp");
-let BSARbuttonOpened = false; // Infos not show by default
+let BSARbuttonOpened = false; // Infos not shown by default
 BSARbutton.onclick = () => {
     if ( BSARbuttonOpened ) {        
         BSARbuttonImg.style.transform = "rotate(90deg)";
-        TxInfos.style.transform = RxInfos.style.transform = BSARInfos.style.transform = "translateY(-240px)";
+        TxInfos.style.transform = RxInfos.style.transform = BSARInfos.style.transform = "translateY(-300px)";
         plotIsoRangeDop.style.transform = plotGAFAmp.style.transform = "translateY(400px)";
         BSARbuttonOpened = false;
     } else {

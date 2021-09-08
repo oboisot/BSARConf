@@ -8,6 +8,11 @@
         <link rel="stylesheet" href="./css/bsarconf.css">
         <link rel="icon" href="./img/icons/bsarconflogo.svg" sizes="any" type="image/svg+xml">
         <title>BSARconf - Bistatic SAR configurator</title>
+        <meta name="keywords"
+              content="bistatic, Synthetic Aperture Radar, SAR, configurator, monostatic,
+                       bistatique, radar à synthèse d'ouverture, RSO, configurateur, monostatique">
+        <meta name="robots" content="index">
+        <meta name="robots" content="follow">
     </head>
     <!-- END OF HEADER -->
 
@@ -21,6 +26,7 @@
           <button type="button" id="BSARbutton" class="BSARMenuButton">
             Bistatic SAR configurator&ensp;
             <img id="BSARbuttonImg" src="./img/icons/arrow-contour.svg" width="18px">
+            <span class="BSARTooltipButton">Show / Hide BSAR infos</span>
           </button>
           <button type="button" id="LoadButton" class="BSARMenuButton">
             <input id="FileInput" type="file" accept=".json" style="display:none;"/>
@@ -795,50 +801,67 @@
         <div id="BSARInfos" class="BSARInfosDiv" cellspacing="0" cellpadding="1">
           <table id="BSARInfosTable" class="InfosTable">
             <tr>
-              <th colspan="2" class="thInputText">BSAR Infos (center) [-3dB]</th>
+              <th colspan="3" class="thInputText">BSAR Infos (center) [-3dB]</th>
+            </tr>
+            <!-- Slant range -->
+            <tr>
+              <td rowspan="3" class="tdInputText"
+                  style="border: solid 0 #ffffff;border-right-width:1px;">Slant range&nbsp;</td>
+              <td class="tdInputText">min:</td>
+              <td id="BSARInfosRangeMin"></td>
             </tr>
             <tr>
-              <td class="tdInputText">Bistatic angle:</td>
+              <td class="tdInputText">&nbsp;center:</td>
+              <td id="BSARInfosRangeAtSwathCenter"></td>
+            </tr>
+            <tr>
+              <td class="tdInputText">max:</td>
+              <td id="BSARInfosRangeMax"></td>
+            </tr>
+            <!-- Bistatic angle -->
+            <tr>
+              <td colspan="2" class="tdInputText">Bistatic angle:</td>
               <td id="BSARInfosBistaticAngle"></td>
             </tr>
+            <!-- Resolutions -->
             <tr>
-              <td class="tdInputText">Slant range res.:</td>
+              <td colspan="2" class="tdInputText">Slant range res.:</td>
               <td id="BSARInfosSlantRangeRes"></td>
             </tr>
             <tr>
-              <td class="tdInputText">Slant lateral res.:</td>
+              <td colspan="2" class="tdInputText">Slant lateral res.:</td>
               <td id="BSARInfosSlantLateralRes"></td>
             </tr>
             <tr>
-              <td class="tdInputText">Ground range res.:</td>
+              <td colspan="2" class="tdInputText">Ground range res.:</td>
               <td id="BSARInfosGroundRangeRes"></td>
             </tr>
             <tr>
-              <td class="tdInputText">Ground lateral res.:</td>
+              <td colspan="2" class="tdInputText">Ground lateral res.:</td>
               <td id="BSARInfosGroundLateralRes"></td>
             </tr>
             <tr>
-              <td class="tdInputText">Resolution area:</td>
+              <td colspan="2" class="tdInputText">Resolution area:</td>
               <td id="BSARInfosResArea"></td>
             </tr>
             <tr>
-              <td class="tdInputText">Doppler frequency:</td>
+              <td colspan="2" class="tdInputText">Doppler frequency:</td>
               <td id="BSARInfosDopplerFrequency"></td>
             </tr>
             <tr>
-              <td class="tdInputText">Doppler rate:</td>
+              <td colspan="2" class="tdInputText">Doppler rate:</td>
               <td id="BSARInfosDopplerRate"></td>
             </tr>
             <tr>
-              <td class="tdInputText">Integration time:</td>
+              <td colspan="2" class="tdInputText">Integration time:</td>
               <td id="BSARInfosIntegrationTime"></td>
             </tr>
             <tr>
-              <td class="tdInputText">Processed Dop. band.:</td>
+              <td colspan="2" class="tdInputText">Processed Dop. band.:</td>
               <td id="BSARInfosProcessedDopplerBandwidth"></td>
             </tr>
             <tr>
-              <td class="tdInputText">NESZ:</td>
+              <td colspan="2" class="tdInputText">NESZ:</td>
               <td id="BSARInfosNESZ"></td>
             </tr>
           </table>

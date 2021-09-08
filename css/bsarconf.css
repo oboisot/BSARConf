@@ -90,26 +90,24 @@ input[type=text]:valid+span:after {
 	font-size: 14px;
 	top: 0px;
 	width: 350px;
-	height: 240px;
+	height: 300px;
 	z-index: 0;
 	transition: 0.5s;
 	transition-timing-function: ease-in-out;
+	transform: translateY(-300px);
 	/* border: 1px solid white; */
 }
 
 .txInfosDiv {
 	left: calc(100% / 2 - 525px);
-	transform: translateY(-240px);
 }
 
 .rxInfosDiv {
 	left: calc(100% / 2 + 175px);
-	transform: translateY(-240px);
 }
 
 .BSARInfosDiv {
 	left: calc(100% / 2 - 175px);
-	transform: translateY(-240px);
 }
 
 .InfosTable {
@@ -305,7 +303,7 @@ input[type=text]:valid+span:after {
 }
 
 /* ***** TOOLTIP ***** */
-.TooltipButtonBottom {
+.TooltipButtonBottom, .BSARTooltipButton {
 	visibility: hidden;
 	width: 120px;
 	background-color: rgba(0, 0, 0, 0.5);
@@ -321,7 +319,14 @@ input[type=text]:valid+span:after {
 	font-weight: normal;
 }
 
-.TooltipButtonBottom::after {
+.BSARTooltipButton {
+	width: 150px;
+	top: 70px;
+	left: 150px; /* half BSARbutton width */ 
+	margin-left: -75px;
+}
+
+.TooltipButtonBottom::after, .BSARTooltipButton::after {
 	content: "";
 	position: absolute;
 	bottom: 100%;

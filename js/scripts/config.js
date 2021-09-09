@@ -226,13 +226,13 @@ export const Elements = {
             "isoRangeSurfaceUpdate": true
         },
         "siteBeamWidth": {
-            "element": document.getElementById('TxSiteBeamWidth'),
-            "needUpdate": [true, true, false, false, true],
+            "element": document.getElementById('TxSiteBeamWidth'), // render, infos Tx, infos Rx, BSAR infos, plots
+            "needUpdate": [true, true, false, true, true],
             "isoRangeSurfaceUpdate": false
         },
         "aziBeamWidth": {
             "element": document.getElementById('TxAziBeamWidth'),
-            "needUpdate": [true, true, false, false, true],
+            "needUpdate": [true, true, false, true, true],
             "isoRangeSurfaceUpdate": false
         },
         "gain": {
@@ -345,13 +345,13 @@ export const Elements = {
             "isoRangeSurfaceUpdate": true
         },
         "siteBeamWidth": {
-            "element": document.getElementById('RxSiteBeamWidth'),
-            "needUpdate": [true, false, true, false, true],
+            "element": document.getElementById('RxSiteBeamWidth'), // render, infos Tx, infos Rx, BSAR infos, plots
+            "needUpdate": [true, false, true, true, true],
             "isoRangeSurfaceUpdate": false
         },
         "aziBeamWidth": {
             "element": document.getElementById('RxAziBeamWidth'),
-            "needUpdate": [true, false, true, false, true],
+            "needUpdate": [true, false, true, true, true],
             "isoRangeSurfaceUpdate": false
         },
         "gain": {

@@ -289,7 +289,6 @@ function updateSelector( needUpdate ) {
     }
     if ( needUpdate[2] ) {
         updateInfos( RxCarrier, Elements.Rx );
-        updateBSARinfos();
     }
     if ( needUpdate[3] ) {
         updateBSARinfos();
@@ -379,7 +378,6 @@ function updateBSARinfos() {
           dopplerBandwidth = bsar.doppler_bandwidth( dopplerRate, bsar_resolutions.tint ),
           rangeAtSwathCenter = bsar.bistatic_range( TP, RP ),
           rangeMinMax = bsar.bistatic_range_minmax( TP, RP, RxCarrier.footprintPoints );
-        //   rangeAtSwathCenter = TxCarrier.getRangeAtSwathCenter() + RxCarrier.getRangeAtSwathCenter();
     // Bistatic angle
     Elements.bsarInfos.bistaticAngle.innerHTML = `${bistatic_angle.toFixed(3)} °`;
     // Slant range
@@ -442,6 +440,17 @@ function updateBSARinfos() {
     Elements.bsarInfos.processedDopplerBandwidth.innerHTML = `${dopplerBandwidth.toFixed(3)} Hz`;
     // NESZ
     Elements.bsarInfos.nesz.innerHTML = `${(10*Math.log10(nesz)).toFixed(3)} dBm&sup2/m&sup2`;
+
+    // Ambguities
+    const PRImin = (rangeMinMax.range_max - rangeMinMax.range_min) / bsar.C0 + BSARConfig.Tx.pulseDuration.value * 1e-6,
+          PRFmax = 1 / PRImin,
+          PRFmin = Math.abs( dopplerRate ) * RxCarrier.getIlluminationTime(),
+          PRImax = 1 / PRFmin;
+    console.log("BSAR ambiguities :");
+    console.log("PRImin = ", PRImin*1e6, " µs");
+    console.log("PRImax = ", PRImax*1e6, " µs");
+    console.log("PRFmin = ", PRFmin*1e-3, " kHz");
+    console.log("PRFmax = ", PRFmax*1e-3, " kHz");
 }
 
 function updatePlots() {

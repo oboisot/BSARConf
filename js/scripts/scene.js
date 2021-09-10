@@ -441,11 +441,21 @@ function updateBSARinfos() {
     // NESZ
     Elements.bsarInfos.nesz.innerHTML = `${(10*Math.log10(nesz)).toFixed(3)} dBm&sup2/m&sup2`;
 
-    // Ambguities
+    // Ambiguities
+    const TxIlluminationTime = TxCarrier.getIlluminationTime(),
+          RxIlluminationTime = RxCarrier.getIlluminationTime();
+    let illuminationTime = RxIlluminationTime; // In case of a fixed transmitter or receiver
+    if ( TxIlluminationTime ) {
+        if ( RxIlluminationTime ){
+            illuminationTime = Math.min( TxIlluminationTime, RxIlluminationTime );
+        } else {
+            illuminationTime = TxIlluminationTime;
+        }
+    }
     const PRImin = (rangeMinMax.range_max - rangeMinMax.range_min) / bsar.C0 + BSARConfig.Tx.pulseDuration.value * 1e-6,
           PRFmax = 1 / PRImin,
-          PRFmin = Math.abs( dopplerRate ) * RxCarrier.getIlluminationTime(),
-          PRImax = 1 / PRFmin;
+          PRFmin = Math.abs( dopplerRate ) * illuminationTime,
+          PRImax = 1 / PRFmin;    
     console.log("BSAR ambiguities :");
     console.log("PRImin = ", PRImin*1e6, " µs");
     console.log("PRImax = ", PRImax*1e6, " µs");

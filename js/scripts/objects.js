@@ -11,26 +11,33 @@ class Carrier {
                 incidence=45, ant_squint=0, ground_squint=0,
                 sight=true,
                 leverx=0, levery=0, leverz=0,
-                siteBeamWidth=16, aziBeamWidth=16,                
+                elvBeamWidth=16, aziBeamWidth=16,                
                 coneLength=1e9, helpers=true) {
         // *****
-        this.carrier     = new THREE.Mesh();      // Carrier referential (relative to World)
-        this.antenna     = new THREE.Mesh();      // Antenna referential (relative to carrier)
-        this.beam        = new THREE.Mesh();      // Antenna beam (relative to antenna referential)
-        this.footprint   = new THREE.Line();      // For plotting beam footprint
-        this.footprintPoints = [];
-        this._beamRadiusY = 0.0;
-        this._beamRadiusZ = 0.0;
-        this._beamOriginWorld = new THREE.Vector3(); // The antenna position in World coordinates
-        this._beamAxisWorld = new THREE.Vector3();   // In local referential at beginning
-        this._footprint_size = 5000;
-        //
+        this.carrier               = new THREE.Mesh(); // Carrier referential (relative to World)
+        this.antenna               = new THREE.Mesh(); // Antenna referential (relative to carrier)
+        this.beam                  = new THREE.Mesh(); // Antenna beam (relative to antenna referential)
+        this.footprint             = new THREE.Line(); // For plotting beam footprint
+        this.elevationAngleLine    = new THREE.Line(); // Antenna elevation angle line plot
+        this.azimuthAngleLine      = new THREE.Line(); // Antenna azimut angle line plot
         this.carrierVelocityVector = new THREE.ArrowHelper();  // Velocity vector orientated along y-axis of carrier
+        this.footprintPoints = []; // keep footprint points for later computations
         // "private" properties
-        this._zero  = new THREE.Vector3( 0, 0, 0 ); // Lever arm
+            // Basic vectors
+        this._zero  = new THREE.Vector3( 0, 0, 0 );
         this._xAxis = new THREE.Vector3( 1, 0, 0 );
         this._yAxis = new THREE.Vector3( 0, 1, 0 );
         this._zAxis = new THREE.Vector3( 0, 0, 1 );
+            // Antenna beam parameters
+        this._beamRadiusY     = 0.0;
+        this._beamRadiusZ     = 0.0;
+        this._beamOriginWorld = new THREE.Vector3(); // The antenna position in World coordinates
+        this._beamAxisWorld   = new THREE.Vector3(); // In local referential at beginning
+            // Footprint constants parameters
+        this._footprint_size             = 5001; // must be a multiple of 4 for antenna angle lines computation (see 'this._antenna_angles_lines_index')
+        this._footprint_tube_size        = 200;
+        this._antenna_angles_lines_index = 1250;
+        this._tubeLinesRadius            = 1; 
         // ***** Create a new carrier *****
         this._altitude      = altitude;
         this._velocity      = velocity;
@@ -42,7 +49,7 @@ class Carrier {
         this._ground_squint = THREE.MathUtils.degToRad( ground_squint );
         this._sight         = sight;
         this._lever         = new THREE.Vector3( leverx, levery, leverz );
-        this._siteBeamWidth = THREE.MathUtils.degToRad( siteBeamWidth );
+        this._elvBeamWidth  = THREE.MathUtils.degToRad( elvBeamWidth );
         this._aziBeamWidth  = THREE.MathUtils.degToRad( aziBeamWidth );
         this._coneLength    = coneLength;
         this._helpers       = helpers;
@@ -97,24 +104,25 @@ class Carrier {
         if ( helpers ) {
             this.antenna.add( new THREE.AxesHelper( 100 ) );
         }
-        this.antenna.name = "antenna"; // For getting getObjectByName
+        this.antenna.name = "antenna"; // For getObjectByName
 
         // ***** Antenna beam *****
         this._beamRadiusY = this._coneLength * Math.tan( 0.5 * this._aziBeamWidth );
-        this._beamRadiusZ = this._coneLength * Math.tan( 0.5 * this._siteBeamWidth );
+        this._beamRadiusZ = this._coneLength * Math.tan( 0.5 * this._elvBeamWidth );
         const coneGeometry = new THREE.ConeGeometry( 1, this._coneLength, 128, 1, true );
-        coneGeometry.translate( 0, -0.5 * this._coneLength, 0);       // Define Cone Vertex as origin
-        coneGeometry.rotateZ( HALF_PI );                  // Define x-axis as cone axis
-        coneGeometry.scale( 1, this._beamRadiusY , this._beamRadiusZ );  // In case of elliptic cone
-        const coneMaterial = new THREE.MeshLambertMaterial({// More efficient than : new THREE.MeshPhongMaterial({
+        coneGeometry.translate( 0, -0.5 * this._coneLength, 0);         // Define Cone Vertex as origin
+        coneGeometry.rotateZ( HALF_PI );                                // Define x-axis as cone axis
+        coneGeometry.scale( 1, this._beamRadiusY , this._beamRadiusZ ); // In case of elliptic cone
+        const coneMaterial = new THREE.MeshBasicMaterial({
             color: 0x000000,
-            opacity: 0.25,
+            opacity: 0.2,
             transparent: true,
             side: THREE.DoubleSide
         });
         this.beam.geometry = coneGeometry;
         this.beam.material = coneMaterial;
-        this.beam.name = "beam"; // For getting getObjectByName
+        this.beam.visible = true;
+        this.beam.name = "beam"; // For getObjectByName
 
         // Adding beam to antenna to carrier
         this.carrier.add( this.antenna.add( this.beam ) );
@@ -122,9 +130,26 @@ class Carrier {
         // Position carrier to have swath center at World origin
         this.carrierPosForSwathCenterAtWorldOrigin();
 
+        // ***** Footprint *****
         // Footprint (NOTE : Footprint is added to the World referential)
         this.footprint.geometry = new THREE.BufferGeometry();
-        this.footprint.material = new THREE.LineBasicMaterial({ color: 0x000000 });
+        this.footprint.material = new THREE.LineBasicMaterial();
+        this.footprint.visible = true;
+        this.footprint.name = "footprint";       
+        
+        // ***** Elevation angle line plot *****
+        this.elevationAngleLine.geometry = new THREE.BufferGeometry();
+        this.elevationAngleLine.material = new THREE.LineBasicMaterial({ color: 0x0000ff });
+        this.elevationAngleLine.visible = true;
+        this.elevationAngleLine.name = "elevationAngleLine";
+
+        // ***** Elevation angle line plot *****
+        this.azimuthAngleLine.geometry = new THREE.BufferGeometry();
+        this.azimuthAngleLine.material = new THREE.LineBasicMaterial({ color: 0x00ff00 });
+        this.azimuthAngleLine.visible = true;
+        this.azimuthAngleLine.name = "azimuthAngleLine";
+        
+        // Footprint update
         this.updateFootprint();
     }
 
@@ -373,17 +398,17 @@ class Carrier {
         this.updateFootprint();
     }
 
-    setSiteBeamWidth(site) {
-        this._siteBeamWidth = THREE.MathUtils.degToRad( site );
+    setElevationBeamWidth(elv) {
+        this._elvBeamWidth = THREE.MathUtils.degToRad( elv );
         const _beamRadiusZ = this._beamRadiusZ; // Get old Z radius
-        this._beamRadiusZ = this._coneLength * Math.tan( 0.5 * this._siteBeamWidth ); // Compute new Z radius
+        this._beamRadiusZ = this._coneLength * Math.tan( 0.5 * this._elvBeamWidth ); // Compute new Z radius
         // inverse scale factor thus apply new scale factor
         this.beam.geometry.scale(1, 1, this._beamRadiusZ / _beamRadiusZ);
         this.carrierPosForSwathCenterAtWorldOrigin();
         this.updateFootprint();
     }
 
-    setAziBeamWidth(azimut) {
+    setAzimuthBeamWidth(azimut) {
         this._aziBeamWidth = THREE.MathUtils.degToRad( azimut );
         const _beamRadiusY = this._beamRadiusY; // Get old Y radius
         this._beamRadiusY = this._coneLength * Math.tan( 0.5 * this._aziBeamWidth ); // Compute new Y radius
@@ -437,11 +462,11 @@ class Carrier {
         if ( str_value === 'leverZ' ) {
             this.setAntennaLeverZ( value );
         }
-        if ( str_value === 'siteBeamWidth' ) {
-            this.setSiteBeamWidth( value );
+        if ( str_value === 'elvBeamWidth' ) {
+            this.setElevationBeamWidth( value );
         }
         if ( str_value === 'aziBeamWidth' ) {
-            this.setAziBeamWidth( value );
+            this.setAzimuthBeamWidth( value );
         }
     }
 
@@ -449,11 +474,15 @@ class Carrier {
     addToScene(scene) {
         scene.add( this.carrier );
         scene.add( this.footprint );
+        scene.add( this.elevationAngleLine );
+        scene.add( this.azimuthAngleLine );
     }
 
     removeFromScene(scene) {
         scene.remove( this.carrier );
         scene.remove( this.footprint );
+        scene.remove( this.elevationAngleLine );
+        scene.remove( this.azimuthAngleLine );
     }
 
     carrierPosForSwathCenterAtWorldOrigin() {
@@ -481,7 +510,7 @@ class Carrier {
         const m = new THREE.Matrix3().setFromMatrix4( this.antenna.matrixWorld ),
               minv = m.clone().transpose(),
               ty = Math.tan( 0.5 * this._aziBeamWidth ),
-              tz = Math.tan( 0.5 * this._siteBeamWidth );
+              tz = Math.tan( 0.5 * this._elvBeamWidth );
         // Get plane parameters in Cone referential:
         // Point of plane: AP = OP - OA
         // normal of plane: n = minv * z (here z is the plane normal)
@@ -508,7 +537,6 @@ class Carrier {
                   c = Math.cos( t ),
                   s = Math.sin( t ),
                   f = d / (n.x + n.y * ty * c + n.z * tz * s);
-            // const point  = new THREE.Vector3( f, ty * c * f, tz * s * f ).applyMatrix3( m ).add( OA );
             const point  = new THREE.Vector3( f, ty * c * f, tz * s * f )
                                .applyMatrix3( m )
                                .add( OA )
@@ -526,8 +554,18 @@ class Carrier {
                 maxDist = dist;
                 indexMaxDist = i;
             }
-            //
         }
+        /* Calcul des points au sol des ouvertures antennes 
+           Ils correspondent au 4 quadrants dans l'intersection cone/plan dans le repère
+           du cone.
+        */
+        this.elevationAngleLine.geometry.setFromPoints( [this.footprintPoints[this._antenna_angles_lines_index], // footprintPoints at pi/2
+                                                         this.footprintPoints[3*this._antenna_angles_lines_index]] ); // footprintPoints at 3pi/2
+        this.elevationAngleLine.geometry.verticesNeedUpdate = true;
+        this.azimuthAngleLine.geometry.setFromPoints( [this.footprintPoints[0],                                     // footprintPoints at 0
+                                                       this.footprintPoints[2*this._antenna_angles_lines_index]] ); // footprintPoints at pi
+        this.azimuthAngleLine.geometry.verticesNeedUpdate = true;
+        /* ================================================ */
         // Set new geometry points of the footprint
         this.footprint.geometry.setFromPoints( this.footprintPoints );
         this.footprint.geometry.verticesNeedUpdate = true;
@@ -573,7 +611,6 @@ class Carrier {
             const velocityVector = this.getCarrierVelocityVector(),                  
                   vx = velocityVector.x,
                   vy = velocityVector.y;
-                //   intersections = [new THREE.Vector3(), new THREE.Vector3()];
             let count = 0; // Number of intersection points
             for (let i = 0 ; i < this._footprint_size - 1 ; ++i) {
                 const e1x = this.footprintPoints[i].x,   // first footprint point
@@ -607,7 +644,7 @@ class IsoRangeSurface {
         this.matrixWorld = new THREE.Matrix4(); // set the transformation matrix : rotation: from (u, v, w) ; translation: from OE (centerPosition) ; scale: from a, b
         // Adding Geometry and Material
         this.isoRangeSurface.geometry = new THREE.SphereBufferGeometry( 1, 128, 128 );
-        this.isoRangeSurface.material = new THREE.MeshLambertMaterial({
+        this.isoRangeSurface.material = new THREE.MeshBasicMaterial({
             color: 0xd62728,
             opacity: 0.15,
             transparent: true,

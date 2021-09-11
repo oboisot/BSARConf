@@ -73,7 +73,7 @@ function initScene() {
     scene.add( new THREE.AmbientLight( 0xffffff ) );
 
     // ***** Reference plane *****
-    worldPlane.geometry = new THREE.PlaneGeometry( planeSize, planeSize, 1, 1 ); // new THREE.PlaneBufferGeometry( planeSize, planeSize, 1, 1 );
+    worldPlane.geometry = new THREE.PlaneBufferGeometry( planeSize, planeSize, 1, 1 );
     worldPlane.material = new THREE.MeshPhongMaterial({ color: 0x006400 });
     worldPlane.translateZ( -0.1 ); // For better rendering
     scene.add( worldPlane );
@@ -93,7 +93,7 @@ function initScene() {
         BSARConfig.Tx.leverX.value,
         BSARConfig.Tx.leverY.value,
         BSARConfig.Tx.leverZ.value,
-        BSARConfig.Tx.siteBeamWidth.value,
+        BSARConfig.Tx.elvBeamWidth.value,
         BSARConfig.Tx.aziBeamWidth.value
     );
     TxCarrier.setBeamColor(0xffffff);
@@ -112,9 +112,10 @@ function initScene() {
         BSARConfig.Rx.leverX.value,
         BSARConfig.Rx.leverY.value,
         BSARConfig.Rx.leverZ.value,
-        BSARConfig.Rx.siteBeamWidth.value,
+        BSARConfig.Rx.elvBeamWidth.value,
         BSARConfig.Rx.aziBeamWidth.value
     );
+    RxCarrier.setBeamColor(0x000000);
 
     // Add carriers to scene
     RxCarrier.addToScene( scene );

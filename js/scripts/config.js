@@ -50,7 +50,7 @@ export const BSARConfig =
             "value": 0,
             "unit": "m"
         },
-        "siteBeamWidth": {
+        "elvBeamWidth": {
             "value": 20,
             "unit": "°"
         },
@@ -136,7 +136,7 @@ export const BSARConfig =
             "value": 0,
             "unit": "m"
         },
-        "siteBeamWidth": {
+        "elvBeamWidth": {
             "value": 16,
             "unit": "°"
         },
@@ -225,7 +225,7 @@ export const Elements = {
             "needUpdate": [true, true, false, true, true],
             "isoRangeSurfaceUpdate": true
         },
-        "siteBeamWidth": {
+        "elvBeamWidth": {
             "element": document.getElementById('TxSiteBeamWidth'), // render, infos Tx, infos Rx, BSAR infos, plots
             "needUpdate": [true, true, false, true, true],
             "isoRangeSurfaceUpdate": false
@@ -344,7 +344,7 @@ export const Elements = {
             "needUpdate": [true, false, true, true, true],
             "isoRangeSurfaceUpdate": true
         },
-        "siteBeamWidth": {
+        "elvBeamWidth": {
             "element": document.getElementById('RxSiteBeamWidth'), // render, infos Tx, infos Rx, BSAR infos, plots
             "needUpdate": [true, false, true, true, true],
             "isoRangeSurfaceUpdate": false

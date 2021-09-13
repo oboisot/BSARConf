@@ -236,12 +236,12 @@ function drawGAFAmp( TxCarrier, RxCarrier, fem, bandwidth, tint, plot_div, size=
     }
 
     let data = [
-        { // GAF amplitude
+        { // GAF intensity
             x: xaxis,
             y: xaxis,
             z: gaf_db,
             type: 'contour',
-            name: 'GAF amplitude',
+            name: 'GAF intensity',
             colorscale: 'Greys',
             reversescale: false,
             zmin: -30,
@@ -293,7 +293,7 @@ function drawGAFAmp( TxCarrier, RxCarrier, fem, bandwidth, tint, plot_div, size=
 
     let layout = {
         title: {
-            text: "Generalized Ambiguity Function amplitude",
+            text: "Generalized Ambiguity Function intensity",
             font: {
                 size: 12
             }

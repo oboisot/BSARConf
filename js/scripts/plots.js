@@ -368,7 +368,7 @@ function drawGAFAmp( TxCarrier, RxCarrier, fem, bandwidth, tint, plot_div, size=
                 Plotly.downloadImage(plot_div,
                     {
                         format: 'png', // one of png, svg, jpeg, webp
-                        filename: 'gaf_amplitude',
+                        filename: 'gaf_intensity',
                         height: 500,
                         width: 563.75,
                         scale: 1.5 // Multiply title/legend/axis/canvas sizes by this factor

@@ -226,7 +226,7 @@ export const Elements = {
             "isoRangeSurfaceUpdate": true
         },
         "elvBeamWidth": {
-            "element": document.getElementById('TxSiteBeamWidth'), // render, infos Tx, infos Rx, BSAR infos, plots
+            "element": document.getElementById('TxElvBeamWidth'), // render, infos Tx, infos Rx, BSAR infos, plots
             "needUpdate": [true, true, false, true, true],
             "isoRangeSurfaceUpdate": false
         },
@@ -345,7 +345,7 @@ export const Elements = {
             "isoRangeSurfaceUpdate": true
         },
         "elvBeamWidth": {
-            "element": document.getElementById('RxSiteBeamWidth'), // render, infos Tx, infos Rx, BSAR infos, plots
+            "element": document.getElementById('RxElvBeamWidth'), // render, infos Tx, infos Rx, BSAR infos, plots
             "needUpdate": [true, false, true, true, true],
             "isoRangeSurfaceUpdate": false
         },

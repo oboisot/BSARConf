@@ -246,25 +246,25 @@
               </tr>
               <!--- 3dB APERTURE -->
               <tr>
-                <th colspan="2" class="thInputText">Beam width [-3dB]</th>
+                <th colspan="2" class="thInputText">Beam width [half-power]</th>
               </tr>
-              <!-- Site -->
+              <!-- Elevation -->
               <tr>
                 <td class="tdInputText">
-                  <label for="TxSiteBeamWidth">Site:</label>
+                  <label for="TxElvBeamWidth">Elevation:</label>
                 </td>
                 <td>
-                  <input type="number" id="TxSiteBeamWidth" name="TxSiteBeamWidth"
+                  <input type="number" id="TxElvBeamWidth" name="TxElvBeamWidth"
                         placeholder="0.001 - 89°"
                         min="0.001" max="89" step="any" required>
                   <span></span>
                   <span>°</span>
                 </td>
               </tr>
-              <!-- Site -->
+              <!-- Azimuth -->
               <tr>
                 <td class="tdInputText">
-                  <label for="TxAziBeamWidth">Azimut:</label>
+                  <label for="TxAziBeamWidth">Azimuth:</label>
                 </td>
                 <td>
                   <input type="number" id="TxAziBeamWidth" name="TxAziBeamWidth"
@@ -285,10 +285,10 @@
                 </td>
                 <td>
                   <input type="number" id="TxGainTx" name="TxGainTx"
-                        placeholder="0 - 100 dB"
+                        placeholder="0 - 100 dBi"
                         min="0" max="100" step="any" >
                   <span></span>
-                  <span>dB</span>
+                  <span>dBi</span>
                 </td>
               </tr>
             </table>
@@ -579,25 +579,25 @@
               </tr>
               <!--- 3dB APERTURE -->
               <tr>
-                <th colspan="2" class="thInputText">Beam width [-3dB]</th>
+                <th colspan="2" class="thInputText">Beam width [half-power]</th>
               </tr>
-              <!-- Site -->
+              <!-- Elevation -->
               <tr>
                 <td class="tdInputText">
-                  <label for="RxSiteBeamWidth">Site:</label>
+                  <label for="RxElvBeamWidth">Elevation:</label>
                 </td>
                 <td>
-                  <input type="number" id="RxSiteBeamWidth" name="RxSiteBeamWidth"
+                  <input type="number" id="RxElvBeamWidth" name="RxElvBeamWidth"
                         placeholder="0.001 - 89°"
                         min="0.001" max="89" step="any"  value="16" required>
                   <span></span>
                   <span>°</span>
                 </td>
               </tr>
-              <!-- Site -->
+              <!-- Azimuth -->
               <tr>
                 <td class="tdInputText">
-                  <label for="RxAziBeamWidth">Azimut:</label>
+                  <label for="RxAziBeamWidth">Azimuth:</label>
                 </td>
                 <td>
                   <input type="number" id="RxAziBeamWidth" name="RxAziBeamWidth"
@@ -618,10 +618,10 @@
                 </td>
                 <td>
                   <input type="number" id="RxGainRx" name="RxGainRx"
-                        placeholder="0 - 100 dB"
+                        placeholder="0 - 100 dBi"
                         min="0" max="100" step="any"  value="20" required>
                   <span></span>
-                  <span>dB</span>
+                  <span>dBi</span>
                 </td>
               </tr>
             </table>
@@ -681,7 +681,7 @@
         <div id="TxInfos" class="txInfosDiv">
           <table id="TxInfosTable" class="InfosTable" cellspacing="0" cellpadding="1">
             <tr>
-              <th colspan="3" class="thInputText">Tx Infos [-3dB]</th>
+              <th colspan="3" class="thInputText">Tx Infos [half-power]</th>
             </tr>
             <!-- Slant range -->
             <tr>
@@ -741,7 +741,7 @@
         <div id="RxInfos" class="rxInfosDiv">
           <table id="RxInfosTable" class="InfosTable" cellspacing="0" cellpadding="1">
             <tr>
-              <th colspan="3" class="thInputText">Rx Infos [-3dB]</th>
+              <th colspan="3" class="thInputText">Rx Infos [half-power]</th>
             </tr>
             <!-- Slant range -->
             <tr>
@@ -801,7 +801,7 @@
         <div id="BSARInfos" class="BSARInfosDiv" cellspacing="0" cellpadding="1">
           <table id="BSARInfosTable" class="InfosTable">
             <tr>
-              <th colspan="3" class="thInputText">BSAR Infos (center) [-3dB]</th>
+              <th colspan="3" class="thInputText">BSAR Infos (center) [half-power]</th>
             </tr>
             <!-- Slant range -->
             <tr>

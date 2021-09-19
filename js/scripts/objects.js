@@ -34,10 +34,8 @@ class Carrier {
         this._beamOriginWorld = new THREE.Vector3(); // The antenna position in World coordinates
         this._beamAxisWorld   = new THREE.Vector3(); // In local referential at beginning
             // Footprint constants parameters
-        this._footprint_size             = 5001; // must be a multiple of 4 for antenna angle lines computation (see 'this._antenna_angles_lines_index')
-        this._footprint_tube_size        = 200;
-        this._antenna_angles_lines_index = 1250;
-        this._tubeLinesRadius            = 1; 
+        this._footprint_size             = 2501; // must be a multiple of 4 for antenna angle lines computation (see 'this._antenna_angles_lines_index')
+        this._antenna_angles_lines_index = 625;
         // ***** Create a new carrier *****
         this._altitude      = altitude;
         this._velocity      = velocity;
@@ -83,7 +81,7 @@ class Carrier {
             this._yAxis,
             this._zero,
             5 * this._velocity,
-            0x5B797E,
+            0xffff00,
             0.5 * this._velocity,
             0.5 * this._velocity
         );
@@ -115,7 +113,7 @@ class Carrier {
         coneGeometry.scale( 1, this._beamRadiusY , this._beamRadiusZ ); // In case of elliptic cone
         const coneMaterial = new THREE.MeshBasicMaterial({
             color: 0x000000,
-            opacity: 0.2,
+            opacity: 0.1,
             transparent: true,
             side: THREE.DoubleSide
         });

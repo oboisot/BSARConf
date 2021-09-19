@@ -3,13 +3,15 @@ import { OrbitControls } from "../three/OrbitControls.js";
 import { Carrier, Axes, IsoRangeSurface } from "./objects.js";
 
 import { BSARConfig, Elements } from "./config.js";
-import { drawIsoRangeDop, drawGAFAmp } from "./plots.js";
+import { drawIsoRangeDop, drawGAFIntensity } from "./plots.js";
 import * as bsar from "./bsarfun.js";
 // ***** Configurator Parameters *****
 
 // ***** THREE parameters *****
 const planeSize = 30000; // m
 const worldPlane = new THREE.Mesh();
+const isoRangeDopPlane = new THREE.Mesh();
+const textureLoader = new THREE.TextureLoader();
 // Global objects
 let renderer, camera, scene, controls,
     TxCarrier, RxCarrier,
@@ -20,7 +22,8 @@ let renderer, camera, scene, controls,
 const sceneCanvas      = document.getElementById('sceneCanvas');
 // ***** PLOTS ELEMENTS *****
 const plotIsoRangeDop  = document.getElementById('plotIsoRangeDop'),
-      plotGAFAmp       = document.getElementById('plotGAFAmp');
+      plotGAFAmp       = document.getElementById('plotGAFAmp'),
+      isoRangeDopPlaneTexture = document.getElementById('isoRangeDopPlaneTexture');
 // ***** LOADING ELEMENTS *****
 const loadingContainer = document.getElementById('loadingContainer');
 
@@ -74,9 +77,12 @@ function initScene() {
 
     // ***** Reference plane *****
     worldPlane.geometry = new THREE.PlaneBufferGeometry( planeSize, planeSize, 1, 1 );
-    worldPlane.material = new THREE.MeshPhongMaterial({ color: 0x006400 });
+    worldPlane.material = new THREE.MeshBasicMaterial({ color: 0x8b8989 }); // 0x006400
     worldPlane.translateZ( -0.1 ); // For better rendering
     scene.add( worldPlane );
+
+    // ***** Iso-Range-Dop plane *****
+    scene.add( isoRangeDopPlane );
 
     // ***** Initialisation of TX and RX Carriers *****
     // ***** TX *****
@@ -131,7 +137,7 @@ function initScene() {
     axes.origin.translateZ( 0.1 ); // For better rendering
     axes.addToScene( scene );
 
-    const gridHelper = new THREE.GridHelper( planeSize, 150 );
+    const gridHelper = new THREE.GridHelper( planeSize, 60, 0x444444, 0x536878 );
     gridHelper.rotateX( 0.5 * Math.PI );
     scene.add( gridHelper );
 
@@ -465,13 +471,26 @@ function updateBSARinfos() {
 }
 
 function updatePlots() {
-    drawIsoRangeDop( TxCarrier, RxCarrier,
-                     BSARConfig.Tx.centerFrequency.value * 1e9,
-                     plotIsoRangeDop );
-    drawGAFAmp( TxCarrier, RxCarrier,
+    // GAF intensity
+    drawGAFIntensity( TxCarrier, RxCarrier,
                 BSARConfig.Tx.centerFrequency.value * 1e9,
                 BSARConfig.Tx.bandwidth.value * 1e6,
                 BSARConfig.Rx.integrationTime.value, plotGAFAmp );
+    drawIsoRangeDop( TxCarrier, RxCarrier,
+                     BSARConfig.Tx.centerFrequency.value * 1e9,
+                     plotIsoRangeDop, isoRangeDopPlaneTexture ).then(
+        ( obj ) => { // Update isoRangeDopPlane and texture
+            textureLoader.load(
+                obj.dataURL,
+                // onload callback
+                ( texture ) => {
+                    isoRangeDopPlane.geometry = new THREE.PlaneBufferGeometry( obj.planeSize, obj.planeSize, 1, 1 );
+                    isoRangeDopPlane.material = new THREE.MeshBasicMaterial({map: texture});
+                    requestRenderIfNotRequested(); // ensure that texture is rendered when loading is over
+                }
+            );
+        }
+    );
 }
 
 // *******************

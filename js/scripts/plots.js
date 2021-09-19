@@ -1,12 +1,12 @@
 import * as THREE from "../three/three.module.js";
 import * as bsar from "./bsarfun.js";
 
-export { drawIsoRangeDop, drawGAFAmp };
+export { drawIsoRangeDop, drawGAFIntensity };
 
 // *******************************************
 // ***** ISO-RANGE and ISO-DOPPLER PLOTS *****
 // *******************************************
-function drawIsoRangeDop( TxCarrier, RxCarrier, fem, plot_div, size=151 ) {
+function drawIsoRangeDop( TxCarrier, RxCarrier, fem, plot_div, texture_div, size=151 ) {
     const lem = bsar.C0 / fem;
     // bistatic range and doppler frequency calculation
     const xmax = 2.0 * RxCarrier.getFootprintAbsMaxCoord();    
@@ -46,6 +46,9 @@ function drawIsoRangeDop( TxCarrier, RxCarrier, fem, plot_div, size=151 ) {
         footprinty[i] = footprint[i].y;
     }
 
+    // **********************************
+    // ***** PLOTTING ISO-RANGE/DOP *****
+    // **********************************
     let data = [
         { // iso-Range
             x: xaxis,
@@ -121,7 +124,7 @@ function drawIsoRangeDop( TxCarrier, RxCarrier, fem, plot_div, size=151 ) {
         },
         showlegend: false,
         hovermode: false
-    }
+    };
 
     let config = {
         modeBarButtonsToRemove: [
@@ -189,15 +192,94 @@ function drawIsoRangeDop( TxCarrier, RxCarrier, fem, plot_div, size=151 ) {
         displaylogo: false,
         scrollZoom: true,
         showLink: false
-    }
+    };
+    // Plotly.react( plot_div, data, layout, config ); // plot sometimes doesn't display correctly
     Plotly.newPlot( plot_div, data, layout, config );
+
+    // **************************************************
+    // ***** COMPUTING TEXTURE FOR isoRangeDopPlane *****
+    // **************************************************
+    data = [
+        { // iso-Range
+            x: xaxis,
+            y: xaxis,
+            z: bistatic_range,
+            type: 'contour',
+            name: 'iso-Range',
+            line: {
+                width: 2,
+                color: '#d62728'
+            },
+            contours: {
+                coloring: 'none',
+                showlabels: true,
+            },
+            autocontour: true,
+            ncontours: 50,
+            showscale: false
+        },
+        { // iso-Doppler
+            x: xaxis,
+            y: xaxis,
+            z: doppler_freq,
+            type: 'contour',
+            name: 'iso-Doppler',
+            line: {
+                width: 2,
+                color: '#1f77b4'
+            },
+            contours: {
+                coloring: 'none',
+                showlabels: true,
+            },
+            autocontour: true,
+            ncontours: 50,
+            showscale: false
+        }
+    ];
+    layout = {
+        paper_bgcolor: "#8b8989",
+        plot_bgcolor: "#8b8989",
+        // paper_bgcolor: "#bababa",
+        // plot_bgcolor: "#bababa",
+        margin: {l: 0, r: 0, t: 0, b: 0},
+        xaxis: {
+            showgrid: false,
+            zeroline: false,
+            showline: false
+        },
+        yaxis: {
+            scaleanchor: 'x',
+            scaleratio: 1,
+            showgrid: false,
+            zeroline: false,
+            showline: false
+        },
+        showlegend: false,
+        hovermode: false
+    };
+    config = {
+        displayModeBar: false,
+        displaylogo: false,
+        scrollZoom: false,
+        showLink: false
+    };
+    Plotly.react( texture_div, data, layout, config );
+    // return a Promise with planeSize and texture as dataURL
+    return Plotly.toImage( texture_div, {format: 'png', width: 1920, height: 1920 } ).then(
+        ( dataURL ) => {
+            return {
+                planeSize: 2 * xaxis[xaxis.length - 1], // 2 * xmax
+                dataURL: dataURL
+            }
+        });
 }
 
 
 // *******************************
 // ***** GAF AMPLITUDE PLOTS *****
 // *******************************
-function drawGAFAmp( TxCarrier, RxCarrier, fem, bandwidth, tint, plot_div, size=151 ) {
+function drawGAFIntensity( TxCarrier, RxCarrier, fem, bandwidth, tint, plot_div, size=151 ) {
     const lem = bsar.C0 / fem;
     const TP = TxCarrier.getAntennaPosition().negate(),
           RP = RxCarrier.getAntennaPosition().negate(),
@@ -313,6 +395,7 @@ function drawGAFAmp( TxCarrier, RxCarrier, fem, bandwidth, tint, plot_div, size=
             scaleanchor: 'x',
             scaleratio: 1
         },
+        hovermode: false
     }
 
     let config = {
@@ -386,6 +469,6 @@ function drawGAFAmp( TxCarrier, RxCarrier, fem, bandwidth, tint, plot_div, size=
         scrollZoom: true,
         showLink: false
     }
-    Plotly.newPlot( plot_div, data, layout, config );
+    Plotly.react( plot_div, data, layout, config );
 }
 

@@ -496,6 +496,38 @@ function updatePlots() {
 // *******************
 // ***** BUTTONS *****
 // *******************
+// ***** TxToRx Button *****
+const TxToRxButton = document.getElementById('TxToRxButton');
+TxToRxButton.onclick = () => {
+    const tx_conf = BSARConfig.Tx,
+          rx_conf = BSARConfig.Rx,
+          rx_elmts = Elements.Rx;
+    for ( const key in tx_conf ) {
+        if ( rx_conf.hasOwnProperty(key) ) { // We loop only on common properties
+            if ( key === 'sight') {
+                const oldvalue = rx_conf.sight.value,
+                      newvalue = tx_conf.sight.value;                
+                if ( newvalue != oldvalue ){
+                    rx_elmts.sight.element.checked = newvalue;
+                    rx_conf.sight.value = newvalue;                        
+                    RxCarrier.setAntennaSight( newvalue );
+                }
+            } else {
+                const oldvalue = rx_conf[key].value,
+                      newvalue = tx_conf[key].value;
+                if ( newvalue != oldvalue ) {
+                    rx_elmts[key].element.value = newvalue;
+                    rx_conf[key].value = newvalue;
+                    RxCarrier.setValueSelector( key, newvalue );
+                }
+            }
+        }
+    }
+    // Update of all scene, infos and plots
+    computeIsoRangeSurface( true );
+    updateSelector( [true, true, true, true, true] );
+}
+
 // ***** Screenshot Button *****
 const ScreenshotButton = document.getElementById('ScreenshotButton');
 ScreenshotButton.onclick = () => {
@@ -696,17 +728,6 @@ function parseLoadConfig( config ) {
     // Update of all scene, infos and plots
     computeIsoRangeSurface( true );
     updateSelector( [true, true, true, true, true] );    
-}
-
-// ***** Process Button *****
-const ProcessButton = document.getElementById('ProcessButton');
-ProcessButton.onclick = () => {
-    loadingContainer.innerHTML = "Processing<br>report...";
-    loadingContainer.style['display'] = 'flex';
-    setTimeout(()=>{
-        loadingContainer.style['display'] = 'none';
-        loadingContainer.innerHTML = "Loading...";
-    }, 2000 );
 }
 
 // ***** Documentation Button *****

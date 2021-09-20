@@ -168,7 +168,7 @@ input[type=text]:valid+span:after {
 	width: 300px;
 }
 
-#BSARbuttonImg {
+.BSARbuttonImg {
 	filter: invert(100%);
 	transform: rotate(90deg);
 	transition: 0.5s;
@@ -258,6 +258,14 @@ input[type=text]:valid+span:after {
 	background-color: transparent;
 }
 
+.TxtoRxIcon {
+	background-image: url("../img/icons/txtorxlogo.svg");
+}
+
+#TxToRxButton:hover div {
+	background-image: url("../img/icons/txtorxhoveredlogo.svg");
+}
+
 .LoadIcon {
 	background-image: url("../img/icons/import.svg");
 	filter: invert(100%);
@@ -270,11 +278,6 @@ input[type=text]:valid+span:after {
 
 .ScreenshotIcon {
 	background-image: url("../img/icons/screenshot.svg");
-	filter: invert(100%);
-}
-
-.ProcessIcon {
-	background-image: url("../img/icons/process.svg");
 	filter: invert(100%);
 }
 
@@ -322,7 +325,7 @@ input[type=text]:valid+span:after {
 .BSARTooltipButton {
 	width: 150px;
 	top: 70px;
-	left: 150px; /* half BSARbutton width */ 
+	left: 210px; /* half BSARbutton width + one button width */ 
 	margin-left: -75px;
 }
 

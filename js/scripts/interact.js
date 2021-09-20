@@ -72,7 +72,8 @@ function toggleTableInput(id) {
 // ***** BSAR MENU BUTTONS *****
 // *****************************
 const BSARbutton = document.getElementById('BSARbutton'),
-      BSARbuttonImg = document.getElementById('BSARbuttonImg'),
+      BSARbuttonImgLeft = document.getElementById('BSARbuttonImgLeft'),
+      BSARbuttonImgRight = document.getElementById('BSARbuttonImgRight'),
       TxInfos = document.getElementById("TxInfos"),
       RxInfos = document.getElementById("RxInfos"),
       BSARInfos = document.getElementById("BSARInfos"),
@@ -81,12 +82,13 @@ const BSARbutton = document.getElementById('BSARbutton'),
 let BSARbuttonOpened = false; // Infos not shown by default
 BSARbutton.onclick = () => {
     if ( BSARbuttonOpened ) {        
-        BSARbuttonImg.style.transform = "rotate(90deg)";
+        BSARbuttonImgRight.style.transform = BSARbuttonImgLeft.style.transform = "rotate(90deg)";
         TxInfos.style.transform = RxInfos.style.transform = BSARInfos.style.transform = "translateY(-300px)";
         plotIsoRangeDop.style.transform = plotGAFAmp.style.transform = "translateY(400px)";
         BSARbuttonOpened = false;
     } else {
-        BSARbuttonImg.style.transform = "rotate(270deg)";
+        BSARbuttonImgRight.style.transform = "rotate(270deg)";
+        BSARbuttonImgLeft.style.transform = "rotate(-90deg)";
         TxInfos.style.transform = RxInfos.style.transform = BSARInfos.style.transform = "translateY(60px)";
         plotIsoRangeDop.style.transform = plotGAFAmp.style.transform = "translateY(0px)";
         BSARbuttonOpened = true;
@@ -94,12 +96,11 @@ BSARbutton.onclick = () => {
 }
 BSARbutton.onmouseover = () => {
     BSARbutton.style.border = "2px solid #ffffff";
-    BSARbuttonImg.src = "./img/icons/arrow-filled.svg";
+    BSARbuttonImgRight.src = BSARbuttonImgLeft.src = "./img/icons/arrow-filled.svg";
 }
 BSARbutton.onmouseout = () => {
     BSARbutton.style.border = "none";
-    BSARbuttonImg.src = "./img/icons/arrow-contour.svg";
+    BSARbuttonImgRight.src = BSARbuttonImgLeft.src = "./img/icons/arrow-contour.svg";
 }
-
 // ***** BUTTONS *****
 // => see in scene.js

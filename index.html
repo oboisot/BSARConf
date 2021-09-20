@@ -23,9 +23,15 @@
 
         <!-- ****************************** Header ****************************** -->
         <div id="header" class="header">
+          <button type="button" id="TxToRxButton" class="BSARMenuButton">
+            <div class="ImgButton TxtoRxIcon">
+              <span class="TooltipButtonBottom">Tx to Rx config.</span>
+            </div>
+          </button>
           <button type="button" id="BSARbutton" class="BSARMenuButton">
-            Bistatic SAR configurator&ensp;
-            <img id="BSARbuttonImg" src="./img/icons/arrow-contour.svg" width="18px">
+            <img id="BSARbuttonImgLeft" class="BSARbuttonImg" src="./img/icons/arrow-contour.svg" width="16px">
+            &ensp;Bistatic SAR configurator&ensp;
+            <img id="BSARbuttonImgRight" class="BSARbuttonImg" src="./img/icons/arrow-contour.svg" width="16px">
             <span class="BSARTooltipButton">Show / Hide BSAR infos</span>
           </button>
           <button type="button" id="LoadButton" class="BSARMenuButton">
@@ -42,11 +48,6 @@
           <button type="button" id="ScreenshotButton", class="BSARMenuButton">
             <div class="ImgButton ScreenshotIcon">
               <span class="TooltipButtonBottom">Take a screenshot</span>
-            </div>
-          </button>
-          <button type="button" id="ProcessButton", class="BSARMenuButton">
-            <div class="ImgButton ProcessIcon">
-              <span class="TooltipButtonBottom">Process full config</span>
             </div>
           </button>
           <button type="button" id="DocumentationButton", class="BSARMenuButton">
@@ -871,7 +872,7 @@
         <!-- ****************************** PLOTS DIV ****************************** -->
         <div id="plotIsoRangeDop" class="plotIsoRangeDop"></div>
         <div id="plotGAFAmp" class="plotGAFAmp"></div>
-        <div id="isoRangeDopPlaneTexture"></div> <!-- silent div for isoRangeDopPlane texture -->
+        <div id="isoRangeDopPlaneTexture" style="display:none;"></div> <!-- silent div for isoRangeDopPlane texture -->
         <!----------------------------------------------------------------------------->
 
         <!-- ****************************** LOAD DIV ****************************** -->

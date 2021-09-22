@@ -16,7 +16,9 @@ input[type=number], input[type=text] {
 }
 
 .coordinatesInput {
+	appearance: textfield;
 	-moz-appearance: textfield;
+	-webkit-appearance: textfield;
 }
 
 input[type=number]:invalid+span:after,

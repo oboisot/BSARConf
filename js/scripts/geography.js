@@ -1,6 +1,7 @@
-import * as THREE from "../three/three.module";
+import { Vector3, Matrix3, MathUtils } from "../three/three.module.js";
 
-export {GeoCoords, WGS84, dd_to_dms, dms_to_dd};
+export {GeoCoords, WGS84, LocalCartesianENU,
+        dd_to_dms, dms_to_dd};
 
 /***** A simple container for geodetic coords *****/
 class GeoCoords {
@@ -10,8 +11,8 @@ class GeoCoords {
     /***** SETTER *****/
     set( lon, lat, alt, degrees=true ) {
         if ( degrees ) {
-            this._lon_rad = THREE.MathUtils.degToRad( lon );
-            this._lat_rad = THREE.MathUtils.degToRad( lat );
+            this._lon_rad = MathUtils.degToRad( lon );
+            this._lat_rad = MathUtils.degToRad( lat );
         } else {
             this._lon_rad = lon;
             this._lat_rad = lat;
@@ -20,14 +21,14 @@ class GeoCoords {
     }
     setLon( lon, degrees=true ) {
         if ( degrees ) {
-            this._lon_rad = THREE.MathUtils.degToRad( lon );
+            this._lon_rad = MathUtils.degToRad( lon );
         } else {
             this._lon_rad = lon;
         }
     }
     setLat( lat, degrees=true ) {
         if ( degrees ) {
-            this._lat_rad = THREE.MathUtils.degToRad( lat );
+            this._lat_rad = MathUtils.degToRad( lat );
         } else {
             this._lat_rad = lat;
         }
@@ -35,11 +36,14 @@ class GeoCoords {
     setAlt( alt ) {
         this._alt = alt;
     }
+    clone() {
+        return new GeoCoords( this._lon_rad, this._lat_rad, this._alt, false );
+    }
     /***** GETTER *****/
     get lon_rad() { return this._lon_rad; }
     get lat_rad() { return this._lat_rad; }
-    get lon_deg() { return THREE.MathUtils.radToDeg( this._lon_rad ); }
-    get lat_deg() { return THREE.MathUtils.radToDeg( this._lat_rad ) ; }
+    get lon_deg() { return MathUtils.radToDeg( this._lon_rad ); }
+    get lat_deg() { return MathUtils.radToDeg( this._lat_rad ) ; }
     get alt() { return this._alt; }
 }
 
@@ -72,21 +76,22 @@ class WGS84 {
     }
 
     /* */
-    geodeticToGeocentric( geocoords ) {
+    geodeticToECEF( geocoords ) {
         const lon_rad = geocoords.lon_rad,
               lat_rad = geocoords.lat_rad,
               alt = geocoords.alt,
               nu = this._primeVerticalCurvatureRadius( lat_rad ),
               nuhcosphi = (nu + alt) * Math.cos( lat_rad );
-        return new THREE.Vector3(
+        return new Vector3(
             nuhcosphi * Math.cos( lon_rad ),
             nuhcosphi * Math.sin( lon_rad ),
             (this._1_e2 * nu + alt) * Math.sin( lat_rad )
         );
     }
 
-    /* */
-    geocentricToGeodetic( pos, maxiter=10 ) {
+    /* Position accuracy of this conversion stays in double precision,
+    that is about 1 nm */
+    ECEFtoGeodetic( pos, maxiter=10 ) {
         const x = pos.x,
               y = pos.y,
               z = pos.z;
@@ -119,23 +124,71 @@ class WGS84 {
             lat_np1,
             Rxy * Math.cos( lat_np1 ) + z * slat - this._a * Math.sqrt( 1.0 - this._e2 * slat * slat ),
             false
-        )
+        );
     }
 }
 
-class LocalENU extends WGS84 {
+class LocalCartesianENU extends WGS84 {
     constructor( point ) {
-        this.set( point );
+        super(); // Initialize WGS84 class
+        this.setOrigin( point );
     }
-
-    set( point ) {
+    setOrigin( point ) {
         if ( point instanceof GeoCoords ) { // initialisation from geodetic coordinates
-            this._center = this.geodeticToGeocentric( point );
-        } else if ( point instanceof THREE.Vector3 ) { // initialisation from geocentric coordinates
-
+            this._origin_ecef = this.geodeticToECEF( point );
+            this._origin_geodetic = point.clone();
+        } else if ( point instanceof Vector3 ) { // initialisation from geocentric coordinates
+            this._origin_ecef = point.clone();
+            this._origin_geodetic = this.ECEFtoGeodetic( point );
         } else {
-            console.log("Initialization incorrect.")
+            console.log("Initialization must come from 'GeoCoords' or 'Vector3' origin point.");
         }
+        const clon = Math.cos( this._origin_geodetic.lon_rad ),
+              slon = Math.sin( this._origin_geodetic.lon_rad ),
+              clat = Math.cos( this._origin_geodetic.lat_rad ),
+              slat = Math.sin( this._origin_geodetic.lat_rad );
+        // Axes of the ENU frame expressed in the ECEF frame
+        this._e = new Vector3(-slon, clon, 0.0);
+        this._n = new Vector3(-clon*slat, -slon*slat, clat);
+        this._u = new Vector3(clon*clat, slon*clat, slat);
+        // Rotation matrix from ENU to ECEF
+        this._r_enu_to_ecef = new Matrix3();
+        this._r_enu_to_ecef.set(
+            this._e.x, this._n.x, this._u.x,
+            this._e.y, this._n.y, this._u.y,
+            this._e.z, this._n.z, this._u.z
+        )
+        // Rotation matrix from ECEF to ENU
+        this._r_ecef_to_enu = this._r_enu_to_ecef.clone().transpose();
+    }
+    /***** GETTER *****/
+    get originCartesianECEF() { return this._origin_ecef; }
+    get originGeodetic() { return this._origin_geodetic; }
+    get rotationFromENUtoECEF() { return this._r_enu_to_ecef; }
+    get rotationFromECEFtoENU() { return this._r_ecef_to_enu; }
+    getENUbasis( e, n, u ) {
+        this._r_enu_to_ecef.extractBasis( e, n, u );
+    }
+    /***** Class methods *****/
+    // Conversion for point coordinates
+    convertPointFromENUtoECEF( point_enu ) {
+        return point_enu.clone().applyMatrix3( this._r_enu_to_ecef ).add( this._origin_ecef );
+    }
+    convertPointFromECEFtoENU( point_ecef ) {
+        return point_ecef.clone().sub( this._origin_ecef ).applyMatrix3( this._r_ecef_to_enu );
+    }
+    convertPointFromENUtoGeodetic( point_enu ) {
+        return this.ECEFtoGeodetic( this.convertPointFromENUtoECEF( point_enu ) );
+    }
+    convertPointFromGeodeticToENU( geocoords ) {
+        return this.convertPointFromECEFtoENU( this.geodeticToECEF( geocoords ) );
+    }
+    // Conversion for vector directions
+    convertVectorFromENUtoECEF( vector ) {
+        return vector.clone().applyMatrix3( this._r_enu_to_ecef );
+    }
+    converVectorFromECEFtoENU( vector ) {
+        return vector.clone().applyMatrix3( this._r_ecef_to_enu );
     }
 }
 

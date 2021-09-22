@@ -2,9 +2,10 @@ import * as THREE from "../three/three.module.js";
 import { OrbitControls } from "../three/OrbitControls.js";
 import { Carrier, Axes, IsoRangeSurface } from "./objects.js";
 
-import { BSARConfig, Elements } from "./config.js";
+import { BSARConfig, Elements, CoordinatesElements } from "./config.js";
 import { drawIsoRangeDop, drawGAFIntensity } from "./plots.js";
 import * as bsar from "./bsarfun.js";
+import * as geo from "./geography.js";
 // ***** Configurator Parameters *****
 
 // ***** THREE parameters *****
@@ -17,6 +18,9 @@ let renderer, camera, scene, controls,
     TxCarrier, RxCarrier,
     BSARisoRangeSurface,
     renderRequested = false;
+// For coordinates calculations
+const ENUorigin = new geo.GeoCoords( 0, 0, 0, false ),
+      ENU       = new geo.LocalCartesianENU( ENUorigin );
 
 // ***** CANVAS ELEMENT *****
 const sceneCanvas      = document.getElementById('sceneCanvas');
@@ -199,6 +203,11 @@ function initValues() {
             }
         }
     }
+    // Coordinates
+    const enu_origin = CoordinatesElements.ENUorigin;
+    enu_origin.lon.value = ENUorigin.lon_deg;
+    enu_origin.lat.value = ENUorigin.lat_deg;
+    enu_origin.alt.value = ENUorigin.alt;
 }
 
 // ***** Interactive functions *****
@@ -279,6 +288,17 @@ function onEventBindings() {
             rx_elmts.integrationTime.element.setCustomValidity("'auto-ground', 'auto-slant' or 0 - 3600 s");
         }
     }
+    // Coordinates local ENU origin events
+    const enu_origin = CoordinatesElements.ENUorigin;
+    for ( const key in enu_origin ) {
+        const elmt = enu_origin[key];
+        elmt.onchange = () => {
+            const newvalue = Number( elmt.value );
+            if ( (newvalue >= elmt.min) && (newvalue <= elmt.max) ) {
+                updateCoordinates( true );
+            }
+        }
+    }
 }
 
 function computeIsoRangeSurface( isoRangeSurfaceUpdate ) {
@@ -293,9 +313,11 @@ function updateSelector( needUpdate ) {
     }
     if ( needUpdate[1] ) {
         updateInfos( TxCarrier, Elements.Tx );
+        updateCoordinates( false );
     }
     if ( needUpdate[2] ) {
         updateInfos( RxCarrier, Elements.Rx );
+        updateCoordinates( false );
     }
     if ( needUpdate[3] ) {
         updateBSARinfos();
@@ -460,14 +482,17 @@ function updateBSARinfos() {
         }
     }
     const PRImin = (rangeMinMax.range_max - rangeMinMax.range_min) / bsar.C0 + BSARConfig.Tx.pulseDuration.value * 1e-6,
-          PRFmax = 1 / PRImin,
-          PRFmin = Math.abs( dopplerRate ) * illuminationTime,
-          PRImax = 1 / PRFmin;    
-    console.log("BSAR ambiguities :");
-    console.log("PRImin = ", PRImin*1e6, " µs");
-    console.log("PRImax = ", PRImax*1e6, " µs");
-    console.log("PRFmin = ", PRFmin*1e-3, " kHz");
-    console.log("PRFmax = ", PRFmax*1e-3, " kHz");
+          PRImax = 1.0 / (Math.abs( dopplerRate ) * illuminationTime);
+    if ( PRImin >= 1e-3 ) { // PRI min is taken as the ceil of its µs value
+        Elements.bsarInfos.priMin.innerHTML = `${(Math.ceil(PRImin*1e6)*1e-3).toFixed(3)} ms`;
+    } else {
+        Elements.bsarInfos.priMin.innerHTML = `${(Math.ceil(PRImin*1e6)).toFixed(0)} µs`;
+    }
+    if( PRImax >= 1e-3 ) {  // PRI max is taken as the floor of its µs value
+        Elements.bsarInfos.priMax.innerHTML = `${(Math.floor(PRImax*1e6)*1e-3).toFixed(3)} ms`;
+    } else {
+        Elements.bsarInfos.priMax.innerHTML = `${(Math.floor(PRImax*1e6)).toFixed(0)} µs`;
+    }
 }
 
 function updatePlots() {
@@ -491,6 +516,63 @@ function updatePlots() {
             );
         }
     );
+}
+
+function updateCoordinates( updateOrigin ) {
+    if ( updateOrigin ) {
+        ENUorigin.set( // Get ENU origin values
+            Number( CoordinatesElements.ENUorigin.lon.value ),
+            Number( CoordinatesElements.ENUorigin.lat.value ),
+            Number( CoordinatesElements.ENUorigin.alt.value ),
+            true
+        );
+        // Set new local ENU origin
+        ENU.setOrigin( ENUorigin );
+    }
+    // Get Carriers positions and velocities in local ENU
+    const OT = TxCarrier.getCarrierPosition(),
+          OR = RxCarrier.getCarrierPosition(),
+          VT = TxCarrier.getCarrierVelocityVector(),
+          VR = RxCarrier.getCarrierVelocityVector();
+    // Local ENU
+    CoordinatesElements.localENU.Tx.posx.innerHTML = `${OT.x.toFixed(9)}`;
+    CoordinatesElements.localENU.Tx.posy.innerHTML = `${OT.y.toFixed(9)}`;
+    CoordinatesElements.localENU.Tx.posz.innerHTML = `${OT.z.toFixed(9)}`;
+    CoordinatesElements.localENU.Tx.velx.innerHTML = `${VT.x.toFixed(9)}`;
+    CoordinatesElements.localENU.Tx.vely.innerHTML = `${VT.y.toFixed(9)}`;
+    CoordinatesElements.localENU.Tx.velz.innerHTML = `${VT.z.toFixed(9)}`;
+    CoordinatesElements.localENU.Rx.posx.innerHTML = `${OR.x.toFixed(9)}`;
+    CoordinatesElements.localENU.Rx.posy.innerHTML = `${OR.y.toFixed(9)}`;
+    CoordinatesElements.localENU.Rx.posz.innerHTML = `${OR.z.toFixed(9)}`;
+    CoordinatesElements.localENU.Rx.velx.innerHTML = `${VR.x.toFixed(9)}`;
+    CoordinatesElements.localENU.Rx.vely.innerHTML = `${VR.y.toFixed(9)}`;
+    CoordinatesElements.localENU.Rx.velz.innerHTML = `${VR.z.toFixed(9)}`;
+    // ECEF
+    const tx_pos_ecef = ENU.convertPointFromENUtoECEF( OT ),
+          tx_vel_ecef = ENU.convertVectorFromENUtoECEF( VT ),
+          rx_pos_ecef = ENU.convertPointFromENUtoECEF( OR ),
+          rx_vel_ecef = ENU.convertVectorFromENUtoECEF( VR );
+    CoordinatesElements.ECEF.Tx.posx.innerHTML = `${tx_pos_ecef.x.toFixed(9)}`;
+    CoordinatesElements.ECEF.Tx.posy.innerHTML = `${tx_pos_ecef.y.toFixed(9)}`;
+    CoordinatesElements.ECEF.Tx.posz.innerHTML = `${tx_pos_ecef.z.toFixed(9)}`;
+    CoordinatesElements.ECEF.Tx.velx.innerHTML = `${tx_vel_ecef.x.toFixed(9)}`;
+    CoordinatesElements.ECEF.Tx.vely.innerHTML = `${tx_vel_ecef.y.toFixed(9)}`;
+    CoordinatesElements.ECEF.Tx.velz.innerHTML = `${tx_vel_ecef.z.toFixed(9)}`;
+    CoordinatesElements.ECEF.Rx.posx.innerHTML = `${rx_pos_ecef.x.toFixed(9)}`;
+    CoordinatesElements.ECEF.Rx.posy.innerHTML = `${rx_pos_ecef.y.toFixed(9)}`;
+    CoordinatesElements.ECEF.Rx.posz.innerHTML = `${rx_pos_ecef.z.toFixed(9)}`;
+    CoordinatesElements.ECEF.Rx.velx.innerHTML = `${rx_vel_ecef.x.toFixed(9)}`;
+    CoordinatesElements.ECEF.Rx.vely.innerHTML = `${rx_vel_ecef.y.toFixed(9)}`;
+    CoordinatesElements.ECEF.Rx.velz.innerHTML = `${rx_vel_ecef.z.toFixed(9)}`;
+    // Geodetic
+    const tx_pos_geo = ENU.ECEFtoGeodetic( tx_pos_ecef ),
+          rx_pos_geo = ENU.ECEFtoGeodetic( rx_pos_ecef );
+    CoordinatesElements.geodetic.Tx.lon.innerHTML = `${tx_pos_geo.lon_deg.toFixed(12)}`;
+    CoordinatesElements.geodetic.Tx.lat.innerHTML = `${tx_pos_geo.lat_deg.toFixed(12)}`;
+    CoordinatesElements.geodetic.Tx.alt.innerHTML = `${tx_pos_geo.alt.toFixed(9)}`;
+    CoordinatesElements.geodetic.Rx.lon.innerHTML = `${rx_pos_geo.lon_deg.toFixed(12)}`;
+    CoordinatesElements.geodetic.Rx.lat.innerHTML = `${rx_pos_geo.lat_deg.toFixed(12)}`;
+    CoordinatesElements.geodetic.Rx.alt.innerHTML = `${rx_pos_geo.alt.toFixed(9)}`;
 }
 
 // *******************

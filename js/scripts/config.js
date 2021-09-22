@@ -401,6 +401,64 @@ export const Elements = {
         "dopplerRate":               document.getElementById('BSARInfosDopplerRate'),
         "integrationTime":           document.getElementById('BSARInfosIntegrationTime'),
         "processedDopplerBandwidth": document.getElementById('BSARInfosProcessedDopplerBandwidth'),
-        "nesz":                      document.getElementById('BSARInfosNESZ')
+        "nesz":                      document.getElementById('BSARInfosNESZ'),
+        "priMin":                    document.getElementById('BSARInfosPRImin'),
+        "priMax":                    document.getElementById('BSARInfosPRImax')
+    }
+}
+
+export const CoordinatesElements = {
+    "ENUorigin": {
+        "lon": document.getElementById('ENUorigLonDD'),
+        "lat": document.getElementById('ENUorigLatDD'),
+        "alt": document.getElementById('ENUorigAltDD')
+    },
+    "localENU": {
+        "Tx": {
+            "posx": document.getElementById('coordENUTxPosx'),
+            "posy": document.getElementById('coordENUTxPosy'),
+            "posz": document.getElementById('coordENUTxPosz'),
+            "velx": document.getElementById('coordENUTxVelx'),
+            "vely": document.getElementById('coordENUTxVely'),
+            "velz": document.getElementById('coordENUTxVelz')
+        },
+        "Rx": {
+            "posx": document.getElementById('coordENURxPosx'),
+            "posy": document.getElementById('coordENURxPosy'),
+            "posz": document.getElementById('coordENURxPosz'),
+            "velx": document.getElementById('coordENURxVelx'),
+            "vely": document.getElementById('coordENURxVely'),
+            "velz": document.getElementById('coordENURxVelz')
+        }
+    },
+    "ECEF": {
+        "Tx": {
+            "posx": document.getElementById('coordECEFTxPosx'),
+            "posy": document.getElementById('coordECEFTxPosy'),
+            "posz": document.getElementById('coordECEFTxPosz'),
+            "velx": document.getElementById('coordECEFTxVelx'),
+            "vely": document.getElementById('coordECEFTxVely'),
+            "velz": document.getElementById('coordECEFTxVelz')
+        },
+        "Rx": {
+            "posx": document.getElementById('coordECEFRxPosx'),
+            "posy": document.getElementById('coordECEFRxPosy'),
+            "posz": document.getElementById('coordECEFRxPosz'),
+            "velx": document.getElementById('coordECEFRxVelx'),
+            "vely": document.getElementById('coordECEFRxVely'),
+            "velz": document.getElementById('coordECEFRxVelz')
+        }
+    },
+    "geodetic": {
+        "Tx": {
+            "lon": document.getElementById('coordGeodTxPosLon'),
+            "lat": document.getElementById('coordGeodTxPosLat'),
+            "alt": document.getElementById('coordGeodTxPosAlt')
+        },
+        "Rx": {
+            "lon": document.getElementById('coordGeodRxPosLon'),
+            "lat": document.getElementById('coordGeodRxPosLat'),
+            "alt": document.getElementById('coordGeodRxPosAlt')
+        }
     }
 }

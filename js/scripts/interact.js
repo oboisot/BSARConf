@@ -72,8 +72,7 @@ function toggleTableInput(id) {
 // ***** BSAR MENU BUTTONS *****
 // *****************************
 const BSARbutton = document.getElementById('BSARbutton'),
-      BSARbuttonImgLeft = document.getElementById('BSARbuttonImgLeft'),
-      BSARbuttonImgRight = document.getElementById('BSARbuttonImgRight'),
+      BSARbuttonImg = document.getElementById('BSARbuttonImg'),
       TxInfos = document.getElementById("TxInfos"),
       RxInfos = document.getElementById("RxInfos"),
       BSARInfos = document.getElementById("BSARInfos"),
@@ -82,13 +81,12 @@ const BSARbutton = document.getElementById('BSARbutton'),
 let BSARbuttonOpened = false; // Infos not shown by default
 BSARbutton.onclick = () => {
     if ( BSARbuttonOpened ) {        
-        BSARbuttonImgRight.style.transform = BSARbuttonImgLeft.style.transform = "rotate(90deg)";
-        TxInfos.style.transform = RxInfos.style.transform = BSARInfos.style.transform = "translateY(-300px)";
+        BSARbuttonImg.style.transform = "rotate(90deg)";
+        TxInfos.style.transform = RxInfos.style.transform = BSARInfos.style.transform = "translateY(-340px)";
         plotIsoRangeDop.style.transform = plotGAFAmp.style.transform = "translateY(400px)";
         BSARbuttonOpened = false;
     } else {
-        BSARbuttonImgRight.style.transform = "rotate(270deg)";
-        BSARbuttonImgLeft.style.transform = "rotate(-90deg)";
+        BSARbuttonImg.style.transform = "rotate(270deg)";
         TxInfos.style.transform = RxInfos.style.transform = BSARInfos.style.transform = "translateY(60px)";
         plotIsoRangeDop.style.transform = plotGAFAmp.style.transform = "translateY(0px)";
         BSARbuttonOpened = true;
@@ -96,11 +94,41 @@ BSARbutton.onclick = () => {
 }
 BSARbutton.onmouseover = () => {
     BSARbutton.style.border = "2px solid #ffffff";
-    BSARbuttonImgRight.src = BSARbuttonImgLeft.src = "./img/icons/arrow-filled.svg";
+    BSARbuttonImg.src = "./img/icons/arrow-filled.svg";
 }
 BSARbutton.onmouseout = () => {
     BSARbutton.style.border = "none";
-    BSARbuttonImgRight.src = BSARbuttonImgLeft.src = "./img/icons/arrow-contour.svg";
+    BSARbuttonImg.src = "./img/icons/arrow-contour.svg";
 }
+
+// ******************************
+// ***** COORDINATES BUTTON *****
+// ******************************
+const Coordinates = document.getElementById('Coordinates'),
+      coordinatesButton = document.getElementById('coordinatesButton'),
+      coordinatesButtonImg = document.getElementById('coordinatesButtonImg');
+let coordinatesButtonOpened = false; // Infos not shown by default
+coordinatesButton.onclick = () => {
+    coordinatesButton.style.border = "none";
+    coordinatesButtonImg.src = "./img/icons/arrow-contour.svg";
+    if ( coordinatesButtonOpened ) {
+        coordinatesButtonImg.style.transform = "rotate(270deg)";
+        Coordinates.style.transform = "translateY(390px)";
+        coordinatesButtonOpened = false;
+    } else {
+        coordinatesButtonImg.style.transform = "rotate(90deg)";
+        Coordinates.style.transform = "translateY(0px)";
+        coordinatesButtonOpened = true;
+    }
+}
+coordinatesButton.onmouseover = () => {
+    coordinatesButton.style.border = "2px solid #ffffff";
+    coordinatesButtonImg.src = "./img/icons/arrow-filled.svg";
+}
+coordinatesButton.onmouseout = () => {
+    coordinatesButton.style.border = "none";
+    coordinatesButtonImg.src = "./img/icons/arrow-contour.svg";
+}
+
 // ***** BUTTONS *****
 // => see in scene.js

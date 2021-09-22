@@ -29,9 +29,8 @@
             </div>
           </button>
           <button type="button" id="BSARbutton" class="BSARMenuButton">
-            <img id="BSARbuttonImgLeft" class="BSARbuttonImg" src="./img/icons/arrow-contour.svg" width="16px">
-            &ensp;Bistatic SAR configurator&ensp;
-            <img id="BSARbuttonImgRight" class="BSARbuttonImg" src="./img/icons/arrow-contour.svg" width="16px">
+            Bistatic SAR configurator&ensp;
+            <img id="BSARbuttonImg" class="BSARbuttonImg" src="./img/icons/arrow-contour.svg" width="18px">
             <span class="BSARTooltipButton">Show / Hide BSAR infos</span>
           </button>
           <button type="button" id="LoadButton" class="BSARMenuButton">
@@ -864,6 +863,134 @@
             <tr>
               <td colspan="2" class="tdInputText">NESZ:</td>
               <td id="BSARInfosNESZ"></td>
+            </tr>
+            <tr>
+              <td colspan="2" class="tdInputText">PRI min.:</td>
+              <td id="BSARInfosPRImin"></td>
+            </tr>
+            <tr>
+              <td colspan="2" class="tdInputText">PRI max.:</td>
+              <td id="BSARInfosPRImax"></td>
+            </tr>
+          </table>
+        </div>
+        <!--------------------------------------------------------------------------------------------------------------->
+
+        <!-- ****************************** COORDINATES ****************************** -->
+        <div id="Coordinates">
+          <button type="button" id="coordinatesButton">
+            Coordinates&ensp;
+            <img id="coordinatesButtonImg" src="./img/icons/arrow-contour.svg" width="18px">
+            <!-- <span class="BSARTooltipButton">Show / Hide BSAR infos</span> -->
+          </button>
+          <table id="coordinatesTable" cellspacing="0">
+            <!-- Local ENU origin -->
+            <tr style="height:50px">
+              <td colspan="3" >Local ENU origin (WGS84 Ellipsoid)</td>
+              <td >
+                <label for="ENUorigLonDD">lon:</label>
+                <input type="number" id="ENUorigLonDD" name="ENUorigLonDD"
+                       class="coordinatesInput"
+                       placeholder="-180 - 180°"
+                       min="-180" max="180" step="any" required>
+                <span></span>
+                <span>°</span>
+              </td>
+              <td>
+                <label for="ENUorigLatDD">lat:</label>
+                <input type="number" id="ENUorigLatDD" name="ENUorigLatDD"
+                       class="coordinatesInput"
+                       placeholder="-90 - 90°"
+                       min="-90" max="90" step="any" required>
+                <span></span>
+                <span>°</span>
+              </td>
+              <td>
+                <label for="ENUorigAltDD">alt:</label>
+                <input type="number" id="ENUorigAltDD" name="ENUorigAltDD"
+                       class="coordinatesInput"
+                       placeholder="-6300 - 30000 km"
+                       min="-6300000" max="30000000" step="any" required>
+                <span></span>
+                <span>m</span>
+              </td>
+            </tr>
+            <!-- -->
+            <tr>
+              <td colspan="2" class="tdCoordTable">Coordinates</td>
+              <td class="tdCoordTable" style="width:170px;">Tx pos. [°][m]</td>
+              <td class="tdCoordTable">Tx vel. [m/s]</td>
+              <td class="tdCoordTable">Rx pos. [°][m]</td>
+              <td class="tdCoordTable">Rx vel. [m/s]</td>
+            </tr>
+            <!-- Local ENU -->
+            <tr>
+              <td rowspan="3" class="tdCoordTableBottom">Local ENU</td>
+              <td>x</td>
+              <td id="coordENUTxPosx" class="tdCoordTableValue"></td>
+              <td id="coordENUTxVelx" class="tdCoordTableValue"></td>
+              <td id="coordENURxPosx" class="tdCoordTableValue"></td>
+              <td id="coordENURxVelx" class="tdCoordTableValue"></td>
+            </tr>
+            <tr>
+              <td>y</td>
+              <td id="coordENUTxPosy" class="tdCoordTableValue"></td>
+              <td id="coordENUTxVely" class="tdCoordTableValue"></td>
+              <td id="coordENURxPosy" class="tdCoordTableValue"></td>
+              <td id="coordENURxVely" class="tdCoordTableValue"></td>
+            </tr>
+            <tr>
+              <td>z</td>
+              <td id="coordENUTxPosz" class="tdCoordTableValueBottom"></td>
+              <td id="coordENUTxVelz" class="tdCoordTableValueBottom"></td>
+              <td id="coordENURxPosz" class="tdCoordTableValueBottom"></td>
+              <td id="coordENURxVelz" class="tdCoordTableValueBottom"></td>
+            </tr>
+            <!-- Geodetic -->
+            <tr>
+              <td rowspan="3" class="tdCoordTableBottom">Geodetic</td>
+              <td>lon</td>
+              <td id="coordGeodTxPosLon" class="tdCoordTableValue"></td>
+              <td class="tdCoordTableValue" style="background-color:rgba(255,255,255,0.6);"></td>
+              <td id="coordGeodRxPosLon" class="tdCoordTableValue"></td>
+              <td class="tdCoordTableValue" style="background-color:rgba(255,255,255,0.6);"></td>
+            </tr>
+            <tr>
+              <td>lat</td>
+              <td id="coordGeodTxPosLat" class="tdCoordTableValue"></td>
+              <td class="tdCoordTableValue" style="background-color:rgba(255,255,255,0.6);"></td>
+              <td id="coordGeodRxPosLat" class="tdCoordTableValue"></td>
+              <td class="tdCoordTableValue" style="background-color:rgba(255,255,255,0.6);"></td>
+            </tr>
+            <tr>
+              <td>alt</td>
+              <td id="coordGeodTxPosAlt" class="tdCoordTableValueBottom"></td>
+              <td class="tdCoordTableValueBottom" style="background-color:rgba(255,255,255,0.6);"></td>
+              <td id="coordGeodRxPosAlt" class="tdCoordTableValueBottom"></td>
+              <td class="tdCoordTableValueBottom" style="background-color:rgba(255,255,255,0.6);"></td>
+            </tr>
+            <!-- ECEF -->
+            <tr>
+              <td rowspan="3" class="tdCoordTableBottom">ECEF</td>
+              <td>X</td>
+              <td id="coordECEFTxPosx" class="tdCoordTableValue"></td>
+              <td id="coordECEFTxVelx" class="tdCoordTableValue"></td>
+              <td id="coordECEFRxPosx" class="tdCoordTableValue"></td>
+              <td id="coordECEFRxVelx" class="tdCoordTableValue"></td>
+            </tr>
+            <tr>
+              <td>Y</td>
+              <td id="coordECEFTxPosy" class="tdCoordTableValue"></td>
+              <td id="coordECEFTxVely" class="tdCoordTableValue"></td>
+              <td id="coordECEFRxPosy" class="tdCoordTableValue"></td>
+              <td id="coordECEFRxVely" class="tdCoordTableValue"></td>
+            </tr>
+            <tr>
+              <td>Z</td>
+              <td id="coordECEFTxPosz" class="tdCoordTableValueBottom"></td>
+              <td id="coordECEFTxVelz" class="tdCoordTableValueBottom"></td>
+              <td id="coordECEFRxPosz" class="tdCoordTableValueBottom"></td>
+              <td id="coordECEFRxVelz" class="tdCoordTableValueBottom"></td>
             </tr>
           </table>
         </div>

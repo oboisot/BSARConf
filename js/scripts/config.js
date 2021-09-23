@@ -271,16 +271,17 @@ export const Elements = {
             "isoRangeSurfaceUpdate": false
         },
         "infos": {
-            "localIncidenceMin":    document.getElementById('TxInfosLocalIncidenceMin'),
-            "localIncidenceCenter": document.getElementById('TxInfosLocalIncidenceCenter'),
-            "localIncidenceMax":    document.getElementById('TxInfosLocalIncidenceMax'),
-            "antennaSquint":        document.getElementById('TxInfosAntennaSquint'),
-            "rangeAtSwathCenter":   document.getElementById('TxInfosRangeAtSwathCenter'),
-            "rangeMin":             document.getElementById('TxInfosRangeMin'),
-            "rangeMax":             document.getElementById('TxInfosRangeMax'),
-            "groundRangeSwath":     document.getElementById('TxInfosGroundRangeSwath'),
-            "footprintArea":        document.getElementById('TxInfosFootprintArea'),
-            "illuminationTime":     document.getElementById('TxInfosIlluminationTime')
+            "localIncidenceMin":     document.getElementById('TxInfosLocalIncidenceMin'),
+            "localIncidenceCenter":  document.getElementById('TxInfosLocalIncidenceCenter'),
+            "localIncidenceMax":     document.getElementById('TxInfosLocalIncidenceMax'),
+            "antennaSquint":         document.getElementById('TxInfosAntennaSquint'),
+            "rangeAtSwathCenter":    document.getElementById('TxInfosRangeAtSwathCenter'),
+            "rangeMin":              document.getElementById('TxInfosRangeMin'),
+            "rangeMax":              document.getElementById('TxInfosRangeMax'),
+            "groundRangeSwath":      document.getElementById('TxInfosGroundRangeSwath'),
+            "footprintArea":         document.getElementById('TxInfosFootprintArea'),
+            "illuminationTime":      document.getElementById('TxInfosIlluminationTime'),
+            "groundAngularVelocity": document.getElementById('TxInfosGroundAngularVelocity')
         }
     },
     "Rx": {
@@ -375,16 +376,17 @@ export const Elements = {
             "isoRangeSurfaceUpdate": false
         },
         "infos": {
-            "localIncidenceMin":    document.getElementById('RxInfosLocalIncidenceMin'),
-            "localIncidenceCenter": document.getElementById('RxInfosLocalIncidenceCenter'),
-            "localIncidenceMax":    document.getElementById('RxInfosLocalIncidenceMax'),
-            "antennaSquint":        document.getElementById('RxInfosAntennaSquint'),
-            "rangeAtSwathCenter":   document.getElementById('RxInfosRangeAtSwathCenter'),
-            "rangeMin":             document.getElementById('RxInfosRangeMin'),
-            "rangeMax":             document.getElementById('RxInfosRangeMax'),
-            "groundRangeSwath":     document.getElementById('RxInfosGroundRangeSwath'),
-            "footprintArea":        document.getElementById('RxInfosFootprintArea'),
-            "illuminationTime":     document.getElementById('RxInfosIlluminationTime')
+            "localIncidenceMin":     document.getElementById('RxInfosLocalIncidenceMin'),
+            "localIncidenceCenter":  document.getElementById('RxInfosLocalIncidenceCenter'),
+            "localIncidenceMax":     document.getElementById('RxInfosLocalIncidenceMax'),
+            "antennaSquint":         document.getElementById('RxInfosAntennaSquint'),
+            "rangeAtSwathCenter":    document.getElementById('RxInfosRangeAtSwathCenter'),
+            "rangeMin":              document.getElementById('RxInfosRangeMin'),
+            "rangeMax":              document.getElementById('RxInfosRangeMax'),
+            "groundRangeSwath":      document.getElementById('RxInfosGroundRangeSwath'),
+            "footprintArea":         document.getElementById('RxInfosFootprintArea'),
+            "illuminationTime":      document.getElementById('RxInfosIlluminationTime'),
+            "groundAngularVelocity": document.getElementById('RxInfosGroundAngularVelocity')
         }
     },
     "bsarInfos": {

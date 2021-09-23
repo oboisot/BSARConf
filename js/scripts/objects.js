@@ -627,6 +627,15 @@ class Carrier {
             this._illumination_time = null;
         }
     }
+
+    groundAngularVelocity() {
+        // Compute the angular velocity of this carrier relative to the referential normal (here z axis)
+        const r = this.carrier.position.clone().setZ(0),   // the rejection of the position vector in the referential plane
+              v = this.getCarrierVelocityVector().setZ(0), // rejection of velocity vector in the referential plane 
+              r2 = r.lengthSq();
+        // returns the norm of the ground angular velocity
+        return r.cross( v ).divideScalar(r2).length();
+    }
 }
 
 class IsoRangeSurface {

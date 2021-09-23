@@ -378,6 +378,9 @@ function updateInfos( system, elmts ) {
     } else {
         elmts.infos.illuminationTime.innerHTML = '+Inf s';
     }
+    // Ground angular velocity
+    const omega = THREE.MathUtils.radToDeg( system.groundAngularVelocity() );
+    elmts.infos.groundAngularVelocity.innerHTML = `${omega.toFixed(3)} °/s`;
 }
 
 function updateBSARinfos() {

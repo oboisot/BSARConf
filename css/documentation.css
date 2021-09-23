@@ -1,17 +1,7 @@
-/* html, body {
-	margin: 0;
-    background-color: #000000;
-	color: #ffffff;
-	font-family: "Lucida Console", "Courier New", "Monospace", "Arial";
-	font-size: 16px;
-	line-height: 16px;
-    scroll-behavior: smooth;
-} */
 html, body {
 	margin: 0;
-    /* background-color: #323232; */
-    background-color: #5a5a5a;
-	color: #ffffff;
+    background-color: #8b8989;
+	color: #000000;
 	font-family: "Lucida Console", "Courier New", "Monospace", "Arial";
 	font-size: 16px;
 	line-height: 16px;

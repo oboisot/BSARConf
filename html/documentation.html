@@ -81,8 +81,8 @@
                                 <li><a href="#Iso-Doppler" style="color:#282828">2.2.5 Iso-Doppler</a></li>
                                 <li><a href="#Resolution_area" style="color:#282828">2.2.6 Resolution area</a></li>
                                 <li><a href="#NESZ" style="color:#282828">2.2.7 Noise Equivalent Sigma Zero</a></li>
-                                <li><a href="#RASR" style="color:#282828">2.2.8 Range Ambiguity to Signal Ratio</a></li>
-                                <li><a href="#LASR" style="color:#282828">2.2.9 Lateral Ambiguity to Signal Ratio</a></li>
+                                <li><a href="#Range_ambiguities" style="color:#282828">2.2.8 Range Ambiguities</a></li>
+                                <li><a href="#Doppler_ambiguities" style="color:#282828">2.2.9 Doppler Ambiguities</a></li>
                             </ul>
                         </li>
                     </ul>
@@ -114,8 +114,8 @@
                    geometry defined by their carrier and antenna objects, respectively. The transmitter and receiver antenna beams
                    are respectively colored white and black in order to distinguish them.
 
-                   The transmitter parameters can be modified by clicking the .... button on the upper left corner and the 
-                   receiver parameters can be modified by clicking the ... button on the upper right corner.
+                   The transmitter parameters can be modified by clicking the Tx button on the upper left corner and the 
+                   receiver parameters can be modified by clicking the Rx button on the upper right corner.
                 </p>
                 <div id="BSARconf_parameters" class="anchor"></div>
                 <h3>1.2 The BSARconf parameters</h3>
@@ -169,7 +169,7 @@
                         following the same color code and is illustrated on Figure 2 below. Realistic geometric configurations can
                         thus be used by converting them into the local ENU plane relative to the point of interest.</br>
                         Each axis of the BSAR configurator referential frame have a length of <strong>500 m</strong> and a grid helper is superimposed
-                        in light grey spaced of <strong>200 m</strong> in both <span style="color:#ff0000;">east</span> and
+                        in light grey spaced of <strong>500 m</strong> in both <span style="color:#ff0000;">east</span> and
                         <span style="color:#00ff00;">north</span> directions. The extent of the depicted referential plane (<span style="color:#006400;">green</span>) is
                         of <strong>30 km</strong> in each direction.
                         <figure>
@@ -179,7 +179,7 @@
                             </a>
                             <figcaption><strong>Figure 2 -</strong> Illustration of the main referential frame of the
                                 Bistatic SAR configurator geometry. Each axis is 500 m long, the light grey grid helper
-                                has a spacing of 200 m in both directions and the extent of the referential plane is 30 km
+                                has a spacing of 500 m in both directions and the extent of the referential plane is 30 km
                                 in both directions.
                             </figcaption>
                         </figure>
@@ -201,8 +201,18 @@
 
                     <div id="GAF" class="anchor"></div>
                     <h4>2.2.1 Generalized Ambiguity Function</h4>
-                        The Bistatic SAR system response can be characterized by its BSAR bisector vector $\overrightarrow{\beta}(u_0)$ together with its corresponding first
-                    time derivative $\dot{\overrightarrow{\beta}}(u_0)$ in the SG approximation for a point scatterer at a given slow-time $u_0$. They are expressed by, respectively:
+                    <figure>
+                        <a href="../img/figures/bistatic_geometry.svg" target="_blank">
+                            <img src="../img/figures/bistatic_geometry.svg" width="100%"
+                                 alt="Bistatic SAR geometry">
+                        </a>
+                        <figcaption><strong>Figure 3 -</strong> Illustration of the Bistatic SAR geometry in the local ENU frame.</figcaption>
+                    </figure>
+                        The Bistatic SAR system response can be characterized by its <em>BSAR bisector vector</em> <span  style="color:#d62728;">$\overrightarrow{\beta}(u_0)$</span>
+                    together with its corresponding first time derivative <span  style="color:#1f77b4;">$\dot{\overrightarrow{\beta}}(u_0)$</span> known as the
+                    <em>BSAR angular velocity vector</em> in the <em>Stop-and-Go</em> (SG) approximation for a point scatterer at a given slow-time $u_0$. Both vectors are illustrated
+                    on Figure 3 above in the local ENU frame where transmitter geometry is depicted in <span style="color:#ffffff;">white</span> and receiver geometry in 
+                    <span style="color:#000000;">black</span>. Those vectors are expressed by, respectively:
 
                     $$\left\{
                     \begin{array}{rcl}
@@ -229,7 +239,7 @@
                                              \exp\left(\mathrm{j}2\pi\frac{\overrightarrow{\beta}(u_0)\cdot\vec{r}}{\lambda_0}\right)
                     $$
 
-                    It must be pointed out that the previous expressions of the BSAR bisector vector and its first time derivative are given in  the <em>slant</em> 
+                    It must be pointed out that the previous expressions of the BSAR bisector and angular velocity vectors are given in  the <em>slant</em> 
                     radar geometry. The <em>ground</em> bistatic GAF is given by:
 
                     $$
@@ -272,11 +282,11 @@
                     <div id="NESZ" class="anchor"></div>
                     <h4>2.2.7 Noise Equivalent Sigma Zero</h4>
 
-                    <div id="RASR" class="anchor"></div>
-                    <h4>2.2.8 Range Ambiguity to Signal Ratio</h4>
+                    <div id="Range_ambiguities" class="anchor"></div>
+                    <h4>2.2.8 Range Ambiguities</h4>
 
-                    <div id="LASR" class="anchor"></div>
-                    <h4>2.2.9 Lateral Ambiguity to Signal Ratio</h4>
+                    <div id="Doppler_ambiguities" class="anchor"></div>
+                    <h4>2.2.9 Doppler Ambiguities</h4>
 
             <div id="References" class="anchor"></div>
             <h2>3. REFERENCES</h2>

@@ -178,7 +178,6 @@ const isoRangeDopTextureConfig = {
     showLink: false
 };
 
-let initPlots = true;
 function drawIsoRangeDop( TxCarrier, RxCarrier, fem, plot_div, texture_div, size=151 ) {
     const lem = bsar.C0 / fem;
     // bistatic range and doppler frequency calculation

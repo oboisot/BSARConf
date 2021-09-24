@@ -896,7 +896,13 @@
           <table id="coordinatesTable" cellspacing="0">
             <!-- Local ENU origin -->
             <tr style="height:50px">
-              <td colspan="3" >Local ENU origin (WGS84 Ellipsoid)</td>
+              <td colspan="3" >
+                <a href="https://en.wikipedia.org/wiki/Local_tangent_plane_coordinates"
+                   target="_blank" class="aLink">Local ENU</a>
+                origin
+                (<a href="https://epsg.org/ellipsoid_7030/WGS-84.html"
+                    target="_blank" class="aLink">WGS84 Ellipsoid</a>)
+              </td>
               <td >
                 <label for="ENUorigLonDD">lon:</label>
                 <input type="number" id="ENUorigLonDD" name="ENUorigLonDD"
@@ -935,7 +941,10 @@
             </tr>
             <!-- Local ENU -->
             <tr>
-              <td rowspan="3" class="tdCoordTableBottom">Local ENU</td>
+              <td rowspan="3" class="tdCoordTableBottom">
+                <a href="https://en.wikipedia.org/wiki/Local_tangent_plane_coordinates"
+                   target="_blank" class="aLink">Local ENU</a>
+              </td>
               <td>x</td>
               <td id="coordENUTxPosx" class="tdCoordTableValue"></td>
               <td id="coordENUTxVelx" class="tdCoordTableValue"></td>
@@ -981,7 +990,10 @@
             </tr>
             <!-- ECEF -->
             <tr>
-              <td rowspan="3" class="tdCoordTableBottom">ECEF</td>
+              <td rowspan="3" class="tdCoordTableBottom">
+                <a href="https://en.wikipedia.org/wiki/ECEF" target="_blank"
+                   class="aLink">ECEF</a>
+              </td>
               <td>X</td>
               <td id="coordECEFTxPosx" class="tdCoordTableValue"></td>
               <td id="coordECEFTxVelx" class="tdCoordTableValue"></td>

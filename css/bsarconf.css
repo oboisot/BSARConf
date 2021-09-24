@@ -496,3 +496,13 @@ input:checked + .slider-sight:before {
 	background-color: transparent;
 	background-image: url("../img/icons/loader.svg");
 }
+
+/* ***** LINKS ***** */
+.aLink, .aLink:link, .aLink:visited {
+	color: #ffffff;
+	text-decoration: none;
+}
+
+.aLink:hover {
+	text-decoration: underline;
+}

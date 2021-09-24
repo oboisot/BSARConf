@@ -74,20 +74,22 @@
                         <li><a href="#BSAR_resolutions" style="color:#141414">2.2 BSAR resolutions and design</a></li>
                         <li>
                             <ul>
-                                <li><a href="#GAF" style="color:#282828">2.2.1 Generalized Ambiguity Function</a></li>
-                                <li><a href="#Range_resolution" style="color:#282828">2.2.2 Range resolution</a></li>
-                                <li><a href="#Lateral_resolution" style="color:#282828">2.2.3 Lateral resolution</a></li>
-                                <li><a href="#Iso-range" style="color:#282828">2.2.4 Iso-Range</a></li>
-                                <li><a href="#Iso-Doppler" style="color:#282828">2.2.5 Iso-Doppler</a></li>
-                                <li><a href="#Resolution_area" style="color:#282828">2.2.6 Resolution area</a></li>
-                                <li><a href="#NESZ" style="color:#282828">2.2.7 Noise Equivalent Sigma Zero</a></li>
-                                <li><a href="#Range_ambiguities" style="color:#282828">2.2.8 Range Ambiguities</a></li>
-                                <li><a href="#Doppler_ambiguities" style="color:#282828">2.2.9 Doppler Ambiguities</a></li>
+                                <li><a href="#Waveform" style="color:#282828">2.2.1 Transmitted signal</a></li>
+                                <li><a href="#GAF" style="color:#282828">2.2.2 Generalized Ambiguity Function</a></li>
+                                <li><a href="#Range_resolution" style="color:#282828">2.2.3 Range resolution</a></li>
+                                <li><a href="#Lateral_resolution" style="color:#282828">2.2.4 Lateral resolution</a></li>
+                                <li><a href="#Iso-range" style="color:#282828">2.2.5 Iso-Range</a></li>
+                                <li><a href="#Iso-Doppler" style="color:#282828">2.2.6 Iso-Doppler</a></li>
+                                <li><a href="#Resolution_area" style="color:#282828">2.2.7 Resolution area</a></li>
+                                <li><a href="#NESZ" style="color:#282828">2.2.8 Noise Equivalent Sigma Zero</a></li>
+                                <li><a href="#Range_ambiguities" style="color:#282828">2.2.9 Range Ambiguities</a></li>
+                                <li><a href="#Doppler_ambiguities" style="color:#282828">2.2.10 Doppler Ambiguities</a></li>
                             </ul>
                         </li>
                     </ul>
                 </li>
-                <li><a href="#References">3. REFERENCES</a></li>
+                <li><a href="#Mathematical_functions">3. APPENDIX - MATHEMATICAL FUNCTIONS</a></li>
+                <li><a href="#References">4. REFERENCES</a></li>
             </ul>
             <button type="button" id="BackToTop" class="BackToTop">
                 <img id="BackToTopImg1" src="../img/icons/arrow-contour.svg" width="10px">
@@ -101,8 +103,8 @@
         <div id="content" class="content">
             <div id="Presentation" class="anchor"></div>
             <h2>1. PRESENTATION</h2>
-                <p>The <strong>B</strong>istatic <strong>S</strong>ynthetic <strong>A</strong>perture <strong>R</strong>adar (BSAR) configurator aims to
-                    provide a simple but comprehensive tool to visualize bistatic SAR system
+                <p>The <strong>B</strong>istatic <strong>S</strong>ynthetic <strong>A</strong>perture <strong>R</strong>adar (BSAR) configurator
+                   <a href="../index.html" target="_blank" class="aLink">BSARConf</a> aims to provide a simple but comprehensive tool to visualize bistatic SAR system
                    geometric configurations together with the calculation of some useful resulting parameters. The main ojective of this tool is to provide
                    a configurator for the design of some future potential bistatic SAR missions. In addition to its operational objective, the BSAR configurator
                    tool offers a didactic approach to the SAR systems geometry in a general way with its 3D representation and the possibility to visualize the
@@ -162,7 +164,7 @@
                         increasing latitude and <span style="color:#0000ff;">$\hat{u}$</span>-axis follows the outgoing local
                         normal to the Earth ellipsoid. More information about local tangent plane coordinates can be found
                         on the Wikipedia page:
-                        <a href="https://en.wikipedia.org/wiki/Local_tangent_plane_coordinates" target="_blank">Local tangent plane coordinates</a>.
+                        <a href="https://en.wikipedia.org/wiki/Local_tangent_plane_coordinates" target="_blank" class="aLink">Local tangent plane coordinates</a>.
                     </p>
                     <p>This referential frame centered on point of interest $P$ forms the main referential of the bistatic
                         SAR configurator geometry. Each geometric parameter is thus expressed relative to this referential frame
@@ -170,7 +172,7 @@
                         thus be used by converting them into the local ENU plane relative to the point of interest.</br>
                         Each axis of the BSAR configurator referential frame have a length of <strong>500 m</strong> and a grid helper is superimposed
                         in light grey spaced of <strong>500 m</strong> in both <span style="color:#ff0000;">east</span> and
-                        <span style="color:#00ff00;">north</span> directions. The extent of the depicted referential plane (<span style="color:#006400;">green</span>) is
+                        <span style="color:#00ff00;">north</span> directions. The extent of the depicted referential plane is
                         of <strong>30 km</strong> in each direction.
                         <figure>
                             <a href="../img/figures/BSAR_scene_ENU_referential.png" target="_blank">
@@ -199,11 +201,54 @@
                 <div id="BSAR_resolutions" class="anchor"></div>
                 <h3>2.2 BSAR resolutions and design</h3>
 
+                    <div id="Waveform" class="anchor"></div>
+                    <h4>2.2.1 Transmitted signal</h4>
+                        The signal classically used in SAR imaging is a Linear Frequency Modulated (LFM) signal, also known
+                    as a <em>linear chirp</em>. This signal offers the advantage, after application of a matched filter, to improve the range
+                    resolution of the received signal (despite the intrinsic low range resolution of the radar) while maximising
+                    the Signal-to-Noise Ratio (SNR) of the system (the received useful signal can be extracted from high relative
+                    noise). For each transmitted pulse, the transmitted signal takes the form:
+
+                    $$
+                    s_T(u,t)=\sqrt{P_T(u,t)}\Pi\left(\dfrac{t}{T_p}\right)
+                    \exp\left[\mathrm{j}2\pi\left(f_0t+\dfrac{K}{2}t^2\right)\right]
+                    $$
+
+                    where variable $u$ denotes the <em>slow-time</em> (relative to the Pulse Repetition Inverval, PRI) and variable $t$ denotes
+                    the <em>fast-time</em> (relative to the electromagnetic wave propagation time) of the transmitted wave. Function $\Pi(t)$ is
+                    the <a href="#Rectangular_window_function" class="aInteriorLink">rectangular window function</a> and other parameters are given by:
+                    <ul>
+                        <li>$P_T(u,t)$ the transmitted power of the signal at each pulse [W], which may vary as function of fast-time
+                            (i.e. amplitude modulation) but is generally constant during transmission for SAR systems. This transmitted
+                            power can thus be simplified to: $P_T(u,t)\simeq P_T(u)$ in general
+                        </li>
+                        <li>$T_p$ the pulse duration [s]</li>
+                        <li>$f_0$ the center (carrier) frequency of the transmitted signal [Hz]</li>
+                        <li>$\lambda_0=c/f_0$ the center wavelength of the transmitted signal [m]</li>
+                        <li>$K$ the transmitted frenquency slope (positive or negative) [Hz/s]</li>
+                    </ul>
+                    where parameter $c$ is the electromagnetic wave propagation celerity (generally taken as the 
+                    <a href="https://physics.nist.gov/cgi-bin/cuu/Value?c|search_for=speed+of+light" target="_blank" class="aLink">speed of light in vacuum</a>).
+                    The LFM signal frequency is thus expressed by:
+
+                    $$
+                    f(t)=\dfrac{1}{2\pi}\dfrac{d\phi(t)}{dt}=f_0+Kt
+                    $$
+
+                    with $\phi(t)$ being the LFM signal phase. This frequency varies linearly as function of fast-time, hence the terminology
+                    of <em>linear frequency modulation</em> of the transmitted signal. One important parameter of this kind of signal
+                    is the transmitted <em>bandwidth</em> $B$, that is, the frequency range swept by the linear frequency modulation. This
+                    bandwidth is given by:
+
+                    $$
+                    B=\left\vert K\right\vert T_p\quad\quad\mbox{[Hz]}
+                    $$
+
                     <div id="GAF" class="anchor"></div>
-                    <h4>2.2.1 Generalized Ambiguity Function</h4>
+                    <h4>2.2.2 Generalized Ambiguity Function</h4>
                     <figure>
                         <a href="../img/figures/bistatic_geometry.svg" target="_blank">
-                            <img src="../img/figures/bistatic_geometry.svg" width="100%"
+                            <img src="../img/figures/bistatic_geometry.svg" width="120%"
                                  alt="Bistatic SAR geometry">
                         </a>
                         <figcaption><strong>Figure 3 -</strong> Illustration of the Bistatic SAR geometry in the local ENU frame.</figcaption>
@@ -226,26 +271,27 @@
                     with the bistatic angle of the BSAR system derived from the BSAR bisector vector:
 
                     $$
-                        \beta(u_0)=2\mathrm{arccos}\left(\dfrac{\left\Vert\overrightarrow{\beta}(u_0)\right\Vert}{2}\right)
+                        \beta(u_0)=2\mathrm{arccos}\left(\left\Vert\overrightarrow{\beta}(u_0)\right\Vert/2\right)
                     $$
 
-                    The complex Generalized Ambiguity Function (GAF) can thus be derived by supposing a narrowband transmitted signal, a linear flight path around slow-time $u_0$,
-                    isotropic antennas and by neglecting the signal attenuation to distances. Calculations of this derivation are not presented here. The complex bistatic
-                    GAF is finally given by:
+                    The complex Generalized Ambiguity Function (GAF), also known as the Point Spread Function (PSF), can thus be derived by supposing a narrowband
+                    transmitted signal, a linear flight path around slow-time $u_0$, isotropic antennas and by neglecting the signal attenuation to distances.
+                    Calculations of this derivation are not presented here but are mainly inspired from []. The complex bistatic GAF is finally given by:
 
                     $$
-                        \chi_P(\vec{r})\simeq\mathrm{sinc}\left(B\dfrac{\overrightarrow{\beta}(u_0)\cdot\vec{r}}{c}\right)
-                                             \mathrm{sinc}\left(T_u\dfrac{\dot{\overrightarrow{\beta}}(u_0)\cdot\vec{r}}{\lambda_0}\right)
-                                             \exp\left(\mathrm{j}2\pi\frac{\overrightarrow{\beta}(u_0)\cdot\vec{r}}{\lambda_0}\right)
+                        \chi_P(\vec{r})\simeq\mathrm{sinc}\left(\dfrac{B}{c}\overrightarrow{\beta}(u_0)\cdot\vec{r}\right)
+                                             \mathrm{sinc}\left(\dfrac{T_u}{\lambda_0}\dot{\overrightarrow{\beta}}(u_0)\cdot\vec{r}\right)
+                                             \exp\left(\mathrm{j}\frac{2\pi}{\lambda_0}\overrightarrow{\beta}(u_0)\cdot\vec{r}\right)
                     $$
 
-                    It must be pointed out that the previous expressions of the BSAR bisector and angular velocity vectors are given in  the <em>slant</em> 
-                    radar geometry. The <em>ground</em> bistatic GAF is given by:
+                    where $\mathrm{sinc}(z)$ is the <a href="#Sinc_function" class="aInteriorLink">normalized sinus cardinal function</a>.
+                    It must be pointed out that the previous expressions of the BSAR bisector and angular velocity vectors are given in
+                    the <em>slant</em> radar geometry. The <em>ground</em> bistatic GAF is given by:
 
                     $$
-                    \chi_{P,g}(\vec{r})\simeq\mathrm{sinc}\left(B\dfrac{\overrightarrow{\beta_g}(u_0)\cdot\vec{r}}{c}\right)
-                                         \mathrm{sinc}\left(T_u\dfrac{\dot{\overrightarrow{\beta_g}}(u_0)\cdot\vec{r}}{\lambda_0}\right)
-                                         \exp\left(\mathrm{j}2\pi\frac{\overrightarrow{\beta_g}(u_0)\cdot\vec{r}}{\lambda_0}\right)
+                    \chi_{P,g}(\vec{r})\simeq\mathrm{sinc}\left(\dfrac{B}{c}\overrightarrow{\beta_g}(u_0)\cdot\vec{r}\right)
+                                        \mathrm{sinc}\left(\dfrac{T_u}{\lambda_0}\dot{\overrightarrow{\beta_g}}(u_0)\cdot\vec{r}\right)
+                                        \exp\left(\mathrm{j}\frac{2\pi}{\lambda_0}\overrightarrow{\beta_g}(u_0)\cdot\vec{r}\right)
                     $$
 
                     for which vectors are expressed in the <em>ground</em> geometry, that is, if $\hat{n}$ is the unit local normal of the surface at point $P$
@@ -260,36 +306,151 @@
                         \right.
                     $$
 
-                    where $\overrightarrow{\beta_g}(u_0)$, respectively $\dot{\overrightarrow{\beta_g}}(u_0)$, is the rejection of vector $\overrightarrow{\beta}(u_0)$,
-                    respectively $\dot{\overrightarrow{\beta}}(u_0)$, with respect to the unit normal $\hat{n}$. Those vectors belongs to the plane of normal $\hat{n}$.
+                    where $\overrightarrow{\beta_g}(u_0)$, respectively $\dot{\overrightarrow{\beta_g}}(u_0)$, is the
+                    <a href="https://en.wikipedia.org/wiki/Vector_projection#Vector_rejection_2" target="_blank" class="aLink">rejection</a> of vectors
+                    $\overrightarrow{\beta}(u_0)$, respectively $\dot{\overrightarrow{\beta}}(u_0)$,
+                    with respect to the unit normal $\hat{n}$. Those vectors belongs to the plane of normal $\hat{n}$.
 
                     <div id="Range_resolution" class="anchor"></div>
-                    <h4>2.2.2 Range resolution</h4>
+                    <h4>2.2.3 Range resolution</h4>
                         The BSAR system range resolution can be estimated from its GAF function 
 
-                    <div id="Lateral_resolution" class="anchor"></div>
-                    <h4>2.2.3 Lateral resolution</h4>
+                    <ul>
+                        <li>The half-power slant range resolution:
+                            $$
+                            \delta_r(u_0)\simeq\dfrac{0.88589c}{B\left\Vert\overrightarrow{\beta}(u_0)\right\Vert}
+                            $$
+                        </li>
+                        <li>The half-power ground range resolution:
+                            $$
+                            \delta_{r,g}(u_0)\simeq\dfrac{0.88589c}{B\left\Vert\overrightarrow{\beta_g}(u_0)\right\Vert}
+                            $$
+                        </li>
+                    </ul>
 
-                    <div id="Iso-Range" class="anchor"></div>
-                    <h4>2.2.4 Iso-Range</h4>
+                    <div id="Lateral_resolution" class="anchor"></div>
+                    <h4>2.2.4 Lateral resolution</h4>
+
+                    <ul>
+                        <li>The half-power slant lateral resolution:
+                            $$
+                            \delta_r(u_0)\simeq\dfrac{0.88589\lambda_0}{T_u\left\Vert\dot{\overrightarrow{\beta}}(u_0)\right\Vert}
+                            $$
+                        </li>
+                        <li>The half-power ground lateral resolution:
+                            $$
+                            \delta_{r,g}(u_0)\simeq\dfrac{0.88589\lambda_0}{T_u\left\Vert\dot{\overrightarrow{\beta_g}}(u_0)\right\Vert}
+                            $$
+                        </li>
+                    </ul>
+
+                    <div id="Iso-range" class="anchor"></div>
+                    <h4>2.2.5 Iso-Range</h4>
+                    <figure>
+                        <a href="../img/figures/iso-range_surface.svg" target="_blank">
+                            <img src="../img/figures/iso-range_surface.svg" width="120%"
+                                 alt="Iso-range surface">
+                        </a>
+                        <figcaption>
+                            <strong>Figure 4 -</strong> Illustration of the bistatic SAR slant iso-range surface (<span style="color:#d62728;">red ellipsoid</span>) 
+                            and ground iso-range contour (<span style="color:#d62728;">red ellipse</span>) in the local ENU frame. Point <span style="color:#1f77b4">$E$</span>
+                            is the center of the ellipsoid formed by the transmitter <span style="color: #ffffff;">$T$</span> and receiver $R$ placed at the two foci of
+                            the ellipsoid passing through ground point <span style="color:#ffa500;">$P$</span>.
+                        </figcaption>
+                    </figure>
 
                     <div id="Iso-Doppler" class="anchor"></div>
-                    <h4>2.2.5 Iso-Doppler</h4>
+                    <h4>2.2.6 Iso-Doppler</h4>
+
+                    $$
+                    f_D(\vec{r};u_0)\simeq\dfrac{1}{\lambda_0}\left(V_T(u_0)\sin\left[\gamma_T(u_0)\right]+
+                                                                    V_R(u_0)\sin\left[\gamma_R(u_0)\right]\right)\quad\quad\mbox{[Hz]}
+                    $$
+
+                    $$
+                    K_D(\vec{r};u_0)\simeq-\dfrac{1}{\lambda_0}\left(
+                        \dfrac{V_T^2(u_0)\cos^2\left[\gamma_T(u_0)\right]}{R_T(u_0)}+
+                        \dfrac{V_R^2(u_0)\cos^2\left[\gamma_R(u_0)\right]}{R_R(u_0)}\right)\quad\quad\mbox{[Hz/s]}
+                    $$
+
+                    with $\gamma_T(u)$ and $\gamma_R(u)$ the <em>antenna squint angles</em> for the transmitter and receiver, respectively,
+                    defined as the angle between the antenna line of sight and the carrier velocity vector:
+
+                    $$
+                    \sin\left[\gamma_T(u)\right]=\dfrac{\overrightarrow{V_T}(u)\cdot\overrightarrow{TP}(u)}
+                                                       {\left\Vert\overrightarrow{V_T}\right\Vert\left\Vert\overrightarrow{TP}(u)\right\Vert}
+                    \quad;\quad
+                    \sin\left[\gamma_R(u)\right]=\dfrac{\overrightarrow{V_R}(u)\cdot\overrightarrow{RP}(u)}
+                                                       {\left\Vert\overrightarrow{V_R}(u)\right\Vert\left\Vert\overrightarrow{RP}(u)\right\Vert}
+                    $$
 
                     <div id="Resolution_area" class="anchor"></div>
-                    <h4>2.2.6 Resolution area</h4>
+                    <h4>2.2.7 Resolution area</h4>
+
+                    $$
+                    A_{res}(u_0)\simeq\dfrac{0.78481\lambda_0c}{BT_u\left\Vert\overrightarrow{\beta_g}(u_0)\wedge\dot{\overrightarrow{\beta_g}}(u_0)\right\Vert}
+                    $$
 
                     <div id="NESZ" class="anchor"></div>
-                    <h4>2.2.7 Noise Equivalent Sigma Zero</h4>
+                    <h4>2.2.8 Noise Equivalent Sigma Zero</h4>
+                    In order to estimate the <em>sensitivity</em> of the BSAR system after full processing of the SAR raw data (range and azimuth processing), the
+                    Noise Equivalent Sigma Zero (NESZ) parameter is used and corresponds to the bistatic scattering coefficient of the observed target for which
+                    the system SNR is equal to one. It is given by:
+
+                    $$
+                    NESZ=\dfrac{(4\pi)^3R_T^2R_R^2kTLN}{\lambda_0^2\overline{P_T}G_TG_RT_uA_{res}}
+                    $$
+
+                    where $R_T$ and $R_R$ are the transmitter-target and receiver-target ranges, respectively, $k$ is the 
+                    <a href="https://physics.nist.gov/cgi-bin/cuu/Value?k|search_for=boltzmann+constant" target="_blank" class="aLink">Boltzmann constant</a> [J/K],
+                    $T$ is the receiver temperature [K], $L$ is the transmitter loss factor and $N$ is the receiver noise factor which forms the
+                    <em>noise power spectral density</em> or <em>noise power per unit bandwidth</em>: $kTLN$ [W/Hz] of the system. Terms $G_T$ and $G_R$ represents
+                    the transmitter and receiver <em>one-way antenna power gains</em>, respectively, $A_{res}$ is the
+                    <a href="#Resolution_area" class="aInteriorLink">resolution area</a> of the system and the mean
+                    transmitted power $\overline{P_T}$ depends on the pulse duration $T_p$ and pulse repetition interval $PRI$:
+
+                    $$
+                    \overline{P_T}=\dfrac{T_p}{PRI}P_T
+                    $$
+
+                    where $P_T$ is the transmitted peak power. 
 
                     <div id="Range_ambiguities" class="anchor"></div>
-                    <h4>2.2.8 Range Ambiguities</h4>
+                    <h4>2.2.9 Range Ambiguities</h4>
 
                     <div id="Doppler_ambiguities" class="anchor"></div>
-                    <h4>2.2.9 Doppler Ambiguities</h4>
+                    <h4>2.2.10 Doppler Ambiguities</h4>
+
+            <div id="Mathematical_functions" class="anchor"></div>
+            <h2>3. APPENDIX - MATHEMATICAL FUNCTIONS </h2>
+                
+                <div id="Rectangular_window_function" class="anchor"></div>
+                <h3>3.1 Rectangular window function</h3>
+                The rectangular window function is defined by:
+
+                $$
+                \Pi(z)=\left\{\begin{array}{ll}
+                    1 &  \mbox{if}~\vert z\vert\leq1/2 \\
+                    0 & \mbox{otherwise}
+                \end{array}\right.
+                $$
+
+                <div id="Sinc_function" class="anchor"></div>
+                <h3>3.1 Normalized sinus cardinal function</h3>
+                The normalized sinus cardinal function is defined by:
+
+                $$
+                \mathrm{sinc}(z)=\dfrac{\mathrm{sinc}(\pi z)}{\pi z}
+                $$
+
+                which is defined in $z=0$ by its limit:
+
+                $$
+                \lim_{z\rightarrow 0}\mathrm{sinc}(z)=1
+                $$
 
             <div id="References" class="anchor"></div>
-            <h2>3. REFERENCES</h2>
+            <h2>4. REFERENCES</h2>
         </div>
         <!-- Content -->
 

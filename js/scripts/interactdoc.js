@@ -34,7 +34,7 @@ const ToCButton = document.getElementById('ToCButton'),
 let ToCButtonOpened = false; // Closed by default
 ToCButton.onclick = () => {
     if ( ToCButtonOpened ) {
-        content.style.paddingRight = "100px";
+        content.style.paddingRight = "20%";
         ToC.style.transform = "translateX(400px)";
         ToCButtonImg.style.transform = "rotate(180deg)";
         ToCButtonOpened = false;

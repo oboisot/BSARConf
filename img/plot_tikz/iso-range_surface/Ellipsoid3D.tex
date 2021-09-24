@@ -1,0 +1,122 @@
+%%%%%%%%%%%%%%
+% Ellipsoid Drawing Functions %
+%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%
+% MERIDIANS DRAWING %
+%%%%%%%%%%%%%
+% Draw all full meridians at a given longitude spaced by delta lon
+\newcommand{\DrawMeridians}[6][black]{ % a, b, c, delta lat, delta lon.
+									% Optional = drawing option
+    % Function call :
+    % \DrawMeridians[<drawing options>]{<a>}{<b>}{<c>}{<delta lat>}{<delta lon>}
+    \pgfmathsetmacro{\latmax}{360-#5};   % Max lat value for loop
+    \pgfmathsetmacro{\doubledlat}{#6+#6}; % 2*dlat
+    \pgfmathsetmacro{\lonmax}{360-#6};  %
+    \foreach \lon in {0,{#6},...,\lonmax} { % Meridians drawing
+        \pgfmathsetmacro{\clon}{cos(\lon)};\pgfmathsetmacro{\slon}{sin(\lon)}; % cos(lon0), sin(lon0)
+        \draw[#1] ({#2*\clon},{#3*\slon},0)% (acos(0)cos(lon), bcos(0)sin(lon), csin(0)) 
+            \foreach \lat in {{#5},\doubledlat,...,\latmax} {%
+                \pgfextra%
+                    \pgfmathsetmacro{\clat}{cos(\lat)};\pgfmathsetmacro{\slat}{sin(\lat)};% cos(lat), sin(lat)
+                    \pgfmathsetmacro{\x}{#2*\clat*\clon};%
+                    \pgfmathsetmacro{\y}{#3*\clat*\slon};%
+                    \pgfmathsetmacro{\z}{#4*\slat};%
+               \endpgfextra%
+                -- (\x, \y, \z)%
+        } -- cycle;%
+    }%
+}
+
+%%%%%%%%%%%%%
+% PARALLELS DRAWING %
+%%%%%%%%%%%%%
+% Fonction de tracé d'un méridien à la longitude et l'altitude souhaitées
+\newcommand{\DrawParallels}[6][black]{% a, b, c, delta lat, delta lon.
+							                 % Optional = drawing options
+    % Function call :
+    % \DrawParallels[<drawing options>]{<a>}{<b>}{<c>}{<delta lat>}{<delta lon>}
+    	%
+    \pgfmathsetmacro{\latmin}{-90+#5};
+    \pgfmathsetmacro{\latmax}{90-#5};
+    \pgfmathsetmacro{\dlat}{\latmin+#5};
+    	%
+    \pgfmathsetmacro{\lonmax}{360-#6};
+    \pgfmathsetmacro{\doubledlon}{#6+#6};
+    % Loop over lat
+    \foreach \lat in {\latmin,\dlat,...,\latmax} {
+    \pgfmathsetmacro{\clat}{cos(\lat)};\pgfmathsetmacro{\slat}{sin(\lat)}; % cos(phi0), sin(phi0)
+    \pgfmathsetmacro{\z}{#4*\slat};%
+        \draw[#1] ({ #2*\clat},0,\z)% lon = 0
+            \foreach \lon in {#6,\doubledlon,...,\lonmax} {%
+                \pgfextra%
+                    \pgfmathsetmacro{\x}{#2*\clat*cos(\lon)};%
+                    \pgfmathsetmacro{\y}{#3*\clat*sin(\lon)};%
+               \endpgfextra%
+                -- (\x, \y, \z)%
+        } -- cycle;%
+    }
+}%
+
+\newcommand{\DrawEllipsoidWireFrame}[6][black]{ % a, b, c, delta lat, delat lon
+										        % optional = drawing options
+	% Function call:
+	% \DrawEllipsoidWireFrame[<drawing options>]{<a>}{<b>}{<c>}{<delta lat>}{<delta lon>}
+	%%% Draw Meridians %%%
+	\DrawMeridians[#1]{#2}{#3}{#4}{#5}{#6}
+	\DrawParallels[#1]{#2}{#3}{#4}{#5}{#6}
+}%
+
+%%%%%%%%%%%
+% Surface Ellipsoid %
+% %%%%%%%%%%
+\newcommand{\DrawEllipsoidSurface}[6][fill=gray,fill opacity=0.5]{ % a, b, c, delta lat, delat lon
+										    % optional = drawing options
+    % Function call:
+    % \DrawEllipsoidSurface[<drawing options>]{<a>}{<b>}{<c>}{<delta lat>}{<delta lon>}
+    \pgfmathsetmacro{\latmin}{-90+#5};
+    \pgfmathsetmacro{\latmax}{90-#5-#5};
+    \pgfmathsetmacro{\dlat}{\latmin+#5};
+    \pgfmathsetmacro{\lonmax}{360-#6};
+    % lat = -90; -90+#5
+    % cos(lat1), sin(lat1)
+    \pgfmathsetmacro{\clati}{cos(\latmin)};\pgfmathsetmacro{\slati}{sin(\latmin)};%
+    \foreach \lon in {0,{#6},...,\lonmax}{%
+             % cos(lon0), sin(lon0), cos(lon1), sin(lon1)
+        \pgfmathsetmacro{\clono}{cos(\lon)};\pgfmathsetmacro{\slono}{sin(\lon)};%
+        \pgfmathsetmacro{\cloni}{cos(#6+\lon)};\pgfmathsetmacro{\sloni}{sin(#6+\lon)};%
+        \draw[#1] (0, 0, {-#4}) --
+                             ({#2*\clati*\clono}, {#3*\clati*\slono}, {#4*\slati}) --%
+                             ({#2*\clati*\cloni}, {#3*\clati*\sloni}, {#4*\slati}) --%
+                             cycle;  %
+    }%
+    % Main loop
+        % Loop over lat
+    \foreach \lat in {\latmin, \dlat,...,\latmax}{%
+        % cos(lat0), sin(lat0),  cos(lat1), sin(lat1)
+        \pgfmathsetmacro{\clato}{cos(\lat)};\pgfmathsetmacro{\slato}{sin(\lat)};%
+        \pgfmathsetmacro{\clati}{cos(#5+\lat)};\pgfmathsetmacro{\slati}{sin(#5+\lat)};%
+            % Loop over lon
+        \foreach \lon in {0,{#6},...,\lonmax}{%
+	       % cos(lon0), sin(lon0), cos(lon1), sin(lon1)
+            \pgfmathsetmacro{\clono}{cos(\lon)};\pgfmathsetmacro{\slono}{sin(\lon)};%
+	   \pgfmathsetmacro{\cloni}{cos(#6+\lon)};\pgfmathsetmacro{\sloni}{sin(#6+\lon)};%
+            \draw[#1] ({#2*\clato*\clono}, {#3*\clato*\slono}, {#4*\slato}) --%
+                                ({#2*\clati*\clono}, {#3*\clati*\slono}, {#4*\slati}) --%
+                                ({#2*\clati*\cloni}, {#3*\clati*\sloni}, {#4*\slati}) --%
+                                ({#2*\clato*\cloni}, {#3*\clato*\sloni}, {#4*\slato}) --%
+                                cycle;%
+        }%
+    }%
+    % lat = 90-#5; 90
+    \pgfmathsetmacro{\clato}{cos(\latmax+#5)};\pgfmathsetmacro{\slato}{sin(\latmax+#5)};%
+    \foreach \lon in {0,{#6},...,\lonmax}{%
+             % cos(lon0), sin(lon0), cos(lon1), sin(lon1)
+        \pgfmathsetmacro{\clono}{cos(\lon)};\pgfmathsetmacro{\slono}{sin(\lon)};%
+        \pgfmathsetmacro{\cloni}{cos(#6+\lon)};\pgfmathsetmacro{\sloni}{sin(#6+\lon)};%
+        \draw[#1] ({#2*\clato*\clono}, {#3*\clato*\slono}, {#4*\slato}) --%
+                             (0, 0, {#4}) --
+                             ({#2*\clato*\cloni}, {#3*\clato*\sloni}, {#4*\slato}) --%
+                             cycle;  %
+    }
+}%

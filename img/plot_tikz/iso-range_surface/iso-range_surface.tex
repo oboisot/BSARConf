@@ -1,0 +1,137 @@
+%\documentclass[tikz,border=0pt]{standalone}
+\documentclass[multi=tikzpicture,varwidth=false]{standalone} % Permet d'éviter le clash d'import du package xcolor avec tikz
+% qui doit être importé avant tikz (pas possible sir tikz est déclaré dans le préambule de la classe standalone)
+
+% Pour les symboles et équations mathématiques
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{textcomp} % Pour la commande \textdegree
+% Couleurs
+\usepackage[dvipsnames]{xcolor}
+% Dessins en LaTeX
+\usepackage{tikz}
+\usepackage{tikz-3dplot}
+\usetikzlibrary{backgrounds}
+%\usetikzlibrary{positioning}
+
+%%% Définition de COMMANDES PERSO %%%
+% Vectors
+\newcommand{\vecl}[1]{\overrightarrow{#1}} % Vector
+\newcommand{\vecn}[1]{\widehat{#1}} % normalized vector
+\newcommand{\norm}[2][]{\left\Vert\vecl{#2}#1\right\Vert}
+% Parameters
+\newcommand{\PRI}{\mathrm{PRI}}
+\newcommand{\PRF}{\mathrm{PRF}}
+\newcommand{\hatt}{\hat{t}}
+\newcommand{\hatto}{\widehat{t_0}}
+\newcommand{\hattT}{\widehat{t_T}}
+\newcommand{\hattR}{\widehat{t_R}}
+\newcommand{\bigdot}[1]{\overset{\hbox{\tiny$\bullet$}}{#1}}
+\newcommand{\bigdotdot}[1]{\overset{\hbox{\tiny$\bullet$$\bullet$}}{#1}}
+\newcommand{\conj}[1]{\overline{#1}}
+
+\definecolor{mred}{HTML}{d62728}
+\definecolor{morange}{HTML}{ffa500}
+\definecolor{mgray}{HTML}{536878}
+
+\input{Ellipsoid3D.tex}
+
+\begin{document}
+\tdplotsetmaincoords{70}{40}
+\begin{tikzpicture}[tdplot_main_coords]
+    % Points definition
+    \coordinate (P) at (1, 1, 0);
+    \coordinate (T) at (6, 6, 6);
+    \coordinate (R) at (2, 2, 2);
+
+     % Tracé du plan z=0
+    \foreach \i in {-7,...,3} {
+       \draw [mgray] (-2,1-\i,0) -- (8,1-\i,0);
+       \draw [mgray] (1-\i,-2,0) -- (1-\i,8,0);
+    }
+
+    % Tracé des axes de références
+    \draw[red,thin,-stealth,thick] (P) -- (2,1,0) node[right]{$\hat{e}$}; % x-axis
+    \draw[green,thin,-stealth,thick] (P) -- (1,2,0) node[above]{$\hat{n}$}; % y-axis
+    \draw[blue,thin,-stealth,thick] (P) -- (1,1,1) node[above]{$\hat{u}$}; % z-axis
+    
+    % Tracé des points    
+    \draw[very thick] (T) node[above]{$R$} -- (R) node[left,white]{$T$};
+    \draw[thick,dashed] (T) -- (P) node[morange,left]{$P$} -- (R);
+    
+    % Tracé de l'ellipsoide
+    \pgfmathsetmacro{\a}{5.861554119139441};
+    \pgfmathsetmacro{\b}{4.728405301113743};
+    \tdplotsetrotatedcoords{-135}{35.26438968275465}{180};
+    \coordinate (E) at (4, 4, 4);
+    \tdplotsetrotatedcoordsorigin{(E)};    
+    \draw[NavyBlue,thin,-stealth,thick,tdplot_rotated_coords] (0,0,0) -- (1,0,0) node[above]{$\hat{u}$}; % x-axis
+    \draw[NavyBlue,thin,-stealth,thick,tdplot_rotated_coords] (0,0,0) -- (0,1,0) node[above]{$\hat{v}$}; % y-axis
+    \draw[NavyBlue,thin,-stealth,thick,tdplot_rotated_coords] (0,0,0) -- (0,0,1) node[above]{$\hat{w}$}; % z-axis
+    \node[NavyBlue,opacity=1,below,tdplot_rotated_coords] at (E) {$E$};
+    \draw[NavyBlue,thin,dashed,opacity=0.5,tdplot_rotated_coords] (-\a-0.5,0,0) -- (\a+0.5,0,0);
+    \draw[NavyBlue,thin,dashed,opacity=0.5,tdplot_rotated_coords] (0,-\b-0.5,0) -- (0,\b+0.5,0);
+    \draw[NavyBlue,thin,dashed,opacity=0.5,tdplot_rotated_coords] (0,0,-\b-0.5) -- (0,0,\b+0.5);
+    \pgfmathsetmacro{\dangle}{5};
+    \DrawEllipsoidSurface[draw=mred, opacity=0.1,
+    				       fill=mred, fill opacity=0.05,
+    				       tdplot_rotated_coords]{\a}{\b}{\b}{\dangle}{\dangle};
+
+    % Tracé de l'intersection
+    \draw[thick, mred]
+        (5.785938897200182, 5.785938897200182, 0) --%
+        (5.498269641382898, 6.034315660828665, 0) --%
+        (5.176031414604286, 6.239321592676311, 0) --%
+        (4.824515359639294, 6.397590501009878, 0) --%
+        (4.44949336039226, 6.50652361473011, 0) --%
+        (4.057123267722779, 6.564332255121337, 0) --%
+        (3.6538477877048265, 6.5700672059065415, 0) --%
+        (3.246288692571145, 6.523634299352384, 0) --%
+        (2.8411380913962527, 6.425795962500775, 0) --%
+        (2.445048545850444, 6.278158698137931, 0) --%
+        (2.0645238353210975, 6.083146706063038, 0) --%
+        (1.70581216503493, 5.843962077794568, 0) --%
+        (1.374803570700923, 5.5645322183160735, 0) --%
+        (1.0769332042868118, 5.249445358194936, 0) --%
+        (0.8170920889740474, 4.903875214963297, 0) --%
+        (0.5995468086923688, 4.5334960408192195, 0) --%
+        (0.42786945092963813, 4.144389451562463, 0) --%
+        (0.30487895315404234, 3.7429445666311922, 0) --%
+        (0.23259481593880005, 3.3357530999374347, 0) --%
+        (0.21220394281858446, 2.9295011241068876, 0) --%
+        (0.24404115136629145, 2.5308592853512444, 0) --%
+        (0.3275836754977567, 2.1463732716418247, 0) --%
+        (0.461459749276398, 1.7823563326940493, 0) --%
+        (0.643471131271974, 1.444785616581648, 0) --%
+        (0.8706291996240937, 1.1392040251305402, 0) --%
+        (1.1392040251305393, 0.8706291996240947, 0) --%
+        (1.4447856165816466, 0.6434711312719745, 0) --%
+        (1.782356332694048, 0.4614597492763983, 0) --%
+        (2.1463732716418247, 0.3275836754977567, 0) --%
+        (2.530859285351243, 0.24404115136629168, 0) --%
+        (2.929501124106886, 0.21220394281858423, 0) --%
+        (3.335753099937433, 0.23259481593880005, 0) --%
+        (3.742944566631191, 0.3048789531540419, 0) --%
+        (4.144389451562463, 0.42786945092963813, 0) --%
+        (4.533496040819218, 0.5995468086923683, 0) --%
+        (4.903875214963297, 0.8170920889740474, 0) --%
+        (5.249445358194934, 1.076933204286811, 0) --%
+        (5.564532218316073, 1.374803570700922, 0) --%
+        (5.843962077794567, 1.7058121650349287, 0) --%
+        (6.083146706063037, 2.0645238353210966, 0) --%
+        (6.27815869813793, 2.445048545850441, 0) --%
+        (6.425795962500774, 2.8411380913962505, 0) --%
+        (6.523634299352384, 3.246288692571145, 0) --%
+        (6.5700672059065415, 3.6538477877048248, 0) --%
+        (6.564332255121337, 4.057123267722779, 0) --%
+        (6.50652361473011, 4.449493360392257, 0) --%
+        (6.39759050100988, 4.8245153596392925, 0) --%
+        (6.239321592676313, 5.176031414604284, 0) --%
+        (6.034315660828666, 5.4982696413828975, 0) --%
+        cycle;
+        
+    % Tracé des marques des points
+    \fill[fill=black] (T) circle (0.075cm);
+    \fill[fill=white] (R) circle (0.075cm);
+    \fill[morange,fill=morange] (P) circle (0.075cm);
+\end{tikzpicture}
+\end{document}

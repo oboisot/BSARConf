@@ -12,7 +12,7 @@ class Carrier {
                 sight=true,
                 leverx=0, levery=0, leverz=0,
                 elvBeamWidth=16, aziBeamWidth=16,                
-                coneLength=1e9, helpers=true) {
+                coneLength=1e7, helpers=true) {
         // *****
         this.carrier               = new THREE.Mesh(); // Carrier referential (relative to World)
         this.antenna               = new THREE.Mesh(); // Antenna referential (relative to carrier)
@@ -107,7 +107,7 @@ class Carrier {
         // ***** Antenna beam *****
         this._beamRadiusY = this._coneLength * Math.tan( 0.5 * this._aziBeamWidth );
         this._beamRadiusZ = this._coneLength * Math.tan( 0.5 * this._elvBeamWidth );
-        const coneGeometry = new THREE.ConeGeometry( 1, this._coneLength, 128, 1, true );
+        const coneGeometry = new THREE.ConeGeometry( 1, this._coneLength, 128, 16, true );
         coneGeometry.translate( 0, -0.5 * this._coneLength, 0);         // Define Cone Vertex as origin
         coneGeometry.rotateZ( HALF_PI );                                // Define x-axis as cone axis
         coneGeometry.scale( 1, this._beamRadiusY , this._beamRadiusZ ); // In case of elliptic cone

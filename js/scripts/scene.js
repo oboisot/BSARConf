@@ -4,6 +4,7 @@ import { Carrier, Axes, IsoRangeSurface } from "./objects.js";
 
 import { BSARConfig, Elements, CoordinatesElements } from "./config.js";
 import { drawIsoRangeDop, drawGAFIntensity } from "./plots.js";
+import * as ct from "./constants.js";
 import * as bsar from "./bsarfun.js";
 import * as geo from "./geography.js";
 // ***** Configurator Parameters *****
@@ -67,10 +68,11 @@ function initScene() {
     controls.enablePan = true;
     controls.panSpeed = 1;
     controls.enableDamping = true;
+    controls.dampingFactor = 0.1;
     controls.rotateSpeed = 0.5;
-    controls.minDistance = 0; // Equatorial Radius + 10 meters
+    controls.minDistance = 50;
     controls.maxDistance = 1e7;
-    controls.maxPolarAngle = 0.6 * Math.PI; //0.49 * Math.PI;
+    controls.maxPolarAngle = 0.6 * ct.PI; //0.49 * Math.PI;
 
     // ***** Scene *****
     scene = new THREE.Scene();
@@ -388,7 +390,7 @@ function updateBSARinfos() {
           RP = RxCarrier.getAntennaPosition().negate(),
           VT = TxCarrier.getCarrierVelocityVector(),
           VR = RxCarrier.getCarrierVelocityVector();
-    const lem = bsar.C0/ BSARConfig.Tx.centerFrequency.value * 1e-9,
+    const lem = ct.C0/ BSARConfig.Tx.centerFrequency.value * 1e-9,
           bandwidth = BSARConfig.Tx.bandwidth.value * 1e6,
           tint = BSARConfig.Rx.integrationTime.value,
           tx_peak_power = BSARConfig.Tx.peakPower.value,
@@ -484,7 +486,7 @@ function updateBSARinfos() {
             illuminationTime = TxIlluminationTime;
         }
     }
-    const PRImin = (rangeMinMax.range_max - rangeMinMax.range_min) / bsar.C0 + BSARConfig.Tx.pulseDuration.value * 1e-6,
+    const PRImin = (rangeMinMax.range_max - rangeMinMax.range_min) / ct.C0 + BSARConfig.Tx.pulseDuration.value * 1e-6,
           PRImax = 1.0 / (Math.abs( dopplerRate ) * illuminationTime);
     if ( PRImin >= 1e-3 ) { // PRI min is taken as the ceil of its µs value
         Elements.bsarInfos.priMin.innerHTML = `${(Math.ceil(PRImin*1e6)*1e-3).toFixed(3)} ms`;
@@ -514,7 +516,7 @@ function updatePlots() {
                 ( texture ) => {
                     isoRangeDopPlane.geometry = new THREE.PlaneBufferGeometry( obj.planeSize, obj.planeSize, 1, 1 );
                     isoRangeDopPlane.material = new THREE.MeshBasicMaterial({map: texture});
-                    requestRenderIfNotRequested(); // ensure that texture is rendered when loading is over
+                    render(); // ensure that texture is rendered when loading is over
                 }
             );
         }

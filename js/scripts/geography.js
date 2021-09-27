@@ -1,4 +1,5 @@
-import { Vector3, Matrix3, MathUtils } from "../three/three.module.js";
+import { Vector3, Matrix3 } from "../three/three.module.js";
+import * as ct from "./constants.js";
 
 export {GeoCoords, WGS84, LocalCartesianENU,
         dd_to_dms, dms_to_dd};
@@ -11,8 +12,8 @@ class GeoCoords {
     /***** SETTER *****/
     set( lon, lat, alt, degrees=true ) {
         if ( degrees ) {
-            this._lon_rad = MathUtils.degToRad( lon );
-            this._lat_rad = MathUtils.degToRad( lat );
+            this._lon_rad = lon * ct.DEG_TO_RAD;
+            this._lat_rad = lat * ct.DEG_TO_RAD;
         } else {
             this._lon_rad = lon;
             this._lat_rad = lat;
@@ -21,14 +22,14 @@ class GeoCoords {
     }
     setLon( lon, degrees=true ) {
         if ( degrees ) {
-            this._lon_rad = MathUtils.degToRad( lon );
+            this._lon_rad = lon * ct.DEG_TO_RAD;
         } else {
             this._lon_rad = lon;
         }
     }
     setLat( lat, degrees=true ) {
         if ( degrees ) {
-            this._lat_rad = MathUtils.degToRad( lat );
+            this._lat_rad = lat * ct.DEG_TO_RAD;
         } else {
             this._lat_rad = lat;
         }
@@ -42,8 +43,8 @@ class GeoCoords {
     /***** GETTER *****/
     get lon_rad() { return this._lon_rad; }
     get lat_rad() { return this._lat_rad; }
-    get lon_deg() { return MathUtils.radToDeg( this._lon_rad ); }
-    get lat_deg() { return MathUtils.radToDeg( this._lat_rad ) ; }
+    get lon_deg() { return this._lon_rad * ct.RAD_TO_DEG; }
+    get lat_deg() { return this._lat_rad * ct.RAD_TO_DEG; }
     get alt() { return this._alt; }
 }
 
@@ -64,10 +65,11 @@ class WGS84 {
     }
 
     /***** GETTER *****/
-    getEquatorialRadius() { return this._a };
-    getPolarRadius() { return this._b };
-    getFirstFlattening() { return this._f };
-    getExcentricitySquared() { return this._e2 };
+    get equatorialRadius() { return this._a };
+    get polarRadius() { return this._b };
+    get firstFlattening() { return this._f };
+    get excentricitySquared() { return this._e2 };
+    
     
     /* Compute the prime vertical radius at a given latitude lat (radians) */
     _primeVerticalCurvatureRadius( lat_rad ) {

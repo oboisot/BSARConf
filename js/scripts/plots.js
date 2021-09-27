@@ -1,5 +1,6 @@
 import * as THREE from "../three/three.module.js";
 import * as bsar from "./bsarfun.js";
+import { C0 } from "./constants.js";
 
 export { drawIsoRangeDop, drawGAFIntensity };
 
@@ -14,7 +15,7 @@ const isoRangeDopData = [
         type: 'contour',
         name: 'iso-Range',
         line: {
-            width: 2,
+            width: 4,
             color: '#d62728'
         },
         contours: {
@@ -178,8 +179,8 @@ const isoRangeDopTextureConfig = {
     showLink: false
 };
 
-function drawIsoRangeDop( TxCarrier, RxCarrier, fem, plot_div, texture_div, size=151 ) {
-    const lem = bsar.C0 / fem;
+function drawIsoRangeDop( TxCarrier, RxCarrier, fem, plot_div, texture_div, size=51 ) {
+    const lem = C0 / fem;
     // bistatic range and doppler frequency calculation
     const xmax = 2.0 * RxCarrier.getFootprintAbsMaxCoord();    
     const xaxis = bsar.linspaced_array(-xmax, xmax, size);
@@ -219,10 +220,13 @@ function drawIsoRangeDop( TxCarrier, RxCarrier, fem, plot_div, texture_div, size
     // **********************************
     // Filling x and y data data for iso-range and iso-Doppler plot
     isoRangeDopData[0].x = isoRangeDopData[0].y = isoRangeDopData[1].x = isoRangeDopData[1].y = xaxis;
-    Plotly.newPlot( plot_div, isoRangeDopData, isoRangeDopLayout, isoRangeDopConfig ); // note : Plotly.react does some weird displaying sometimes here
+    isoRangeDopData[0].line.width = isoRangeDopData[1].line.width = 2; // ensure to have line width of 2 for iso-range and iso-doppler
+    Plotly.react( plot_div, isoRangeDopData, isoRangeDopLayout, isoRangeDopConfig );
+    Plotly.relayout( plot_div, isoRangeDopLayout ); // note : Plotly.react does some weird displaying sometimes here so we force relayout
     // **************************************************
     // ***** COMPUTING TEXTURE FOR isoRangeDopPlane *****
     // **************************************************
+    isoRangeDopData[0].line.width = isoRangeDopData[1].line.width = 6; // larger line width for ground texture
     Plotly.react( texture_div,
                   isoRangeDopData.slice(0, 2), // only iso-range and iso-contours
                   isoRangeDopTextureLayout,
@@ -230,6 +234,7 @@ function drawIsoRangeDop( TxCarrier, RxCarrier, fem, plot_div, texture_div, size
     // return a Promise with planeSize and texture as dataURL
     return Plotly.toImage( texture_div, {format: 'png', width: 1080, height: 1080, scale: 3 } ).then(
         ( dataURL ) => {
+            isoRangeDopData[0].line.width = isoRangeDopData[1].line.width = 2; // this prevent using line width of 6 when zooming and panning in the 'plot_div' plot
             return {
                 planeSize: 2.0 * xmax,
                 dataURL: dataURL
@@ -395,7 +400,7 @@ const gafIntensityConfig = {
 }
 
 function drawGAFIntensity( TxCarrier, RxCarrier, fem, bandwidth, tint, plot_div, size=151 ) {
-    const lem = bsar.C0 / fem;
+    const lem = C0 / fem;
     const TP = TxCarrier.getAntennaPosition().negate(),
           RP = RxCarrier.getAntennaPosition().negate(),
           VT = TxCarrier.getCarrierVelocityVector(),
@@ -412,7 +417,7 @@ function drawGAFIntensity( TxCarrier, RxCarrier, fem, bandwidth, tint, plot_div,
                                bsar_resolutions.ground_lateral_resolution );
     }
     const xaxis = bsar.linspaced_array( -xmax, xmax, size );
-    const B_C0 = bandwidth / bsar.C0,
+    const B_C0 = bandwidth / C0,
           tint_lem = bsar_resolutions.tint / lem,
           betag = bsar_resolutions.bisector_vectors.betag.clone(),
           dbetag = bsar_resolutions.bisector_vectors.dbetag.clone();

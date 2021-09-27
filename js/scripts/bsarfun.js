@@ -1,3 +1,4 @@
+import * as ct from "./constants.js";
 export {
     bistatic_angle,
     bistatic_range, bistatic_range_minmax, doppler_frequency, doppler_rate, doppler_bandwidth,
@@ -8,12 +9,6 @@ export {
     linspaced_array,
     sinc,
 };
-
-// ***** CONSTANTS *****
-export const C0 = 299792458.0;  // speed of light in vacuum [m/s]
-export const K  = 1.380649e-23; // Boltzmann constant [J/K]
-export const RES_FACTOR = 0.8858929413789047; // twice the solution of sinc^2(x) = 0.5 for -3.01dB resolutions
-export const RES_AREA_FACTOR = 0.7848063035849675; // RES_FACTOR * RES_FACTOR
 
 // ***** BSAR functions *****
 /*
@@ -134,15 +129,15 @@ function bistatic_sar_resolution( lem, bandwidth, tx_vec, tx_vel, rx_vec, rx_vel
         ground_range_resolution, ground_lateral_resolution,
         resolution_area;
     if (tint === 'auto-ground') { // estimate tint for ground 'squared' resolutions
-        tint = bandwidth * lem / C0 * betag_norm / dbetag_norm;
+        tint = bandwidth * lem / ct.C0 * betag_norm / dbetag_norm;
     } else if (tint === 'auto-slant') { // estimate tint for slant 'squared' resolutions
-        tint = bandwidth * lem / C0 * beta_norm / dbeta_norm;
+        tint = bandwidth * lem / ct.C0 * beta_norm / dbeta_norm;
     }
-    slant_range_resolution    = RES_FACTOR * C0 / (bandwidth * beta_norm);
-    slant_lateral_resolution  = RES_FACTOR * lem / (tint * dbeta_norm);
-    ground_range_resolution   = RES_FACTOR * C0 / (bandwidth * betag_norm);
-    ground_lateral_resolution = RES_FACTOR * lem / (tint * dbetag_norm);
-    resolution_area           = RES_AREA_FACTOR * lem * C0 / (
+    slant_range_resolution    = ct.RES_FACTOR * ct.C0 / (bandwidth * beta_norm);
+    slant_lateral_resolution  = ct.RES_FACTOR * lem / (tint * dbeta_norm);
+    ground_range_resolution   = ct.RES_FACTOR * ct.C0 / (bandwidth * betag_norm);
+    ground_lateral_resolution = ct.RES_FACTOR * lem / (tint * dbetag_norm);
+    resolution_area           = ct.RES_AREA_FACTOR * lem * ct.C0 / (
         bandwidth * tint * bisectors.betag.clone().cross( bisectors.dbetag.clone() ).length());
     return {
         slant_range_resolution:    slant_range_resolution,
@@ -174,9 +169,9 @@ function compute_nesz( tx_peak_power, tx_duty_cycle, tx_loss_factor, tx_gain,
                        rx_temp, rx_noise_factor, rx_gain,
                        tx_vec, rx_vec, lem, tint, res_area ) {
     return (
-        64 * Math.PI * Math.PI * Math.PI *
+        64 * ct.PI * ct.PI * ct.PI *
         tx_vec.lengthSq() * rx_vec.lengthSq() *
-        K * Math.pow(10, 0.1 * (tx_loss_factor + rx_noise_factor - tx_gain - rx_gain)) * rx_temp / // noise dsp + Rx and Rx gains
+        ct.K * Math.pow(10, 0.1 * (tx_loss_factor + rx_noise_factor - tx_gain - rx_gain)) * rx_temp / // noise dsp + Rx and Rx gains
         (lem * lem *
          tx_peak_power * tx_duty_cycle * // mean transmitted power
          tint * res_area)
@@ -203,7 +198,7 @@ function linspaced_array(start, stop, size) {
  ****** Special functions ******
  ******************************/
 function sinc(x) {
-    const arg = Math.PI * x;
+    const arg = ct.PI * x;
     if ( Math.abs(x) < 1e-6 ) { // for double precision
         return 1.0 - arg * arg / 6;
     }

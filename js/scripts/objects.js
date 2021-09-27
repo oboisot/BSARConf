@@ -1,8 +1,7 @@
 import * as THREE from "../three/three.module.js";
+import * as ct from "./constants.js";
 
 export { Carrier, IsoRangeSurface, Axes };
-
-const HALF_PI = 0.5 * Math.PI;
 
 class Carrier {
     /* */
@@ -39,16 +38,16 @@ class Carrier {
         // ***** Create a new carrier *****
         this._altitude      = altitude;
         this._velocity      = velocity;
-        this._roll          = THREE.MathUtils.degToRad( roll );
-        this._pitch         = THREE.MathUtils.degToRad( pitch );
-        this._heading       = THREE.MathUtils.degToRad( -heading );
-        this._incidence     = THREE.MathUtils.degToRad( incidence );
-        this._ant_squint    = THREE.MathUtils.degToRad( ant_squint );
-        this._ground_squint = THREE.MathUtils.degToRad( ground_squint );
+        this._roll          = roll * ct.DEG_TO_RAD;
+        this._pitch         = pitch * ct.DEG_TO_RAD;
+        this._heading       = -heading * ct.DEG_TO_RAD;
+        this._incidence     = incidence * ct.DEG_TO_RAD;
+        this._ant_squint    = ant_squint * ct.DEG_TO_RAD;
+        this._ground_squint = ground_squint * ct.DEG_TO_RAD;
         this._sight         = sight;
         this._lever         = new THREE.Vector3( leverx, levery, leverz );
-        this._elvBeamWidth  = THREE.MathUtils.degToRad( elvBeamWidth );
-        this._aziBeamWidth  = THREE.MathUtils.degToRad( aziBeamWidth );
+        this._elvBeamWidth  = elvBeamWidth * ct.DEG_TO_RAD;
+        this._aziBeamWidth  = aziBeamWidth * ct.DEG_TO_RAD;
         this._coneLength    = coneLength;
         this._helpers       = helpers;
         // ***** Infos Parameters *****
@@ -92,10 +91,10 @@ class Carrier {
         this.antenna.position.copy( this._lever ); // Relative to carrier position
         if ( this._sight ) {// if true => left-looking
             this.antenna.rotateZ( -this._ground_squint )  // Ground squint first
-                        .rotateY( HALF_PI + this._incidence );
+                        .rotateY( ct.HALF_PI + this._incidence );
         } else {
             this.antenna.rotateZ( this._ground_squint )  // Ground squint first
-                        .rotateY( HALF_PI - this._incidence );
+                        .rotateY( ct.HALF_PI - this._incidence );
         }
         this.antenna.rotateZ( this._ant_squint ); // antenna squint last
         // Antenna AxesHelper
@@ -109,7 +108,7 @@ class Carrier {
         this._beamRadiusZ = this._coneLength * Math.tan( 0.5 * this._elvBeamWidth );
         const coneGeometry = new THREE.ConeGeometry( 1, this._coneLength, 128, 16, true );
         coneGeometry.translate( 0, -0.5 * this._coneLength, 0);         // Define Cone Vertex as origin
-        coneGeometry.rotateZ( HALF_PI );                                // Define x-axis as cone axis
+        coneGeometry.rotateZ( ct.HALF_PI );                                // Define x-axis as cone axis
         coneGeometry.scale( 1, this._beamRadiusY , this._beamRadiusZ ); // In case of elliptic cone
         const coneMaterial = new THREE.MeshBasicMaterial({
             color: 0x000000,
@@ -184,15 +183,15 @@ class Carrier {
     }
 
     getCarrierHeading() {
-        return THREE.MathUtils.radToDeg( -this._heading ) ;
+        return -this._heading * ct.RAD_TO_DEG;
     }
 
     getCarrierRoll() {
-        return THREE.MathUtils.radToDeg( this._roll ) ;
+        return this._roll * ct.RAD_TO_DEG;
     }
 
     getCarrierPitch() {
-        return THREE.MathUtils.radToDeg( this._pitch ) ;
+        return this._pitch * ct.RAD_TO_DEG;
     }
 
     getAntennaPosition() {
@@ -206,11 +205,11 @@ class Carrier {
     }
 
     getAntennaNominalIncidence() {
-        return THREE.MathUtils.radToDeg( this._incidence );
+        return this._incidence * ct.RAD_TO_DEG;
     }
 
     getNominalAntennaSquint() {
-        return THREE.MathUtils.radToDeg( this._ant_squint );
+        return this._ant_squint * ct.RAD_TO_DEG;
     }
 
     // Parameters infos
@@ -276,13 +275,13 @@ class Carrier {
 
     setCarrierVelocity(velocity) {
         this._velocity = velocity;
-        this.carrierVelocityVector.setLength( 5 * this._velocity, 0.5 * this._velocity, 0.5 * this._velocity);
+        this.carrierVelocityVector.setLength( 5 * this._velocity, 0.5 * this._velocity, 0.5 * this._velocity );
         this.illuminationTime(); // Update illumination time
     }
 
     setCarrierHeading(heading) {
         const _heading = this._heading; // Get old heading value
-        this._heading = THREE.MathUtils.degToRad( -heading );
+        this._heading = -heading * ct.DEG_TO_RAD;
         // We remove X and Y rotation thus apply new Z rotation and reapply back X and Y rotations.
         this.carrier.rotateX( -this._pitch )
                     .rotateY( -this._roll )
@@ -295,7 +294,7 @@ class Carrier {
 
     setCarrierRoll(roll) {
         const _roll = this._roll; // Get old roll value
-        this._roll = THREE.MathUtils.degToRad( roll );
+        this._roll = roll * ct.DEG_TO_RAD;
         // We remove X rotation thus apply new Y rotation and reapply back X rotation.
         this.carrier.rotateX( -this._pitch )
                     .rotateY( this._roll - _roll )
@@ -306,7 +305,7 @@ class Carrier {
 
     setCarrierPitch(pitch) {
         const _pitch = this._pitch; // Get old pitch value
-        this._pitch = THREE.MathUtils.degToRad( pitch );
+        this._pitch = pitch * ct.DEG_TO_RAD;
         // We apply new pitch rotation
         this.carrier.rotateX( this._pitch - _pitch );
         this.carrierPosForSwathCenterAtWorldOrigin();
@@ -315,7 +314,7 @@ class Carrier {
 
     setAntennaNominalIncidence(incidence) {
         const _incidence = this._incidence; // Get old incidence value
-        this._incidence = THREE.MathUtils.degToRad( incidence );
+        this._incidence = incidence * ct.DEG_TO_RAD;
         // We remove squint rotaton first (Z rotation)
         this.antenna.rotateZ( -this._ant_squint );
         // We thus apply new incidence
@@ -332,7 +331,7 @@ class Carrier {
 
     setAntennaSquint( ant_squint ) {
         const _ant_squint = this._ant_squint; // Get old incidence value
-        this._ant_squint = THREE.MathUtils.degToRad( ant_squint );
+        this._ant_squint = ant_squint * ct.DEG_TO_RAD;
         this.antenna.rotateZ( this._ant_squint - _ant_squint ); // Removing then adding new squint
         this.carrierPosForSwathCenterAtWorldOrigin();
         this.updateFootprint();
@@ -340,16 +339,16 @@ class Carrier {
 
     setGroundSquint( ground_squint ) {
         const _ground_squint = this._ground_squint; // Get old ground squint value
-        this._ground_squint = THREE.MathUtils.degToRad( ground_squint );
+        this._ground_squint = ground_squint * ct.DEG_TO_RAD;
         this.antenna.rotateZ( -this._ant_squint ); // We remove squint first
         if ( this._sight ) { // if true => left-looking
-            this.antenna.rotateY( -HALF_PI - this._incidence )           // We remove incidence angle
+            this.antenna.rotateY( -ct.HALF_PI - this._incidence )           // We remove incidence angle
                         .rotateZ( _ground_squint - this._ground_squint ) // Removing then adding new ground squint
-                        .rotateY( HALF_PI + this._incidence );           // We apply back incidence
+                        .rotateY( ct.HALF_PI + this._incidence );           // We apply back incidence
         } else {
-            this.antenna.rotateY( this._incidence - HALF_PI )            // We remove incidence angle
+            this.antenna.rotateY( this._incidence - ct.HALF_PI )            // We remove incidence angle
                         .rotateZ( this._ground_squint - _ground_squint ) // Removing then adding new ground squint
-                        .rotateY( HALF_PI - this._incidence );           // We apply back incidence
+                        .rotateY( ct.HALF_PI - this._incidence );           // We apply back incidence
         }
         this.antenna.rotateZ( this._ant_squint ); // Adding back squint
         this.carrierPosForSwathCenterAtWorldOrigin();
@@ -361,13 +360,13 @@ class Carrier {
             this._sight = sight;
             this.antenna.rotateZ( -this._ant_squint ); // We remove squint first
             if ( this._sight ) { // if true => right-looking to left-looking
-                this.antenna.rotateY( -HALF_PI + this._incidence ) // We remove incidence angle from right-looking
+                this.antenna.rotateY( -ct.HALF_PI + this._incidence ) // We remove incidence angle from right-looking
                             .rotateZ( -2 * this._ground_squint )   // Removing ground squint from right-looking then adding for left-looking
-                            .rotateY( HALF_PI + this._incidence ); // We apply incidence for left-looking
+                            .rotateY( ct.HALF_PI + this._incidence ); // We apply incidence for left-looking
             } else { // if false => left-looking to right-looking
-                this.antenna.rotateY( -HALF_PI - this._incidence ) // We remove incidence angle from left-looking
+                this.antenna.rotateY( -ct.HALF_PI - this._incidence ) // We remove incidence angle from left-looking
                             .rotateZ( 2 * this._ground_squint )    // Removing ground squint from left-looking then adding for right-looking
-                            .rotateY( HALF_PI - this._incidence ); // We apply incidence for right-looking
+                            .rotateY( ct.HALF_PI - this._incidence ); // We apply incidence for right-looking
             }
             this.antenna.rotateZ( this._ant_squint ); // Adding back squint
             this.carrierPosForSwathCenterAtWorldOrigin();
@@ -397,7 +396,7 @@ class Carrier {
     }
 
     setElevationBeamWidth(elv) {
-        this._elvBeamWidth = THREE.MathUtils.degToRad( elv );
+        this._elvBeamWidth = elv * ct.DEG_TO_RAD;
         const _beamRadiusZ = this._beamRadiusZ; // Get old Z radius
         this._beamRadiusZ = this._coneLength * Math.tan( 0.5 * this._elvBeamWidth ); // Compute new Z radius
         // inverse scale factor thus apply new scale factor
@@ -407,7 +406,7 @@ class Carrier {
     }
 
     setAzimuthBeamWidth(azimut) {
-        this._aziBeamWidth = THREE.MathUtils.degToRad( azimut );
+        this._aziBeamWidth = azimut * ct.DEG_TO_RAD;
         const _beamRadiusY = this._beamRadiusY; // Get old Y radius
         this._beamRadiusY = this._coneLength * Math.tan( 0.5 * this._aziBeamWidth ); // Compute new Y radius
         // inverse scale factor thus apply new scale factor
@@ -585,15 +584,15 @@ class Carrier {
         this._footprint_area = 0.5 * Math.abs( area );
         // Local incidence
         const axis = this._beamAxisWorld.clone();
-        this._loc_incidence_center = THREE.MathUtils.radToDeg( Math.acos( axis.clone().negate().dot( this._zAxis ) ) );
+        this._loc_incidence_center = Math.acos( axis.clone().negate().dot( this._zAxis ) ) * ct.RAD_TO_DEG;
             // Min
         const axisMin = OA.clone().sub( pointMin ).normalize(),
               axisMax = OA.clone().sub( pointMax ).normalize();
-        this._loc_incidence_min = THREE.MathUtils.radToDeg( Math.acos( axisMin.dot( this._zAxis ) ) );
-        this._loc_incidence_max = THREE.MathUtils.radToDeg( Math.acos( axisMax.dot( this._zAxis ) ) );
+        this._loc_incidence_min = Math.acos( axisMin.dot( this._zAxis ) ) * ct.RAD_TO_DEG;
+        this._loc_incidence_max = Math.acos( axisMax.dot( this._zAxis ) ) * ct.RAD_TO_DEG;
         // Computed squint
         const vel = this.getCarrierVelocityVector().normalize();
-        this._computed_squint = THREE.MathUtils.radToDeg( Math.asin( axis.dot( vel ) ) );
+        this._computed_squint = Math.asin( axis.dot( vel ) ) * ct.RAD_TO_DEG;
         // Slant range at swath center
         this._range_at_swath_center = OA.length();
         // Compute illumination time

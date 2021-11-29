@@ -34,7 +34,7 @@ function bistatic_range( tx_vec, rx_vec ) {
 function bistatic_range_minmax( tx_vec, rx_vec, rx_footprint ) {
     let dist = 0,
         minDist = Number.MAX_VALUE,
-        maxDist = 0
+        maxDist = 0;
     for ( let i = 0 ; i < rx_footprint.length ; ++i ){
         const point = rx_footprint[i];
         dist = tx_vec.distanceTo( point ) + rx_vec.distanceTo( point );

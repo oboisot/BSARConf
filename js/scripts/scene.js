@@ -411,7 +411,10 @@ function updateBSARinfos() {
           dopplerRate = bsar.doppler_rate( lem, TP, VT, RP, VR ),
           dopplerBandwidth = bsar.doppler_bandwidth( dopplerRate, bsar_resolutions.tint ),
           rangeAtSwathCenter = bsar.bistatic_range( TP, RP ),
-          rangeMinMax = bsar.bistatic_range_minmax( TP, RP, RxCarrier.footprintPoints );
+          rangeMinMax = bsar.bistatic_range_minmax( TP.clone().negate(),
+                                                    RP.clone().negate(),
+                                                    RxCarrier.footprintPoints );
+          // Note: we want the position of the transmitter and receiver relative to the scene cente, i.e., -TP and -RP
     // Bistatic angle
     Elements.bsarInfos.bistaticAngle.innerHTML = `${bistatic_angle.toFixed(3)} °`;
     // Slant range
@@ -423,12 +426,12 @@ function updateBSARinfos() {
     if (rangeMinMax.range_min > 1000.0)
         Elements.bsarInfos.rangeMin.innerHTML = `${(rangeMinMax.range_min/1000.0).toFixed(3)} km`;
     else {
-        Elements.bsarInfos.rangeMin.innerHTML = `${rangeMinMax.range_min.toFixed(3)} km`;
+        Elements.bsarInfos.rangeMin.innerHTML = `${rangeMinMax.range_min.toFixed(3)} m`;
     }
     if (rangeMinMax.range_max > 1000.0)
         Elements.bsarInfos.rangeMax.innerHTML = `${(rangeMinMax.range_max/1000.0).toFixed(3)} km`;
     else {
-        Elements.bsarInfos.rangeMax.innerHTML = `${rangeMinMax.range_max.toFixed(3)} km`;
+        Elements.bsarInfos.rangeMax.innerHTML = `${rangeMinMax.range_max.toFixed(3)} m`;
     }
     // Slant range resolution
     Elements.bsarInfos.slantRangeRes.innerHTML = `${bsar_resolutions.slant_range_resolution.toFixed(3)} m`;

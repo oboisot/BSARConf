@@ -1,7 +1,7 @@
 # BSARConf
 Bistatic Synthetic Aperture Radar Configurator
 
-## Quick description
+## Description
 Website interface to visualize and configure bistatic Synthetic Aperture Radar (SAR) systems.\
 A *real-time* rendering of the geometric configuration is made together with the computation
 of some usefull BSAR parameters such as:
@@ -16,13 +16,7 @@ of some usefull BSAR parameters such as:
 
 A preview is available here:  [BSARConf](https://www.bsarconf.oboisot.com)
 
-It is a recent project and is still under construction and improvements, MORE TO COME:
-- The addition of NESZ computation must be added
-- The making of a full configuration report must be added
-- More informations about the site and the physics behind must be added
-
-## Detailed description
- TO DO...
+It is a recent project and is still under construction and improvements...
 
 ## Other projects used by this site
 This site uses the:

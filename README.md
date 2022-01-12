@@ -13,10 +13,9 @@ of some usefull BSAR parameters such as:
 - Noise Equivalent Sigma Zero (NESZ)
 - direct drawing of ground iso-Range and iso-Doppler contours
 - direct drawing of the Generalized Ambiguity Function (GAF) amplitude for a unit point scatterer
+- and so on...
 
 A preview is available here:  [BSARConf](https://www.bsarconf.oboisot.com)
-
-It is a recent project and is still under construction and improvements...
 
 ## Other projects used by this site
 This site uses the:

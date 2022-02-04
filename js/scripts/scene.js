@@ -389,7 +389,8 @@ function updateBSARinfos() {
     const TP = TxCarrier.getAntennaPosition().negate(),
           RP = RxCarrier.getAntennaPosition().negate(),
           VT = TxCarrier.getCarrierVelocityVector(),
-          VR = RxCarrier.getCarrierVelocityVector();
+          VR = RxCarrier.getCarrierVelocityVector(),
+          tx_rx_range = TP.distanceTo(RP);
     const lem = ct.C0/ BSARConfig.Tx.centerFrequency.value * 1e-9,
           bandwidth = BSARConfig.Tx.bandwidth.value * 1e6,
           tint = BSARConfig.Rx.integrationTime.value,
@@ -417,56 +418,54 @@ function updateBSARinfos() {
           // Note: we want the position of the transmitter and receiver relative to the scene cente, i.e., -TP and -RP
     // Bistatic angle
     Elements.bsarInfos.bistaticAngle.innerHTML = `${bistatic_angle.toFixed(3)} °`;
+    // Tx-RX range
+    if (tx_rx_range > 1000.0)
+        Elements.bsarInfos.txrxRange.innerHTML = `${(tx_rx_range/1000.0).toFixed(3)} km`;
+    else
+        Elements.bsarInfos.txrxRange.innerHTML = `${tx_rx_range.toFixed(3)} m`;
     // Slant range
     if (rangeAtSwathCenter > 1000.0)
         Elements.bsarInfos.rangeAtSwathCenter.innerHTML = `${(rangeAtSwathCenter/1000.0).toFixed(3)} km`;
-    else {
+    else
         Elements.bsarInfos.rangeAtSwathCenter.innerHTML = `${rangeAtSwathCenter.toFixed(3)} m`;
-    }
     if (rangeMinMax.range_min > 1000.0)
         Elements.bsarInfos.rangeMin.innerHTML = `${(rangeMinMax.range_min/1000.0).toFixed(3)} km`;
-    else {
+    else
         Elements.bsarInfos.rangeMin.innerHTML = `${rangeMinMax.range_min.toFixed(3)} m`;
-    }
     if (rangeMinMax.range_max > 1000.0)
         Elements.bsarInfos.rangeMax.innerHTML = `${(rangeMinMax.range_max/1000.0).toFixed(3)} km`;
-    else {
+    else
         Elements.bsarInfos.rangeMax.innerHTML = `${rangeMinMax.range_max.toFixed(3)} m`;
-    }
     // Slant range resolution
     Elements.bsarInfos.slantRangeRes.innerHTML = `${bsar_resolutions.slant_range_resolution.toFixed(3)} m`;
     // Slant lateral resolution
-    if (bsar_resolutions.slant_lateral_resolution > 1e6) {
+    if (bsar_resolutions.slant_lateral_resolution > 1e6)
         Elements.bsarInfos.slantLateralRes.innerHTML = '+Inf';
-    } else if (bsar_resolutions.slant_lateral_resolution > 1000.0) {
+    else if (bsar_resolutions.slant_lateral_resolution > 1000.0)
         Elements.bsarInfos.slantLateralRes.innerHTML = `${(bsar_resolutions.slant_lateral_resolution/1000.0).toFixed(3)} km`;
-    } else {
+    else
         Elements.bsarInfos.slantLateralRes.innerHTML = `${bsar_resolutions.slant_lateral_resolution.toFixed(3)} m`;
-    }
     // Ground range resolution
-    if (bsar_resolutions.ground_range_resolution > 1e6) {
+    if (bsar_resolutions.ground_range_resolution > 1e6)
         Elements.bsarInfos.groundRangeRes.innerHTML = '+Inf';
-    } else if (bsar_resolutions.ground_range_resolution > 1000.0) {
+    else if (bsar_resolutions.ground_range_resolution > 1000.0)
         Elements.bsarInfos.groundRangeRes.innerHTML = `${(bsar_resolutions.ground_range_resolution/1000.0).toFixed(3)} km`;
-    } else {
+    else
         Elements.bsarInfos.groundRangeRes.innerHTML = `${bsar_resolutions.ground_range_resolution.toFixed(3)} m`;
-    }
     // Ground lateral resolution
-    if (bsar_resolutions.ground_lateral_resolution > 1e6) {
+    if (bsar_resolutions.ground_lateral_resolution > 1e6)
         Elements.bsarInfos.groundLateralRes.innerHTML = '+Inf';
-    } else if (bsar_resolutions.ground_lateral_resolution > 1000.0) {
+    else if (bsar_resolutions.ground_lateral_resolution > 1000.0)
         Elements.bsarInfos.groundLateralRes.innerHTML = `${(bsar_resolutions.ground_lateral_resolution/1000.0).toFixed(3)} km`;
-    } else {
+    else
         Elements.bsarInfos.groundLateralRes.innerHTML = `${bsar_resolutions.ground_lateral_resolution.toFixed(3)} m`;
-    }
     // Resolution area
-    if (bsar_resolutions.resolution_area > 1e6) {
+    if (bsar_resolutions.resolution_area > 1e6)
         Elements.bsarInfos.resolutionArea.innerHTML = '+Inf';
-    } else if (bsar_resolutions.resolution_area > 1000000.0) {
+    else if (bsar_resolutions.resolution_area > 1000000.0)
         Elements.bsarInfos.resolutionArea.innerHTML = `${(bsar_resolutions.resolution_area/1000000.0).toFixed(3)} km&sup2;`;
-    } else {
+    else
         Elements.bsarInfos.resolutionArea.innerHTML = `${bsar_resolutions.resolution_area.toFixed(3)} m&sup2`;
-    }
     // Doppler frequency
     Elements.bsarInfos.dopplerFrequency.innerHTML = `${dopplerFrequency.toFixed(3)} Hz`;
     // Doppler rate
@@ -483,24 +482,21 @@ function updateBSARinfos() {
           RxIlluminationTime = RxCarrier.getIlluminationTime();
     let illuminationTime = RxIlluminationTime; // In case of a fixed transmitter or receiver
     if ( TxIlluminationTime ) {
-        if ( RxIlluminationTime ){
+        if ( RxIlluminationTime )
             illuminationTime = Math.min( TxIlluminationTime, RxIlluminationTime );
-        } else {
+        else
             illuminationTime = TxIlluminationTime;
-        }
     }
     const PRImin = (rangeMinMax.range_max - rangeMinMax.range_min) / ct.C0 + BSARConfig.Tx.pulseDuration.value * 1e-6,
           PRImax = 1.0 / (Math.abs( dopplerRate ) * illuminationTime);
-    if ( PRImin >= 1e-3 ) { // PRI min is taken as the ceil of its µs value
+    if ( PRImin >= 1e-3 ) // PRI min is taken as the ceil of its µs value
         Elements.bsarInfos.priMin.innerHTML = `${(Math.ceil(PRImin*1e6)*1e-3).toFixed(3)} ms`;
-    } else {
+    else
         Elements.bsarInfos.priMin.innerHTML = `${(Math.ceil(PRImin*1e6)).toFixed(0)} µs`;
-    }
-    if( PRImax >= 1e-3 ) {  // PRI max is taken as the floor of its µs value
+    if( PRImax >= 1e-3 )  // PRI max is taken as the floor of its µs value
         Elements.bsarInfos.priMax.innerHTML = `${(Math.floor(PRImax*1e6)*1e-3).toFixed(3)} ms`;
-    } else {
+    else
         Elements.bsarInfos.priMax.innerHTML = `${(Math.floor(PRImax*1e6)).toFixed(0)} µs`;
-    }
 }
 
 function updatePlots() {

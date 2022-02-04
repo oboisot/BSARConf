@@ -96,12 +96,12 @@ input[type=text]:valid+span:after {
 	font-size: 14px;
 	top: 0px;
 	width: 350px;
-	height: 340px;
+	height: 360px;
 	z-index: 0;
 	transition: 0.5s;
 	transition-timing-function: ease-in-out;
-	transform: translateY(-340px);
-	/* border: 1px solid white; */
+	transform: translateY(-360px);
+	/* border: 1px solid white; */ /* for debug */
 }
 
 .txInfosDiv {
